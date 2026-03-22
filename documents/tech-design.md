@@ -1,1230 +1,520 @@
-# Glass Box Protocol - Technical Design Document
+# Engineering Architecture Specification: The Glass Box Protocol
 
 **Version:** 1.0
-**Last Updated:** March 16, 2026
-**Status:** Draft
+**Last Updated:** March 22, 2026
+**Core Objective:** Establish a verifiable, decentralized trust and reputation layer (RAID) for autonomous AI agents via immutable reasoning traces.
 
 ---
 
-## 1. Executive Summary
+## 1. System Topology & Data Flow
 
-This document details the technical architecture and implementation strategy for the Glass Box Protocol, a decentralized trust layer for AI agents in finance. The system provides cryptographic verification of AI reasoning processes through a modular skill-based architecture, blind validation, and on-chain reputation tracking.
+The Glass Box Protocol operates as a middleware trust layer sitting between agent computation and on-chain financial execution. The architecture strictly limits integration to two perimeter gates (Input and Output) to maintain an agent-agnostic core.
 
-### Key Technical Goals
-- Enable deterministic evaluation of non-deterministic AI decision-making
-- Create a trustless marketplace for financial AI expertise
-- Provide cryptographic proof of AI reasoning processes
-- Build infrastructure-agnostic validation layer
+**High-Level Flow:**
+
+```
+Trigger Register (Input) → Execution Track (Hosted or Self-Hosted) → Ledger SDK (Output) → DA Layer → Reputation Engine → Marketplace / API
+```
 
 ---
 
-## 2. System Architecture
+## 2. Integration Gates (Ingress & Egress)
 
-### 2.1 High-Level Architecture
+### 2.1 The Trigger Register (Input Gate)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Glass Box Protocol                       │
-├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────┐      ┌──────────────┐      ┌───────────┐ │
-│  │   Creators   │─────▶│    Blind     │─────▶│ Validator │ │
-│  │   (Skill     │      │  Sequencer   │      │  Network  │ │
-│  │   Modules)   │      │              │      │           │ │
-│  └──────────────┘      └──────────────┘      └───────────┘ │
-│         │                     │                      │       │
-│         │                     │                      │       │
-│         ▼                     ▼                      ▼       │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            On-Chain Registry & RAID Store            │  │
-│  │         (Reasoning Traces + Performance Data)        │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                              │                              │
-│                              ▼                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                  Consumer Layer                       │  │
-│  │   (Smart Vaults, Execution Engines, End Users)       │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                              │
-└──────────────────────────────────────────────────────────────┘
-```
+A standardized event bus that feeds normalized triggers to the agents. This prevents agents from arbitrarily executing without a verifiable catalyst.
 
-### 2.2 Core Components
+- **On-Chain Events:** Smart contract state changes, DEX pool imbalances, DAO votes
+- **Off-Chain Events:** Verified Oracle data (e.g., Pyth/Chainlink price feeds), News API webhooks
+- **Agent-Generated Events:** Inter-agent communication (e.g., a macro-analysis agent triggering a specialized execution sub-agent)
 
-#### 2.2.1 Agent State Machine
-**Purpose:** Track agent reasoning state across multiple data streams
+### 2.2 The Reasoning Ledger SDK (Output Gate)
 
-The state machine is a text-based representation that allows LLM agents to maintain context and reasoning continuity across multiple data inputs. This is critical for financial decision-making where agents need to process streaming market data, news feeds, and on-chain events simultaneously.
+A lightweight client library (`@glassbox/sdk`) responsible for intercepting the agent's state, compiling the final outcome and the granular execution steps into the Universal Schema, encrypting proprietary alpha, and pushing the payload to the ledger.
 
-**State Representation (state.txt):**
-```markdown
-# Agent State: Trading Module v1.0
-Last Updated: 2026-03-16T10:30:45Z
+---
 
-## Current Context
-- Market Regime: HIGH_VOLATILITY
-- Portfolio Exposure: 65% (target: 50-70%)
-- Active Positions: 3
-- Available Capital: $45,000
+## 3. Dual-Track Execution & Attestation Layer
 
-## Data Stream States
-### Stream 1: Price Feed (chainlink:eth-usd)
-- Status: ACTIVE
-- Last Value: $3,542.15
-- Last Update: 30s ago
-- Trend: DECLINING (-2.3% over 5min)
+To solve the "Cold Start" developer friction while maintaining a path to fully trustless institutional adoption, the protocol routes agents through one of two execution tracks.
 
-### Stream 2: News Sentiment (newsapi:crypto)
-- Status: ACTIVE
-- Last Event: "SEC announces crypto framework"
-- Sentiment: NEUTRAL (0.52)
-- Last Update: 2min ago
+### Track A: The Glass Box Framework (MVP / Cold Start)
 
-### Stream 3: On-Chain Metrics (glassnode:eth-netflow)
-- Status: ACTIVE
-- Last Value: -15,234 ETH (exchange outflow)
-- Last Update: 5min ago
-- Signal: BULLISH
+Designed for rapid onboarding with limited flexibility.
 
-## Reasoning History (Last 5 Steps)
-1. [10:28:30] Observed volatility spike → Reduced target exposure to 50-60%
-2. [10:29:15] News sentiment neutral → No immediate action
-3. [10:29:45] Exchange outflow detected → Upgraded signal to ACCUMULATE
-4. [10:30:15] Price dipped below support → Initiated buy order $5,000
-5. [10:30:45] CURRENT: Monitoring fill status
+- **Infrastructure:** Agents are built using the official, opinionated Glass Box runtime environment
+- **Attestation:** Because the protocol controls the runtime, it serves as the centralized "Trust Source." The framework natively captures the trace, signs it with a protocol session key, and guarantees the logic was executed as claimed
 
-## Pending Decisions
-- [ ] Check if buy order filled (expires in 5min)
-- [ ] Re-evaluate position if BTC correlation changes
-- [ ] Update stop-loss if position increases >10%
+### Track B: Self-Hosted Agents (Trustless Ecosystem)
 
-## Risk Parameters
-- Max Single Position: $15,000
-- Stop Loss: -5%
-- Take Profit: +12%
-- Max Daily Loss: $3,000 (used: $450)
+Designed for proprietary, mature agents (e.g., institutional quant bots) running on external infrastructure.
 
-## Flags & Alerts
-- ⚠️ Volatility above 95th percentile - reduce risk
-- ✓ Correlation check passed (ETH-BTC: 0.78)
+- **Identity:** Bring Your Own Identity (BYOI). Agents sign payloads with their own cryptographic public key (EVM address, DID), establishing their RAID (Reasoning As Identity)
+- **Work Attestation (The Blind Sequencer):** Sits between the Trigger Register and the Agent. It randomly injects synthetic, protocol-generated test events alongside real user data. This creates cryptographic paranoia, making lazy "token-digging" computationally risky and economically irrational
+- **Cryptographic Proofs:** Long-term roadmap includes requiring zkTLS (proving web traffic to Anthropic/OpenAI) or TEE (hardware enclave signatures) to cryptographically guarantee the trace matches the runtime execution
+
+---
+
+## 4. The Universal Reasoning Ledger (Data Schema)
+
+The protocol utilizes an agent-agnostic JSON envelope to record computation. The `Execution_Graph` mandates a low-granularity behavioral breakdown, mapping directly to modern LLM Tool Use and XML-tagging mechanics (e.g., Claude `tool_use`, `<thinking>`, `<plan>`).
+
+**`ReasoningTrace` JSON Schema:**
+
+```json
+{
+  "Header": {
+    "agent_id": "0x...",
+    "epoch_timestamp": "2026-03-22T12:00:00Z",
+    "attestation_type": "framework_v1"
+  },
+  "Trigger_Event": {
+    "source": "chainlink_oracle",
+    "payload": { "asset": "ETH", "price": "3200" }
+  },
+  "Context_Snapshot": "[ENCRYPTED_CREATOR_KEY]",
+  "Execution_Graph": [
+    {
+      "behavior": "Observing",
+      "data": "Ingested ETH price drop and current stablecoin balances."
+    },
+    {
+      "behavior": "Planning",
+      "data": "1. Verify slippage. 2. Execute rotation to USDC."
+    },
+    {
+      "behavior": "Reasoning",
+      "data": "Market volatility exceeds threshold. Capital preservation protocol engaged."
+    },
+    {
+      "behavior": "Acting",
+      "tool": "uniswap_router",
+      "params": { "action": "swap", "amount": "100_ETH" }
+    },
+    {
+      "behavior": "Self_Refining",
+      "data": "Slippage tolerance exceeded. Recalculating route via Curve."
+    }
+  ],
+  "Terminal_Action": {
+    "type": "transaction_intent",
+    "payload": { "status": "executed", "tx_hash": "0x..." }
+  }
+}
 ```
 
-**State Transition Example:**
+**Note:** Proprietary logic (Context_Snapshot and Execution_Graph) is encrypted. Only the Header, Trigger_Event, and Terminal_Action remain public for the settlement loop.
+
+---
+
+## 5. Infrastructure & Settlement Stack
+
+### Data Availability (DA) Layer
+
+Heavy JSON `ReasoningTrace` payloads are pushed to high-throughput DA networks (e.g., Celestia, EigenDA) to ensure permanent, low-cost storage.
+
+### Smart Contract Layer (L2)
+
+- **Registry Contract:** Maps the BYOI public key to the agent's historical performance
+- **Trace Ledger:** Stores the Merkle Root of the JSON payload and the DA pointer, securing the off-chain data mathematically
+
+---
+
+## 6. The Application Layer (Monetization & Utility)
+
+### 6.1 The Reputation Engine
+
+An off-chain evaluator that pulls the raw Outcomes and Traces from the DA layer. It runs the Measurement Matrix (Execution Determinism, Data Provenance, Actuarial Outcome) to continuously update the agent's RAID score.
+
+### 6.2 The Glass Box Marketplace
+
+The primary B2C and B2B interface built on top of the Reputation Engine.
+
+**Signal Subscriptions (Professionals):** Users pay a subscription fee to stream the verified `Terminal_Action` JSON outputs of top-tier agents into their own execution pipelines.
+
+**Agent Staking (Retail/Degens):** Users stake the native protocol token on specific agents, effectively creating a prediction market for agentic performance and routing liquidity to the best models.
+
+**Smart Vaults:** Automated pools where user capital strictly follows the logic of Skill Modules that maintain a RAID score above a specific threshold.
+
+### 6.3 The Reputation API (Future State)
+
+The ultimate utility of the protocol. It exposes the RAID score as the definitive "Credit Score" for the agent economy. DeFi lending platforms, uncollateralized loan protocols, and DAO treasuries query this API to underwrite risk before granting capital access to an autonomous agent.
+
+---
+
+## 7. Agent State Machine Architecture
+
+### 7.1 Text-Based State Representation
+
+Agents maintain a text-based state machine optimized for LLM processing. Unlike traditional binary state machines, this approach allows the AI model itself to read, reason about, and update its own state.
+
+**State File Format (state.txt):**
+
+```
+=== AGENT STATE ===
+Timestamp: 2026-03-22T12:30:45Z
+Market Sentiment: +0.42 (BULLISH)
+Political Risk: MODERATE
+Signal Strength: BULLISH
+Confidence: 0.78
+Current Position: MONITORING
+
+=== DATA STREAMS ===
+Stream: elon_musk
+  Status: ACTIVE
+  Last Value: +0.65
+  Last Update: 2026-03-22T12:30:40Z
+  Signal: BULLISH
+
+Stream: donald_trump
+  Status: ACTIVE
+  Last Value: +0.38
+  Last Update: 2026-03-22T12:30:35Z
+  Signal: BULLISH
+
+=== REASONING HISTORY ===
+[2026-03-22T12:30:45Z] Processed elon_musk tweet → Generated BUY signal
+[2026-03-22T12:25:12Z] Processed donald_trump tweet → Monitoring
+[2026-03-22T12:20:08Z] Market sentiment shifted NEUTRAL → BULLISH
+```
+
+### 7.2 State Update Logic
+
 ```python
 class AgentState:
-    """
-    Text-based state machine for LLM agents
-    """
+    """Text-based state machine for LLM agents"""
+
     def __init__(self, state_file="state.txt"):
         self.state_file = state_file
         self.state = self.load_state()
 
-    def load_state(self):
-        """Load state from text file"""
+    def load_state(self) -> str:
+        """Load current state as plaintext"""
         with open(self.state_file, 'r') as f:
             return f.read()
 
-    def update_stream(self, stream_name, new_data):
-        """
-        Update a specific data stream in the state
-        LLM processes the state + new data to generate updated state
-        """
+    def update_stream(self, stream_name: str, new_data: dict):
+        """Update a specific data stream in the state"""
+        # LLM processes: current_state + new_data → updated_state
         prompt = f"""
-Current Agent State:
-{self.state}
+        Current State:
+        {self.state}
 
-New Data from {stream_name}:
-{new_data}
+        New Data from {stream_name}:
+        {json.dumps(new_data, indent=2)}
 
-Update the state file to reflect this new information.
-Maintain the same format. Update the reasoning history.
-Identify any new pending decisions.
-"""
-        # LLM generates updated state
-        updated_state = llm.complete(prompt)
+        Update the state file to reflect this new information.
+        Maintain the same format and structure.
+        """
 
-        # Save state
-        with open(self.state_file, 'w') as f:
-            f.write(updated_state)
-
-        self.state = updated_state
+        updated_state = llm.generate(prompt)
+        self.save_state(updated_state)
         return updated_state
 
-    def make_decision(self):
-        """
-        Use current state to make a decision
-        Returns both decision and reasoning trace
-        """
-        prompt = f"""
-Current Agent State:
-{self.state}
-
-Based on the current state, data streams, and reasoning history:
-1. Should we take action now?
-2. What action should we take?
-3. Provide detailed reasoning for this decision.
-
-Format your response as a structured decision with reasoning trace.
-"""
-        decision_with_reasoning = llm.complete(prompt)
-
-        # Parse decision and update state
-        # This becomes the Reasoning Trace for validation
-        return decision_with_reasoning
-
-    def get_state_hash(self):
-        """Generate hash of current state for trace verification"""
-        return hashlib.sha256(self.state.encode()).hexdigest()
+    def save_state(self, new_state: str):
+        """Persist updated state"""
+        with open(self.state_file, 'w') as f:
+            f.write(new_state)
+        self.state = new_state
 ```
 
-**Multi-Stream Processing Flow:**
-```
-Data Stream 1 → Update State →
-Data Stream 2 → Update State → Generate Reasoning Trace → Decision
-Data Stream 3 → Update State →
-     ↓                ↓
-  State.txt    Reasoning History
-```
+### 7.3 Multi-Stream Processing
 
-**Why Text-Based State Works for LLMs:**
-1. **Natural Language Processing**: LLMs can directly read and update text state without serialization
-2. **Human Readable**: Auditors can review exact agent state at decision time
-3. **Flexible Schema**: State format can evolve without breaking validation
-4. **Reasoning Continuity**: Full context available for each decision
-5. **Cryptographic Verification**: State snapshots can be hashed and included in traces
-
-#### 2.2.2 Skill Module System
-**Purpose:** Encapsulate financial decision-making logic as tradable, auditable units
-
-**Structure:**
-```json
-{
-  "module_id": "uuid",
-  "creator_address": "0x...",
-  "version": "1.0.0",
-  "components": {
-    "curated_context": {
-      "data_sources": [
-        {
-          "provider": "chainlink",
-          "feed_id": "eth-usd",
-          "update_frequency": 60
-        }
-      ],
-      "authentication": "api_key_hash"
-    },
-    "instruction_set": {
-      "file": "risk_framework.md",
-      "hash": "sha256:...",
-      "logic_steps": [
-        "check_market_volatility",
-        "calculate_position_size",
-        "verify_risk_limits"
-      ]
-    },
-    "tool_calls": {
-      "execution_schema": {
-        "type": "object",
-        "properties": {
-          "action": {"type": "string", "enum": ["buy", "sell", "hold"]},
-          "amount": {"type": "number", "minimum": 0},
-          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
-        }
-      }
-    },
-    "evaluation_criteria": {
-      "success_metrics": ["accuracy", "capital_preservation"],
-      "failure_conditions": ["hallucination", "schema_violation"],
-      "confidence_threshold": 0.7
-    }
-  }
-}
-```
-
-#### 2.2.3 Reasoning Trace Format (with State Snapshots)
-**Purpose:** Cryptographically verifiable record of AI decision-making process including state transitions
-
-**Schema:**
-```json
-{
-  "trace_id": "uuid",
-  "module_id": "uuid",
-  "timestamp": "2026-03-16T10:30:00Z",
-  "input_hash": "sha256:...",
-  "state_snapshot": {
-    "pre_decision_state": "# Agent State: Trading Module v1.0\nLast Updated: 2026-03-16T10:29:45Z\n...",
-    "pre_decision_state_hash": "sha256:abc123...",
-    "post_decision_state": "# Agent State: Trading Module v1.0\nLast Updated: 2026-03-16T10:30:45Z\n...",
-    "post_decision_state_hash": "sha256:def456..."
-  },
-  "data_stream_inputs": [
-    {
-      "stream_id": "chainlink:eth-usd",
-      "timestamp": "2026-03-16T10:30:00Z",
-      "data": {"price": 3542.15, "volume": 125000},
-      "hash": "sha256:..."
-    },
-    {
-      "stream_id": "newsapi:crypto",
-      "timestamp": "2026-03-16T10:28:30Z",
-      "data": {"headline": "SEC announces framework", "sentiment": 0.52},
-      "hash": "sha256:..."
-    }
-  ],
-  "reasoning_chain": [
-    {
-      "step": 1,
-      "description": "Retrieved market data from price feed",
-      "data_sources": ["chainlink:eth-usd"],
-      "values": {"eth_price": 3542.15, "volatility": 0.23},
-      "confidence": 0.95,
-      "state_changes": "Updated stream status, recorded price trend as DECLINING"
-    },
-    {
-      "step": 2,
-      "description": "Analyzed multi-stream signals",
-      "logic_applied": "correlation_analysis",
-      "intermediate_values": {
-        "price_signal": "BEARISH",
-        "onchain_signal": "BULLISH",
-        "combined_signal": "NEUTRAL"
-      },
-      "confidence": 0.82,
-      "state_changes": "Added reasoning history entry, flagged conflicting signals"
-    },
-    {
-      "step": 3,
-      "description": "Calculated position size based on volatility",
-      "logic_applied": "volatility_based_sizing",
-      "intermediate_values": {"max_position": 8000, "recommended": 5000},
-      "confidence": 0.85,
-      "state_changes": "Updated pending decisions list"
-    }
-  ],
-  "final_decision": {
-    "action": "buy",
-    "amount": 5000,
-    "confidence": 0.80,
-    "rationale": "Despite bearish price action, strong on-chain outflow suggests accumulation. Reduced size due to high volatility."
-  },
-  "execution_payload": {
-    "schema_version": "1.0",
-    "validated": true
-  },
-  "signatures": {
-    "creator": "0x...",
-    "blind_sequencer": "0x...",
-    "timestamp_proof": "block_height:12345"
-  }
-}
-```
-
-#### 2.2.4 Blind Sequencer
-**Purpose:** Prevent gaming by mixing real and test inputs
-
-**Algorithm:**
-```python
-def process_decision_request(module_id, input_data):
-    # Randomization parameters
-    TEST_DATA_RATIO = 0.3  # 30% test data
-
-    # Generate test cases from historical data
-    test_cases = generate_test_cases(module_id)
-
-    # Create blinded batch
-    batch = []
-    batch.append({
-        "id": generate_id(),
-        "data": input_data,
-        "is_test": False
-    })
-
-    # Add test cases
-    num_tests = int(1 / (1 - TEST_DATA_RATIO)) - 1
-    for i in range(num_tests):
-        batch.append({
-            "id": generate_id(),
-            "data": test_cases[i],
-            "is_test": True
-        })
-
-    # Shuffle to hide which is real
-    random.shuffle(batch)
-
-    # Send to module for processing
-    results = module.process_batch(batch)
-
-    # Separate real from test results
-    real_result = extract_real_result(results, batch)
-    test_results = extract_test_results(results, batch)
-
-    # Validate test results
-    validation_score = validate_test_results(test_results, test_cases)
-
-    if validation_score >= VALIDATION_THRESHOLD:
-        return {
-            "decision": real_result,
-            "validation_passed": True,
-            "score": validation_score
-        }
-    else:
-        return {
-            "decision": None,
-            "validation_passed": False,
-            "score": validation_score
-        }
-```
-
----
-
-## 3. Validation & Scoring System
-
-### 3.1 Measurement Matrix Implementation
-
-#### 3.1.1 State Continuity Validation
-```python
-def validate_state_continuity(trace, module):
-    """
-    Validates that agent state transitions are logical and consistent
-    with data stream inputs across multi-stream processing
-    """
-    pre_state = trace.state_snapshot.pre_decision_state
-    post_state = trace.state_snapshot.post_decision_state
-    stream_inputs = trace.data_stream_inputs
-
-    # Parse state files
-    pre_state_data = parse_state_text(pre_state)
-    post_state_data = parse_state_text(post_state)
-
-    violations = []
-
-    # Check 1: All stream inputs should be reflected in post state
-    for stream_input in stream_inputs:
-        stream_id = stream_input.stream_id
-        if stream_id not in post_state_data.data_streams:
-            violations.append({
-                "type": "missing_stream_update",
-                "stream": stream_id,
-                "severity": "high"
-            })
-
-        # Verify timestamp progression
-        post_timestamp = post_state_data.data_streams[stream_id].last_update
-        if post_timestamp < stream_input.timestamp:
-            violations.append({
-                "type": "stale_stream_data",
-                "stream": stream_id,
-                "expected": stream_input.timestamp,
-                "actual": post_timestamp
-            })
-
-    # Check 2: Reasoning history should append, not replace
-    pre_history_len = len(pre_state_data.reasoning_history)
-    post_history_len = len(post_state_data.reasoning_history)
-    if post_history_len <= pre_history_len:
-        violations.append({
-            "type": "reasoning_history_not_updated",
-            "pre_count": pre_history_len,
-            "post_count": post_history_len
-        })
-
-    # Check 3: State changes should match reasoning chain
-    for step in trace.reasoning_chain:
-        if step.state_changes:
-            # Verify claimed state change appears in diff
-            if not verify_state_change_in_diff(
-                pre_state, post_state, step.state_changes
-            ):
-                violations.append({
-                    "type": "state_change_mismatch",
-                    "step": step.step,
-                    "claimed_change": step.state_changes
-                })
-
-    # Check 4: Risk parameters shouldn't violate constraints
-    if post_state_data.risk_parameters:
-        if hasattr(post_state_data.risk_parameters, 'max_daily_loss'):
-            if post_state_data.risk_parameters.used > \
-               post_state_data.risk_parameters.max_daily_loss:
-                violations.append({
-                    "type": "risk_limit_exceeded",
-                    "limit": "max_daily_loss",
-                    "value": post_state_data.risk_parameters.used
-                })
-
-    score = 1.0 - (len(violations) / max(1, len(stream_inputs) * 2))
-    return {
-        "metric": "state_continuity",
-        "score": max(0, score),
-        "violations": violations,
-        "state_hash_verified": verify_state_hashes(trace)
-    }
-
-def verify_state_hashes(trace):
-    """Verify state snapshot hashes match content"""
-    pre_hash = hashlib.sha256(
-        trace.state_snapshot.pre_decision_state.encode()
-    ).hexdigest()
-    post_hash = hashlib.sha256(
-        trace.state_snapshot.post_decision_state.encode()
-    ).hexdigest()
-
-    return (
-        pre_hash == trace.state_snapshot.pre_decision_state_hash and
-        post_hash == trace.state_snapshot.post_decision_state_hash
-    )
-```
-
-#### 3.1.2 Data Provenance Check
-```python
-def validate_data_provenance(trace, module):
-    """
-    Ensures all data references in trace come from authorized sources
-    Includes validation of multi-stream data inputs
-    """
-    authorized_sources = set(module.curated_context.data_sources)
-    violations = []
-
-    # Validate data streams in trace
-    for stream_input in trace.data_stream_inputs:
-        if stream_input.stream_id not in authorized_sources:
-            violations.append({
-                "type": "unauthorized_stream",
-                "stream": stream_input.stream_id
-            })
-
-    # Validate reasoning chain references
-    for step in trace.reasoning_chain:
-        for source in step.data_sources:
-            if source not in authorized_sources:
-                violations.append({
-                    "step": step.step,
-                    "unauthorized_source": source
-                })
-
-    score = 1.0 - (len(violations) / len(trace.reasoning_chain))
-    return {
-        "metric": "data_provenance",
-        "score": max(0, score),
-        "violations": violations
-    }
-```
-
-#### 3.1.3 Deliberation Adherence
-```python
-def validate_deliberation_adherence(trace, module):
-    """
-    Checks if reasoning follows required logic steps in order
-    """
-    required_steps = module.instruction_set.logic_steps
-    trace_steps = [step.description for step in trace.reasoning_chain]
-
-    # Use sequence matching algorithm
-    matches = longest_common_subsequence(required_steps, trace_steps)
-    adherence_score = len(matches) / len(required_steps)
-
-    return {
-        "metric": "deliberation_adherence",
-        "score": adherence_score,
-        "required_steps": required_steps,
-        "executed_steps": trace_steps,
-        "missing_steps": set(required_steps) - set(matches)
-    }
-```
-
-#### 3.1.3 Confidence Calibration
-```python
-def calculate_confidence_calibration(module_id, trace, outcome):
-    """
-    Measures correlation between stated confidence and actual accuracy
-    """
-    # Retrieve historical predictions for this module
-    history = get_module_history(module_id)
-
-    # Group by confidence buckets
-    confidence_buckets = {}
-    for h in history:
-        bucket = round(h.confidence, 1)
-        if bucket not in confidence_buckets:
-            confidence_buckets[bucket] = {"correct": 0, "total": 0}
-
-        confidence_buckets[bucket]["total"] += 1
-        if h.outcome == h.prediction:
-            confidence_buckets[bucket]["correct"] += 1
-
-    # Calculate calibration score (Expected Calibration Error)
-    ece = 0
-    for bucket, stats in confidence_buckets.items():
-        accuracy = stats["correct"] / stats["total"]
-        ece += abs(bucket - accuracy) * (stats["total"] / len(history))
-
-    calibration_score = 1.0 - ece
-
-    return {
-        "metric": "confidence_calibration",
-        "score": calibration_score,
-        "ece": ece,
-        "current_confidence": trace.final_decision.confidence
-    }
-```
-
-#### 3.1.4 Execution Determinism
-```python
-def validate_execution_determinism(trace, module):
-    """
-    Validates output matches required schema exactly
-    """
-    schema = module.tool_calls.execution_schema
-    payload = trace.execution_payload
-
-    try:
-        # Use JSON Schema validator
-        validate_schema(payload, schema)
-
-        return {
-            "metric": "execution_determinism",
-            "score": 1.0,
-            "valid": True
-        }
-    except ValidationError as e:
-        return {
-            "metric": "execution_determinism",
-            "score": 0.0,
-            "valid": False,
-            "errors": str(e)
-        }
-```
-
-#### 3.1.5 Actuarial Outcome
-```python
-def calculate_actuarial_outcome(module_id, window_days=30):
-    """
-    Calculates real-world performance metrics
-    """
-    settled_traces = get_settled_traces(module_id, window_days)
-
-    metrics = {
-        "accuracy": 0,
-        "capital_preservation": 0,
-        "risk_adjusted_return": 0
-    }
-
-    correct_predictions = 0
-    total_capital_change = 0
-    returns = []
-
-    for trace in settled_traces:
-        # Accuracy
-        if trace.predicted_outcome == trace.actual_outcome:
-            correct_predictions += 1
-
-        # Capital preservation
-        total_capital_change += trace.capital_delta
-
-        # Returns
-        returns.append(trace.return_pct)
-
-    metrics["accuracy"] = correct_predictions / len(settled_traces)
-    metrics["capital_preservation"] = 1.0 - abs(min(0, total_capital_change) / initial_capital)
-    metrics["risk_adjusted_return"] = np.mean(returns) / np.std(returns)  # Sharpe-like
-
-    return {
-        "metric": "actuarial_outcome",
-        "score": weighted_average(metrics),
-        "breakdown": metrics
-    }
-```
-
-### 3.2 RAID Score Calculation
+The state machine handles multiple concurrent data streams with weighted influence:
 
 ```python
-def calculate_raid_score(module_id, trace_id):
-    """
-    Aggregates all metrics into final RAID score
-    Includes state continuity validation for multi-stream agents
-    """
-    trace = get_trace(trace_id)
-    module = get_module(module_id)
+def process_multi_stream_update(agent_state, new_tweets):
+    """Process tweets from multiple sources with weighted influence"""
 
-    # Real-time metrics
-    state_continuity = validate_state_continuity(trace, module)
-    provenance = validate_data_provenance(trace, module)
-    adherence = validate_deliberation_adherence(trace, module)
-    determinism = validate_execution_determinism(trace, module)
-
-    # Historical metrics
-    calibration = calculate_confidence_calibration(module_id, trace, None)
-    actuarial = calculate_actuarial_outcome(module_id)
-
-    # Weighted combination - state continuity is critical for multi-stream agents
+    # Stream influence weights
     weights = {
-        "state_continuity": 0.20,  # NEW: Validates proper state management
-        "provenance": 0.20,         # Reduced to accommodate state continuity
-        "adherence": 0.15,
-        "determinism": 0.10,
-        "calibration": 0.15,
-        "actuarial": 0.20
+        'elon_musk': 0.7,     # 70% influence
+        'donald_trump': 0.5   # 50% influence
     }
 
-    raid_score = (
-        weights["state_continuity"] * state_continuity["score"] +
-        weights["provenance"] * provenance["score"] +
-        weights["adherence"] * adherence["score"] +
-        weights["determinism"] * determinism["score"] +
-        weights["calibration"] * calibration["score"] +
-        weights["actuarial"] * actuarial["score"]
-    )
+    for tweet in new_tweets:
+        author = tweet['author']
+        sentiment = tweet['sentiment']
+        weight = weights.get(author, 0.3)
 
-    return {
-        "raid_score": raid_score,
-        "components": {
-            "state_continuity": state_continuity,
-            "provenance": provenance,
-            "adherence": adherence,
-            "determinism": determinism,
-            "calibration": calibration,
-            "actuarial": actuarial
-        },
-        "timestamp": current_timestamp(),
-        "version": "1.1"  # Incremented for state machine support
-    }
+        # Weighted sentiment integration
+        old_sentiment = agent_state.market_sentiment
+        new_sentiment = old_sentiment * 0.7 + sentiment * weight * 0.3
+
+        agent_state.market_sentiment = new_sentiment
+        agent_state.update_stream(author, tweet)
+
+    return agent_state
 ```
 
 ---
 
-## 4. Smart Contract Architecture
+## 8. RAID Scoring System
 
-### 4.1 Module Registry Contract
+### 8.1 Measurement Matrix
 
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+The RAID (Reasoning As Identity) score is calculated across six dimensions:
 
-contract ModuleRegistry {
-    struct SkillModule {
-        address creator;
-        string metadataURI;  // Points to IPFS with full module spec
-        uint256 createdAt;
-        uint256 totalTraces;
-        uint256 raidScore;  // Scaled to 0-10000 (basis points)
-        bool active;
+| Metric | Weight | Description |
+|--------|--------|-------------|
+| **Reasoning Accuracy** | 25% | Logical consistency and determinism in execution graphs |
+| **Data Provenance** | 25% | Source verification and hallucination detection |
+| **Actuarial Performance** | 20% | Real-world outcome tracking (PnL, accuracy) |
+| **State Continuity** | 20% | Coherent state transitions across data streams |
+| **Framework Adherence** | 10% | Compliance with risk management rules |
+
+### 8.2 Scoring Formula
+
+```python
+def calculate_raid_score(agent_traces):
+    """Calculate RAID score from reasoning traces"""
+
+    scores = {
+        'reasoning_accuracy': measure_logical_consistency(agent_traces),
+        'data_provenance': verify_data_sources(agent_traces),
+        'actuarial_performance': calculate_pnl_accuracy(agent_traces),
+        'state_continuity': validate_state_transitions(agent_traces),
+        'framework_adherence': check_rule_compliance(agent_traces)
     }
 
-    mapping(bytes32 => SkillModule) public modules;
-    mapping(bytes32 => mapping(bytes32 => bool)) public traces;
-
-    event ModuleRegistered(bytes32 indexed moduleId, address creator);
-    event TraceSubmitted(bytes32 indexed moduleId, bytes32 traceHash);
-    event RAIDScoreUpdated(bytes32 indexed moduleId, uint256 newScore);
-
-    function registerModule(
-        bytes32 moduleId,
-        string calldata metadataURI
-    ) external {
-        require(modules[moduleId].creator == address(0), "Module exists");
-
-        modules[moduleId] = SkillModule({
-            creator: msg.sender,
-            metadataURI: metadataURI,
-            createdAt: block.timestamp,
-            totalTraces: 0,
-            raidScore: 0,
-            active: true
-        });
-
-        emit ModuleRegistered(moduleId, msg.sender);
+    weights = {
+        'reasoning_accuracy': 0.25,
+        'data_provenance': 0.25,
+        'actuarial_performance': 0.20,
+        'state_continuity': 0.20,
+        'framework_adherence': 0.10
     }
 
-    function submitTrace(
-        bytes32 moduleId,
-        bytes32 traceHash,
-        uint256 validationScore
-    ) external onlyValidator {
-        require(modules[moduleId].active, "Module not active");
-        require(!traces[moduleId][traceHash], "Trace exists");
-
-        traces[moduleId][traceHash] = true;
-        modules[moduleId].totalTraces++;
-
-        emit TraceSubmitted(moduleId, traceHash);
-    }
-
-    function updateRAIDScore(
-        bytes32 moduleId,
-        uint256 newScore
-    ) external onlyValidator {
-        require(newScore <= 10000, "Score out of range");
-
-        modules[moduleId].raidScore = newScore;
-
-        emit RAIDScoreUpdated(moduleId, newScore);
-    }
-}
+    raid_score = sum(scores[k] * weights[k] for k in scores)
+    return raid_score  # 0.0 to 1.0
 ```
 
-### 4.2 Validator Staking Contract
+### 8.3 State Continuity Validation
 
-```solidity
-contract ValidatorStaking {
-    struct Validator {
-        uint256 stakedAmount;
-        uint256 validationCount;
-        uint256 slashCount;
-        bool active;
-    }
+New metric ensuring agents maintain coherent reasoning across multiple data streams:
 
-    mapping(address => Validator) public validators;
-    uint256 public constant MINIMUM_STAKE = 10000 * 10**18; // 10k tokens
+```python
+def validate_state_transitions(traces):
+    """Validate coherent state transitions"""
+    score = 1.0
 
-    event ValidatorRegistered(address indexed validator);
-    event ValidatorSlashed(address indexed validator, uint256 amount);
+    for i in range(1, len(traces)):
+        prev_state = traces[i-1].final_state
+        curr_state = traces[i].initial_state
 
-    function registerValidator() external payable {
-        require(msg.value >= MINIMUM_STAKE, "Insufficient stake");
-        require(!validators[msg.sender].active, "Already registered");
+        # Check for unexplained jumps
+        sentiment_delta = abs(curr_state.sentiment - prev_state.sentiment)
+        if sentiment_delta > 0.5:  # Large unexplained jump
+            score -= 0.1
 
-        validators[msg.sender] = Validator({
-            stakedAmount: msg.value,
-            validationCount: 0,
-            slashCount: 0,
-            active: true
-        });
+        # Check for stream consistency
+        for stream in ['elon_musk', 'donald_trump']:
+            if stream_signals_conflict(prev_state, curr_state, stream):
+                score -= 0.05
 
-        emit ValidatorRegistered(msg.sender);
-    }
-
-    function slashValidator(address validator, uint256 amount) external onlyGovernance {
-        require(validators[validator].active, "Not active");
-        require(validators[validator].stakedAmount >= amount, "Insufficient stake");
-
-        validators[validator].stakedAmount -= amount;
-        validators[validator].slashCount++;
-
-        if (validators[validator].stakedAmount < MINIMUM_STAKE) {
-            validators[validator].active = false;
-        }
-
-        emit ValidatorSlashed(validator, amount);
-    }
-}
+    return max(0.0, score)
 ```
 
 ---
 
-## 5. Data Storage & Infrastructure
+## 9. Database Schemas
 
-### 5.1 Storage Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│                  Storage Layers                      │
-├─────────────────────────────────────────────────────┤
-│                                                       │
-│  Layer 1: On-Chain (Ethereum/L2)                    │
-│  - Module Registry                                   │
-│  - RAID Scores                                       │
-│  - Validator Stakes                                  │
-│  - Trace Hashes                                      │
-│                                                       │
-│  Layer 2: IPFS/Arweave (Permanent)                  │
-│  - Full Reasoning Traces                            │
-│  - Module Specifications                             │
-│  - Historical Performance Data                       │
-│                                                       │
-│  Layer 3: Off-Chain DB (Fast Access)                │
-│  - Cached Scores                                     │
-│  - Real-time Analytics                              │
-│  - API Query Layer                                   │
-│                                                       │
-└─────────────────────────────────────────────────────┘
-```
-
-### 5.2 Database Schema (PostgreSQL)
+### 9.1 Agent Registry
 
 ```sql
--- Modules table
-CREATE TABLE modules (
-    module_id UUID PRIMARY KEY,
-    creator_address VARCHAR(42) NOT NULL,
-    metadata_uri TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    raid_score DECIMAL(5,4) DEFAULT 0,
-    total_traces INTEGER DEFAULT 0,
-    active BOOLEAN DEFAULT TRUE,
-    on_chain_tx_hash VARCHAR(66)
-);
-
--- Traces table
-CREATE TABLE traces (
-    trace_id UUID PRIMARY KEY,
-    module_id UUID REFERENCES modules(module_id),
-    trace_hash VARCHAR(66) UNIQUE NOT NULL,
-    ipfs_cid TEXT NOT NULL,
-    timestamp TIMESTAMP DEFAULT NOW(),
-    validation_score DECIMAL(5,4),
-    provenance_score DECIMAL(5,4),
-    adherence_score DECIMAL(5,4),
-    determinism_score DECIMAL(5,4),
-    confidence_score DECIMAL(5,4),
-    settled BOOLEAN DEFAULT FALSE,
-    outcome_verified BOOLEAN DEFAULT FALSE
-);
-
--- Performance metrics table
-CREATE TABLE performance_metrics (
-    metric_id SERIAL PRIMARY KEY,
-    module_id UUID REFERENCES modules(module_id),
-    window_start TIMESTAMP,
-    window_end TIMESTAMP,
-    accuracy DECIMAL(5,4),
-    capital_preservation DECIMAL(5,4),
-    risk_adjusted_return DECIMAL(10,4),
+CREATE TABLE agents (
+    agent_id VARCHAR(66) PRIMARY KEY,  -- 0x... RAID address
+    created_at TIMESTAMP,
+    framework_version VARCHAR(20),
+    raid_score DECIMAL(4,3),           -- 0.000 to 1.000
     total_traces INTEGER,
-    successful_traces INTEGER
+    total_signals_generated INTEGER,
+    last_active TIMESTAMP
 );
+```
 
--- Validators table
-CREATE TABLE validators (
-    validator_address VARCHAR(42) PRIMARY KEY,
-    staked_amount DECIMAL(30,0),
-    validation_count INTEGER DEFAULT 0,
-    slash_count INTEGER DEFAULT 0,
-    active BOOLEAN DEFAULT TRUE,
-    registered_at TIMESTAMP DEFAULT NOW()
+### 9.2 Reasoning Traces
+
+```sql
+CREATE TABLE reasoning_traces (
+    trace_id VARCHAR(100) PRIMARY KEY,
+    agent_id VARCHAR(66) REFERENCES agents(agent_id),
+    timestamp TIMESTAMP,
+    trigger_source VARCHAR(50),
+    encrypted_context TEXT,            -- JSONB encrypted
+    encrypted_execution_graph TEXT,    -- JSONB encrypted
+    terminal_action JSONB,             -- Public
+    da_layer_pointer VARCHAR(200),     -- Celestia/EigenDA pointer
+    merkle_root VARCHAR(66)
 );
+```
 
--- Create indexes
-CREATE INDEX idx_traces_module_id ON traces(module_id);
-CREATE INDEX idx_traces_timestamp ON traces(timestamp);
-CREATE INDEX idx_metrics_module_id ON performance_metrics(module_id);
-CREATE INDEX idx_modules_raid_score ON modules(raid_score DESC);
+### 9.3 Performance Metrics
+
+```sql
+CREATE TABLE agent_metrics (
+    id SERIAL PRIMARY KEY,
+    agent_id VARCHAR(66) REFERENCES agents(agent_id),
+    measurement_date DATE,
+    reasoning_accuracy DECIMAL(4,3),
+    data_provenance DECIMAL(4,3),
+    actuarial_performance DECIMAL(4,3),
+    state_continuity DECIMAL(4,3),
+    framework_adherence DECIMAL(4,3),
+    composite_raid_score DECIMAL(4,3)
+);
 ```
 
 ---
 
-## 6. API Design
+## 10. API Specifications
 
-### 6.1 REST API Endpoints
+### 10.1 Submit Reasoning Trace
 
-```
-# Module Management
-POST   /api/v1/modules                    # Register new module
-GET    /api/v1/modules/:id                # Get module details
-GET    /api/v1/modules                    # List modules (with filters)
-PATCH  /api/v1/modules/:id                # Update module metadata
-
-# Trace Submission
-POST   /api/v1/modules/:id/traces         # Submit reasoning trace
-GET    /api/v1/traces/:id                 # Get trace details
-GET    /api/v1/modules/:id/traces         # List module traces
-
-# Validation
-POST   /api/v1/validate/trace             # Validate a trace
-GET    /api/v1/modules/:id/raid           # Get RAID score breakdown
-
-# Analytics
-GET    /api/v1/modules/:id/performance    # Get performance metrics
-GET    /api/v1/leaderboard                # Top-rated modules
-GET    /api/v1/analytics/ecosystem        # Ecosystem stats
-
-# Blind Sequencer (Internal)
-POST   /internal/sequencer/submit         # Submit decision request
-POST   /internal/sequencer/results        # Return batch results
-```
-
-### 6.2 Example API Response
-
-```json
-GET /api/v1/modules/550e8400-e29b-41d4-a716-446655440000
+```http
+POST /api/v1/traces
+Authorization: Bearer <agent_session_key>
+Content-Type: application/json
 
 {
-  "module_id": "550e8400-e29b-41d4-a716-446655440000",
-  "creator": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-  "metadata_uri": "ipfs://Qm...",
-  "created_at": "2026-03-01T00:00:00Z",
-  "raid_score": 0.8734,
-  "raid_breakdown": {
-    "data_provenance": 0.95,
-    "deliberation_adherence": 0.88,
-    "execution_determinism": 1.0,
-    "confidence_calibration": 0.82,
-    "actuarial_outcome": 0.72
+  "agent_id": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "trace": {
+    "header": {...},
+    "trigger_event": {...},
+    "encrypted_context": "...",
+    "encrypted_execution_graph": "...",
+    "terminal_action": {...}
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "trace_id": "trace_abc123_1234567890",
+  "da_pointer": "celestia://block/12345/tx/67890",
+  "merkle_root": "0xabcd...",
+  "status": "pending_validation"
+}
+```
+
+### 10.2 Query Agent Reputation
+
+```http
+GET /api/v1/agents/{agent_id}/reputation
+```
+
+**Response:**
+
+```json
+{
+  "agent_id": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "raid_score": 0.847,
+  "breakdown": {
+    "reasoning_accuracy": 0.92,
+    "data_provenance": 0.88,
+    "actuarial_performance": 0.75,
+    "state_continuity": 0.91,
+    "framework_adherence": 0.95
   },
-  "statistics": {
-    "total_traces": 1523,
-    "settled_traces": 1421,
-    "accuracy": 0.76,
-    "capital_preservation": 0.94,
-    "avg_confidence": 0.81
-  },
-  "usage_fee": "0.01 ETH",
-  "active": true
+  "total_traces": 1247,
+  "total_signals": 89,
+  "last_active": "2026-03-22T12:30:45Z"
+}
+```
+
+### 10.3 Subscribe to Agent Signals
+
+```http
+POST /api/v1/subscriptions
+Authorization: Bearer <user_api_key>
+
+{
+  "agent_id": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "subscription_tier": "premium",
+  "webhook_url": "https://myservice.com/webhook"
 }
 ```
 
 ---
 
-## 7. Security Considerations
+## 11. Security Considerations
 
-### 7.1 Threat Model
+### 11.1 Encryption
 
-| Threat | Mitigation |
-|--------|-----------|
-| **Module Gaming** | Blind Sequencer randomizes test data; validators can't know which requests are tests |
-| **Data Poisoning** | Strict provenance checking; only authorized data sources allowed |
-| **Validator Collusion** | Economic slashing; distributed validator network; reputation tracking |
-| **Replay Attacks** | Timestamp proofs; nonce-based trace IDs; on-chain hash verification |
-| **Front-Running** | Commit-reveal schemes for sensitive operations; encrypted mempool support |
-| **Sybil Attacks** | Staking requirements for validators; reputation decay for new modules |
+- **Context_Snapshot** and **Execution_Graph** are encrypted with the agent's private key
+- Only the Reputation Engine (with authorized access) can decrypt for scoring
+- Public fields (Header, Trigger_Event, Terminal_Action) remain visible for transparency
 
-### 7.2 Cryptographic Primitives
+### 11.2 Attestation Verification
 
-```python
-# Trace commitment scheme
-def commit_trace(trace):
-    """
-    Creates commitment before revealing full trace
-    """
-    trace_json = json.dumps(trace, sort_keys=True)
-    trace_hash = sha256(trace_json.encode()).hexdigest()
+**Framework Track (MVP):**
+- Protocol session key signs all traces
+- Centralized but rapid onboarding
 
-    # Add salt to prevent rainbow table attacks
-    salt = os.urandom(32).hex()
-    commitment = sha256(f"{trace_hash}{salt}".encode()).hexdigest()
+**Self-Hosted Track (Future):**
+- zkTLS proofs of API calls to LLM providers
+- TEE hardware signatures (AWS Nitro, Intel SGX)
+- Optimistic fraud proofs with slashing
 
-    return {
-        "commitment": commitment,
-        "salt": salt,
-        "trace_hash": trace_hash
-    }
+### 11.3 The Blind Sequencer
 
-def verify_trace(trace, commitment, salt):
-    """
-    Verifies trace matches commitment
-    """
-    trace_json = json.dumps(trace, sort_keys=True)
-    trace_hash = sha256(trace_json.encode()).hexdigest()
-    expected_commitment = sha256(f"{trace_hash}{salt}".encode()).hexdigest()
-
-    return commitment == expected_commitment
-```
-
----
-
-## 8. Performance & Scaling
-
-### 8.1 Performance Targets
-
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Trace Submission Latency | < 500ms | P95 |
-| Validation Time | < 2s | Real-time metrics only |
-| RAID Score Update | < 5s | After trace settlement |
-| API Response Time | < 100ms | Cached queries |
-| Throughput | 10,000 traces/day | Initial target |
-| Blockchain Finality | < 15min | L2 settlement |
-
-### 8.2 Scaling Strategy
-
-```
-Phase 1 (MVP): Centralized validator, L2 deployment
-Phase 2: Multi-validator network, horizontal DB scaling
-Phase 3: ZK-proof validation, cross-chain support
-Phase 4: Fully decentralized sequencer network
-```
-
----
-
-## 9. Deployment Architecture
-
-### 9.1 Infrastructure Components
-
-```yaml
-# Kubernetes deployment structure
-services:
-  - name: api-gateway
-    replicas: 3
-    resources:
-      cpu: 2
-      memory: 4Gi
-
-  - name: blind-sequencer
-    replicas: 2
-    resources:
-      cpu: 4
-      memory: 8Gi
-
-  - name: validator-worker
-    replicas: 5
-    resources:
-      cpu: 2
-      memory: 4Gi
-
-  - name: trace-indexer
-    replicas: 2
-    resources:
-      cpu: 1
-      memory: 2Gi
-
-databases:
-  - postgres:
-      replicas: 3
-      storage: 500Gi
-
-  - redis:
-      replicas: 2
-      memory: 16Gi
-
-external_services:
-  - ipfs_cluster
-  - ethereum_l2_node
-  - monitoring_stack
-```
-
----
-
-## 10. Development Roadmap
-
-### Phase 1: Foundation (Q2 2026)
-- [ ] Core smart contracts (Module Registry, Validator Staking)
-- [ ] Basic trace validation logic
-- [ ] IPFS integration
-- [ ] Initial API endpoints
-
-### Phase 2: Validation Network (Q3 2026)
-- [ ] Blind Sequencer implementation
-- [ ] Multi-validator support
-- [ ] RAID score calculation engine
-- [ ] Performance metrics tracking
-
-### Phase 3: Ecosystem (Q4 2026)
-- [ ] Module marketplace UI
-- [ ] Smart Vault integration
-- [ ] Analytics dashboard
-- [ ] SDK for module creators
-
-### Phase 4: Scale (Q1 2027)
-- [ ] ZK-proof validation
-- [ ] Cross-chain deployment
-- [ ] Decentralized sequencer
-- [ ] Enterprise features
-
----
-
-## 11. Testing Strategy
-
-### 11.1 Test Coverage Requirements
+Prevents "token-digging" by randomly injecting test events:
 
 ```python
-# Unit Tests
-- Data provenance validation: 95%+ coverage
-- Deliberation adherence: 90%+ coverage
-- Schema validation: 100% coverage
-- RAID score calculation: 95%+ coverage
+def blind_sequencer(real_events, test_events, mix_ratio=0.3):
+    """Mix real and synthetic events randomly"""
+    total_events = len(real_events)
+    num_tests = int(total_events * mix_ratio)
 
-# Integration Tests
-- Blind Sequencer end-to-end flow
-- Multi-validator consensus
-- Smart contract interactions
-- API endpoint coverage
+    # Randomly sample test events
+    selected_tests = random.sample(test_events, num_tests)
 
-# Security Tests
-- Penetration testing
-- Smart contract audits (2+ firms)
-- Fuzz testing on validation logic
-- Economic attack simulations
+    # Merge and shuffle
+    mixed = real_events + selected_tests
+    random.shuffle(mixed)
+
+    return mixed
 ```
 
-### 11.2 Test Scenarios
-
-```gherkin
-Scenario: Token-Digger Detection
-  Given a module with historical test data
-  When the module receives a blinded batch
-  And the module produces different results for test vs real data
-  Then the validation should fail
-  And the module's RAID score should be penalized
-
-Scenario: Data Hallucination Detection
-  Given a module with strict data provenance rules
-  When a trace references unauthorized data sources
-  Then the provenance score should be 0
-  And the trace should be rejected
-
-Scenario: Confidence Miscalibration
-  Given a module with 50% historical accuracy
-  When the module claims 90% confidence
-  Then the calibration score should reflect the gap
-  And the RAID score should decrease
-```
+Agents cannot know which events are tests, forcing honest computation on all inputs.
 
 ---
 
-## 12. Monitoring & Observability
+## 12. Development Roadmap
 
-### 12.1 Key Metrics
+### Phase 1: MVP (Current)
+- Framework-level attestation
+- Trading agent focus
+- Centralized Reputation Engine
+- Manual RAID scoring
 
-```yaml
-business_metrics:
-  - total_modules_registered
-  - active_modules
-  - traces_per_day
-  - average_raid_score
-  - total_value_locked
+### Phase 2: Decentralization (6-12 months)
+- Self-hosted agent support
+- Blind Sequencer implementation
+- zkTLS/TEE attestation
+- Automated RAID calculation
 
-technical_metrics:
-  - api_latency_p50_p95_p99
-  - validation_throughput
-  - database_query_time
-  - ipfs_upload_success_rate
-  - blockchain_sync_lag
-
-security_metrics:
-  - failed_validations_per_module
-  - slashing_events
-  - anomalous_trace_patterns
-  - validator_uptime
-```
+### Phase 3: Ecosystem Expansion (12-24 months)
+- Multi-domain agent support (not just trading)
+- Reputation API marketplace
+- Cross-chain deployment
+- DAO governance for measurement matrix
 
 ---
 
-## 13. Open Questions & Future Research
+## 13. References
 
-1. **ZK-Proof Integration**: Can we use zero-knowledge proofs to validate traces without revealing proprietary logic?
-
-2. **Cross-Chain RAID**: How to maintain RAID scores across multiple blockchain deployments?
-
-3. **Privacy-Preserving Validation**: Can modules keep their instruction sets private while still being validated?
-
-4. **Dynamic Weighting**: Should RAID score component weights adapt based on market conditions or use case?
-
-5. **Adversarial Testing**: Automated generation of adversarial test cases for modules?
+- **Celestia:** https://celestia.org
+- **EigenDA:** https://www.eigenlayer.xyz/eigenda
+- **Chainlink:** https://chain.link
+- **Pyth Network:** https://pyth.network
+- **zkTLS:** https://blog.opacity.network/zktls-the-future-of-private-data-verification
+- **AWS Nitro Enclaves:** https://aws.amazon.com/ec2/nitro/nitro-enclaves
 
 ---
 
-## 14. Appendix
-
-### 14.1 Glossary
-
-- **RAID**: Reasoning As Identity - unique identifier based on decision-making patterns
-- **Skill Module**: Encapsulated financial expertise unit
-- **Reasoning Trace**: Cryptographic log of AI decision process
-- **Blind Sequencer**: Randomization layer to prevent gaming
-- **Token-Digger**: Agent that optimizes for token efficiency over correctness
-
-### 14.2 References
-
-- Glass Box Protocol Whitepaper v1.0
-- ERC-721 Non-Fungible Token Standard
-- IPFS Protocol Specification
-- Chainlink Data Feeds Documentation
-- Expected Calibration Error (ECE) Research Papers
-
----
-
-**Document Control**
-- **Authors:** Glass Box Protocol Engineering Team
-- **Reviewers:** TBD
-- **Next Review Date:** 2026-04-16
-- **Version History:**
-  - v1.0 (2026-03-16): Initial draft
+**Document Version:** 1.0
+**Last Updated:** March 22, 2026
+**Status:** Active Development
