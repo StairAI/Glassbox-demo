@@ -1,228 +1,101 @@
-# Glass Box Protocol
+# Engineering Architecture Specification: The Glass Box Protocol
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-A decentralized trust and reputation layer for autonomous AI agents in finance, enabling transparent reasoning and verifiable decision-making.
-
-## Overview
-
-The Glass Box Protocol provides a framework for AI agents to operate with complete transparency, where every decision is cryptographically traceable back to its reasoning process and data sources. Unlike traditional "black box" AI systems, Glass Box enables:
-
-- **Transparent Reasoning**: Every agent decision generates a detailed reasoning trace
-- **RAID (Reasoning As Identity)**: Reputation tied to reasoning patterns, not agent identity
-- **Multi-Stream Analysis**: Real-time correlation of multiple data sources
-- **Verifiable Decisions**: Cryptographically signed execution paths with confidence scoring
-
-## Live Demo
-
-An interactive demonstration showcasing political risk analysis for Bitcoin price prediction:
-
-🚀 **[View Demo](http://localhost:5174)** (run locally)
-
-### Demo Features
-
-- **Real-time Data Streams**: Mock tweet feeds from Elon Musk and Donald Trump
-- **Reasoning Agent**: Professional quantitative trading analysis with:
-  - Multi-stream correlation and divergence detection
-  - Confidence-weighted position sizing
-  - Risk management with specific price levels (entry, stop-loss, take-profit)
-  - Cross-stream validation logic
-- **Trading Signals**: Threshold-based signal generation (75% confidence, 0.5 sentiment strength)
-- **Interactive Visualization**: React Flow graph with animated data flow
-
-### Running the Demo
-
-```bash
-cd demo/frontend
-npm install
-npm run dev
-```
-
-The demo will be available at `http://localhost:5173` (or 5174 if 5173 is in use).
-
-## Key Concepts
-
-### 1. Reasoning Traces
-
-Every agent action generates a structured reasoning trace containing:
-- **Input Analysis**: Data source evaluation and sentiment scoring
-- **Cross-Stream Correlation**: Multi-source validation and conflict detection
-- **Risk Assessment**: Political risk and volatility analysis
-- **Decision Logic**: Threshold analysis and execution criteria
-- **Position Management**: Confidence-weighted sizing and risk parameters
-
-Example reasoning output:
-```
-📊 MARKET SIGNAL ANALYSIS: New input from Elon Musk (high-influence tech leader)
-✓ Cross-stream validation: Both sources bullish - high confidence correlation
-💭 Weighted sentiment integration (70% influence): 0.300 → 0.452 (+0.152)
-Risk environment: MODERATE - moderate exposure acceptable
-Confidence score: 82.5% (threshold: 75%) | Sentiment strength: 0.52 (threshold: 0.50)
-✅ EXECUTION CRITERIA MET - BULLISH SIGNAL CONFIRMED
-Position sizing: 75% position (confidence-weighted) | Entry: $68,450
-Risk management: Stop-loss $65,027 | Take-profit $73,926
-```
-
-### 2. State Machine Architecture
-
-Agents maintain text-based state representations optimized for LLM processing:
-
-```python
-class AgentState:
-    """Text-based state machine for LLM agents"""
-    timestamp: datetime
-    market_sentiment: float  # -1 to +1
-    political_risk: 'LOW' | 'MODERATE' | 'HIGH'
-    signal_strength: 'BEARISH' | 'NEUTRAL' | 'BULLISH'
-    confidence: float  # 0 to 1
-    stream_states: dict  # Per-source signal tracking
-    reasoning_history: list  # Recent decision log
-```
-
-### 3. RAID Score
-
-Reputation is calculated based on:
-- **Reasoning Accuracy** (25%): Logical consistency and determinism
-- **Data Provenance** (25%): Source verification and hallucination detection
-- **Actuarial Performance** (20%): Real-world outcome tracking
-- **Adherence to Framework** (10%): Rule compliance and risk management
-- **State Continuity** (20%): Coherent state transitions across streams
-
-## Documentation
-
-- **[Whitepaper](documents/whitepaper.md)**: Complete protocol specification
-- **[Technical Design](documents/tech-design.md)**: Architecture and implementation details
-- **[Frontend Spec](demo/design/frontend-spec.md)**: UI/UX design documentation
-
-## Architecture
-
-### Layer 1: Identity Layer
-- Bring Your Own Identity (BYOI) - any cryptographic identifier
-- RAID (Reasoning As Identity) - reputation tied to reasoning patterns
-- Flexible identity management across model upgrades
-
-### Layer 2: Runtime Attestation
-**Phase 1 (MVP)**: Framework-level attestation via official SDK
-**Phase 2 (Roadmap)**:
-- zkTLS (Zero-Knowledge TLS) proofs
-- TEE (Trusted Execution Environments)
-- Optimistic fraud proofs with slashing
-
-### Data Layer
-- **Reasoning Ledger**: Universal schema for agent computation
-- **Data Availability**: Celestia/EigenDA for immutable trace storage
-- **Smart Contracts**: Base/Arbitrum/Solana for registry and settlement
-
-## Technology Stack
-
-### Frontend Demo
-- **React** + **TypeScript** + **Vite**
-- **React Flow** - Graph visualization with custom nodes
-- **Zustand** - Lightweight state management
-- **Tailwind CSS** - Utility-first styling with cyberpunk theme
-
-### Core Components
-- Mock data generators with sentiment analysis
-- Multi-stream reasoning engine with confidence calibration
-- Real-time edge animations showing data flow
-- Professional quantitative trading logic
-
-## Project Structure
-
-```
-glassbox-demo/
-├── documents/
-│   ├── whitepaper.md           # Protocol specification
-│   └── tech-design.md          # Technical architecture
-├── demo/
-│   ├── design/
-│   │   └── frontend-spec.md    # UI/UX specification
-│   └── frontend/               # Interactive React demo
-│       ├── src/
-│       │   ├── components/     # React Flow nodes and UI
-│       │   ├── data/           # Mock generators and reasoning engine
-│       │   ├── store/          # Zustand state management
-│       │   └── types/          # TypeScript definitions
-│       └── package.json
-└── README.md
-```
-
-## Development
-
-### Prerequisites
-- Node.js 18+ (demo requires 20+ for Vite)
-- npm or yarn
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/StairAI/Glassbox-demo.git
-cd Glassbox-demo
-
-# Install demo dependencies
-cd demo/frontend
-npm install
-
-# Start development server
-npm run dev
-```
-
-### Building for Production
-
-```bash
-cd demo/frontend
-npm run build
-npm run preview
-```
-
-## Demo Controls
-
-- **Play/Pause**: Control automatic tweet generation
-- **Speed**: Adjust tweet generation rate (1x, 2x, 4x)
-- **Reset**: Clear all data and restart demo
-
-## Reasoning Engine
-
-The demo implements a sophisticated reasoning engine with:
-
-### Input Processing
-- Sentiment analysis with reach weighting
-- Author influence factors (Elon: 70%, Trump: 50%)
-- Bitcoin mention detection
-
-### Multi-Stream Analysis
-- Cross-stream validation (alignment boost: +0.2 confidence)
-- Divergence detection (conflict penalty: -0.15 confidence)
-- Sentiment integration with weighted moving average
-
-### Risk Management
-- Political risk calculation based on sentiment volatility
-- Position sizing: 50% / 75% / Full based on confidence
-- Stop-loss: 5% from entry | Take-profit: 8% from entry
-
-### Signal Generation
-Signals only generated when:
-- Confidence > 75%
-- |Sentiment| > 0.5
-
-## Contributing
-
-This is a demonstration project. For production implementation or contributions, please contact the team.
-
-## License
-
-MIT License - see LICENSE file for details
-
-## Contact
-
-For questions about the Glass Box Protocol:
-- Website: [Coming Soon]
-- Twitter: [@GlassBoxAI](https://twitter.com/GlassBoxAI)
-- Discord: [Join Community](https://discord.gg/glassbox)
+**Version:** 1.0
+**Core Objective:** Establish a verifiable, decentralized trust and reputation layer (RAID) for autonomous AI agents via immutable reasoning traces.
 
 ---
 
-**Built with transparency. Powered by reasoning.**
+## 1. System Topology & Data Flow
 
-*🤖 Demo generated with Claude Code*
+The Glass Box Protocol operates as a middleware trust layer sitting between agent computation and on-chain financial execution. The architecture strictly limits integration to two perimeter gates (Input and Output) to maintain an agent-agnostic core.
+
+**High-Level Flow:**
+`Trigger Register (Input)` $\rightarrow$ `Execution Track (Hosted or Self-Hosted)` $\rightarrow$ `Ledger SDK (Output)` $\rightarrow$ `DA Layer` $\rightarrow$ `Reputation Engine` $\rightarrow$ `Marketplace / API`
+
+---
+
+## 2. Integration Gates (Ingress & Egress)
+
+### 2.1 The Trigger Register (Input Gate)
+
+A standardized event bus that feeds normalized triggers to the agents. This prevents agents from arbitrarily executing without a verifiable catalyst.
+
+- **On-Chain Events:** Smart contract state changes, DEX pool imbalances, DAO votes.
+- **Off-Chain Events:** Verified Oracle data (e.g., Pyth/Chainlink price feeds), News API webhooks.
+- **Agent-Generated Events:** Inter-agent communication (e.g., a macro-analysis agent triggering a specialized execution sub-agent).
+
+### 2.2 The Reasoning Ledger SDK (Output Gate)
+
+A lightweight client library (`@glassbox/sdk`) responsible for intercepting the agent's state, compiling the final outcome and the granular execution steps into the Universal Schema, encrypting proprietary alpha, and pushing the payload to the ledger.
+
+---
+
+## 3. Dual-Track Execution & Attestation Layer
+
+To solve the "Cold Start" developer friction while maintaining a path to fully trustless institutional adoption, the protocol routes agents through one of two execution tracks.
+
+### Track A: The Glass Box Framework (MVP / Cold Start)
+
+Designed for rapid onboarding with limited flexibility.
+
+- **Infrastructure:** Agents are built using the official, opinionated Glass Box runtime environment.
+- **Attestation:** Because the protocol controls the runtime, it serves as the centralized "Trust Source." The framework natively captures the trace, signs it with a protocol session key, and guarantees the logic was executed as claimed.
+
+### Track B: Self-Hosted Agents (Trustless Ecosystem)
+
+Designed for proprietary, mature agents (e.g., institutional quant bots) running on external infrastructure.
+
+- **Identity:** Bring Your Own Identity (BYOI). Agents sign payloads with their own cryptographic public key (EVM address, DID), establishing their RAID (Reasoning As Identity).
+- **Work Attestation (The Blind Sequencer):** Sits between the Trigger Register and the Agent. It randomly injects synthetic, protocol-generated test events alongside real user data. This creates cryptographic paranoia, making lazy "token-digging" computationally risky and economically irrational.
+- **Cryptographic Proofs:** Long-term roadmap includes requiring zkTLS (proving web traffic to Anthropic/OpenAI) or TEE (hardware enclave signatures) to cryptographically guarantee the trace matches the runtime execution.
+
+---
+
+## 4. The Universal Reasoning Ledger (Data Schema)
+
+The protocol utilizes an agent-agnostic JSON envelope to record computation. The `Execution_Graph` mandates a low-granularity behavioral breakdown, mapping directly to modern LLM Tool Use and XML-tagging mechanics (e.g., Claude `tool_use`, `<thinking>`, `<plan>`).
+
+**`ReasoningTrace` JSON Schema:**
+
+```json
+{
+  "Header": {
+    "agent_id": "0x...", // RAID Public Key
+    "epoch_timestamp": "2026-03-21T10:00:00Z",
+    "attestation_type": "framework_v1"
+  },
+  "Trigger_Event": {
+    "source": "chainlink_oracle",
+    "payload": { "asset": "ETH", "price": "3200" }
+  },
+  "Context_Snapshot": "[ENCRYPTED_CREATOR_KEY]",
+  "Execution_Graph": [
+    // [ENCRYPTED_CREATOR_KEY]
+    {
+      "behavior": "Observing",
+      "data": "Ingested ETH price drop and current stablecoin balances."
+    },
+    {
+      "behavior": "Planning",
+      "data": "1. Verify slippage. 2. Execute rotation to USDC."
+    },
+    {
+      "behavior": "Reasoning",
+      "data": "Market volatility exceeds threshold. Capital preservation protocol engaged."
+    },
+    {
+      "behavior": "Acting",
+      "tool": "uniswap_router",
+      "params": { "action": "swap", "amount": "100_ETH" }
+    },
+    {
+      "behavior": "Self_Refining", // If an error occurs
+      "data": "Slippage tolerance exceeded. Recalculating route via Curve."
+    }
+  ],
+  "Terminal_Action": {
+    "type": "transaction_intent",
+    "payload": { "status": "executed", "tx_hash": "0x..." }
+  }
+}
+```

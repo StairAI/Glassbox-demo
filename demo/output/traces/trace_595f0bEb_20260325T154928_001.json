@@ -1,0 +1,25 @@
+{
+  "Header": {
+    "agent_id": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "epoch_timestamp": "2026-03-25T15:49:28.566601+00:00",
+    "attestation_type": "framework_v1"
+  },
+  "Trigger_Event": {
+    "source": "news_stream",
+    "payload": {
+      "headline": "Bitcoin surges past $70k as institutions adopt crypto",
+      "sentiment": 0.85,
+      "timestamp": "2026-03-25T15:49:28.566575+00:00"
+    }
+  },
+  "Context_Snapshot": "[ENCRYPTED:119 bytes]",
+  "Execution_Graph": "[ENCRYPTED:550 bytes]",
+  "Terminal_Action": {
+    "type": "signal_generated",
+    "payload": {
+      "status": "published",
+      "signal_id": "sig_btc_long_test",
+      "subscribers_notified": 147
+    }
+  }
+}

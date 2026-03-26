@@ -1,0 +1,202 @@
+{
+  "agent_id": "agent_c",
+  "current_state": "MONITORING",
+  "metadata": {
+    "btc_predicted_change": 0.24,
+    "btc_confidence": 0.632,
+    "sui_predicted_change": 0.32,
+    "sui_confidence": 0.726,
+    "btc_allocation_pct": 60.0,
+    "sui_allocation_pct": 23.3,
+    "raid_score": 0.338,
+    "sharpe_ratio": 0.012
+  },
+  "state_history": [
+    {
+      "timestamp": "2026-03-25T16:34:27.416964+00:00",
+      "state": "MONITORING",
+      "reason": "initialized",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.435161+00:00",
+      "state": "ANALYZING",
+      "reason": "Processing BTC and SUI predictions",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.435750+00:00",
+      "state": "ALLOCATING",
+      "reason": "Calculating optimal portfolio allocation",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.436217+00:00",
+      "state": "REBALANCING",
+      "reason": "Executing portfolio rebalancing on SUI chain",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.440074+00:00",
+      "state": "TRACKING",
+      "reason": "Updating portfolio performance",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.446021+00:00",
+      "state": "PUBLISHING",
+      "reason": "Publishing portfolio management signal",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.447055+00:00",
+      "state": "MONITORING",
+      "reason": "Signal published, monitoring for next cycle",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.965809+00:00",
+      "state": "ANALYZING",
+      "reason": "Processing BTC and SUI predictions",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.966281+00:00",
+      "state": "ALLOCATING",
+      "reason": "Calculating optimal portfolio allocation",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.966800+00:00",
+      "state": "REBALANCING",
+      "reason": "Executing portfolio rebalancing on SUI chain",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.969514+00:00",
+      "state": "TRACKING",
+      "reason": "Updating portfolio performance",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.975410+00:00",
+      "state": "PUBLISHING",
+      "reason": "Publishing portfolio management signal",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:27.976112+00:00",
+      "state": "MONITORING",
+      "reason": "Signal published, monitoring for next cycle",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:28.496439+00:00",
+      "state": "ANALYZING",
+      "reason": "Processing BTC and SUI predictions",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:28.496928+00:00",
+      "state": "ALLOCATING",
+      "reason": "Calculating optimal portfolio allocation",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:28.497355+00:00",
+      "state": "REBALANCING",
+      "reason": "Executing portfolio rebalancing on SUI chain",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:28.498465+00:00",
+      "state": "TRACKING",
+      "reason": "Updating portfolio performance",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:28.503206+00:00",
+      "state": "PUBLISHING",
+      "reason": "Publishing portfolio management signal",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:28.504819+00:00",
+      "state": "MONITORING",
+      "reason": "Signal published, monitoring for next cycle",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.025205+00:00",
+      "state": "ANALYZING",
+      "reason": "Processing BTC and SUI predictions",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.025773+00:00",
+      "state": "ALLOCATING",
+      "reason": "Calculating optimal portfolio allocation",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.026664+00:00",
+      "state": "REBALANCING",
+      "reason": "Executing portfolio rebalancing on SUI chain",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.029592+00:00",
+      "state": "TRACKING",
+      "reason": "Updating portfolio performance",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.035098+00:00",
+      "state": "PUBLISHING",
+      "reason": "Publishing portfolio management signal",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.035875+00:00",
+      "state": "MONITORING",
+      "reason": "Signal published, monitoring for next cycle",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.553099+00:00",
+      "state": "ANALYZING",
+      "reason": "Processing BTC and SUI predictions",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.553983+00:00",
+      "state": "ALLOCATING",
+      "reason": "Calculating optimal portfolio allocation",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.554610+00:00",
+      "state": "REBALANCING",
+      "reason": "Executing portfolio rebalancing on SUI chain",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.557525+00:00",
+      "state": "TRACKING",
+      "reason": "Updating portfolio performance",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.563643+00:00",
+      "state": "PUBLISHING",
+      "reason": "Publishing portfolio management signal",
+      "metadata": {}
+    },
+    {
+      "timestamp": "2026-03-25T16:34:29.564433+00:00",
+      "state": "MONITORING",
+      "reason": "Signal published, monitoring for next cycle",
+      "metadata": {}
+    }
+  ]
+}

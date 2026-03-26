@@ -1,0 +1,184 @@
+{
+  "current_block_number": 12847002,
+  "blocks": [
+    {
+      "block_number": 12847001,
+      "timestamp": "2026-03-25T16:07:25.625834+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x735d5e3cb89b9115ad384bf1a611bde1d9a0011be1fa368288a53ad5c3448820",
+          "tx_type": "agent_registration",
+          "sender": "0x4c06a1c58655f268a5df5d2f45d107a13eb6200cd53e7dd829012802eea748c9",
+          "data": {
+            "agent_name": "agent_a",
+            "registered_at": "2026-03-25T16:07:25.625456+00:00"
+          },
+          "timestamp": "2026-03-25T16:07:25.625675+00:00",
+          "block_number": 12847001,
+          "gas_used": 0.001008,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xe0010bdbec926fe4d68c016ec799152877a86c9c611228519e2f037effce00ed",
+          "tx_type": "agent_registration",
+          "sender": "0x6e30c94256ce934508427be40988711310237a33be4352d75424d9a3ef6d1cc7",
+          "data": {
+            "agent_name": "agent_b",
+            "registered_at": "2026-03-25T16:07:25.625762+00:00"
+          },
+          "timestamp": "2026-03-25T16:07:25.625768+00:00",
+          "block_number": 12847001,
+          "gas_used": 0.001008,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x695ebd687ea9a2633f5e7a66e9e1b79ee3862b9185b903a075caf4edc5da854c",
+          "tx_type": "agent_registration",
+          "sender": "0x1097b0a6989f96cce4f6c120f3fb7f1c3b23e397ca2f1e99f4d6864112ea94f0",
+          "data": {
+            "agent_name": "agent_c",
+            "registered_at": "2026-03-25T16:07:25.625803+00:00"
+          },
+          "timestamp": "2026-03-25T16:07:25.625807+00:00",
+          "block_number": 12847001,
+          "gas_used": 0.001008,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 3
+    },
+    {
+      "block_number": 12847002,
+      "timestamp": "2026-03-25T16:07:25.626319+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x8935ab8bc1b6466e50b08e5e0a33285ccf20bbafcd394220fc0dd9f125ca2f4a",
+          "tx_type": "raid_score_update",
+          "sender": "0x6e30c94256ce934508427be40988711310237a33be4352d75424d9a3ef6d1cc7",
+          "data": {
+            "agent_name": "agent_b",
+            "raid_score": 0.731,
+            "metrics": {
+              "accuracy": 0.67,
+              "mae": 0.021,
+              "direction_accuracy": 0.71
+            },
+            "timestamp": "2026-03-25T16:07:25.626187+00:00"
+          },
+          "timestamp": "2026-03-25T16:07:25.626196+00:00",
+          "block_number": 12847002,
+          "gas_used": 0.001017,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x7481268b84248b494c23c75e5bf8854099f0936000aaa0ca625df75dd1fe2032",
+          "tx_type": "raid_score_update",
+          "sender": "0x1097b0a6989f96cce4f6c120f3fb7f1c3b23e397ca2f1e99f4d6864112ea94f0",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.856,
+            "metrics": {
+              "sharpe_ratio": 1.82,
+              "return_pct": 12.5,
+              "max_drawdown": 3.2,
+              "win_rate": 0.73
+            },
+            "timestamp": "2026-03-25T16:07:25.626239+00:00"
+          },
+          "timestamp": "2026-03-25T16:07:25.626243+00:00",
+          "block_number": 12847002,
+          "gas_used": 0.001019,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x67967c48675d968b3c6d7b74ccd950a7ef06ff8ec6e889fc9f529634f828bc87",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x1097b0a6989f96cce4f6c120f3fb7f1c3b23e397ca2f1e99f4d6864112ea94f0",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 15000
+              },
+              {
+                "asset": "SUI",
+                "action": "HOLD",
+                "amount_usd": 0
+              },
+              {
+                "asset": "USDC",
+                "action": "SELL",
+                "amount_usd": -15000
+              }
+            ],
+            "portfolio_value": 102800,
+            "timestamp": "2026-03-25T16:07:25.626278+00:00"
+          },
+          "timestamp": "2026-03-25T16:07:25.626283+00:00",
+          "block_number": 12847002,
+          "gas_used": 0.001028,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 3
+    }
+  ],
+  "agent_registry": {
+    "agent_a": "0x4c06a1c58655f268a5df5d2f45d107a13eb6200cd53e7dd829012802eea748c9",
+    "agent_b": "0x6e30c94256ce934508427be40988711310237a33be4352d75424d9a3ef6d1cc7",
+    "agent_c": "0x1097b0a6989f96cce4f6c120f3fb7f1c3b23e397ca2f1e99f4d6864112ea94f0"
+  },
+  "raid_scores": {
+    "agent_b": [
+      {
+        "score": 0.731,
+        "metrics": {
+          "accuracy": 0.67,
+          "mae": 0.021,
+          "direction_accuracy": 0.71
+        },
+        "tx_hash": "0x8935ab8bc1b6466e50b08e5e0a33285ccf20bbafcd394220fc0dd9f125ca2f4a",
+        "timestamp": "2026-03-25 16:07:25.626196+00:00"
+      }
+    ],
+    "agent_c": [
+      {
+        "score": 0.856,
+        "metrics": {
+          "sharpe_ratio": 1.82,
+          "return_pct": 12.5,
+          "max_drawdown": 3.2,
+          "win_rate": 0.73
+        },
+        "tx_hash": "0x7481268b84248b494c23c75e5bf8854099f0936000aaa0ca625df75dd1fe2032",
+        "timestamp": "2026-03-25 16:07:25.626243+00:00"
+      }
+    ]
+  },
+  "portfolio_states": {
+    "agent_c": {
+      "actions": [
+        {
+          "asset": "BTC",
+          "action": "BUY",
+          "amount_usd": 15000
+        },
+        {
+          "asset": "SUI",
+          "action": "HOLD",
+          "amount_usd": 0
+        },
+        {
+          "asset": "USDC",
+          "action": "SELL",
+          "amount_usd": -15000
+        }
+      ],
+      "value": 102800,
+      "tx_hash": "0x67967c48675d968b3c6d7b74ccd950a7ef06ff8ec6e889fc9f529634f828bc87",
+      "timestamp": "2026-03-25 16:07:25.626283+00:00"
+    }
+  }
+}

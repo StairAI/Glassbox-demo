@@ -1,0 +1,1139 @@
+{
+  "current_block_number": 12847017,
+  "blocks": [
+    {
+      "block_number": 12847001,
+      "timestamp": "2026-03-25T16:18:48.879244+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x40a946847d587d0bd6f7680a171e5adbe8221395b0b45c22aadcce24e2a308c2",
+          "tx_type": "agent_registration",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "registered_at": "2026-03-25T16:18:48.873594+00:00"
+          },
+          "timestamp": "2026-03-25T16:18:48.873604+00:00",
+          "block_number": 12847001,
+          "gas_used": 0.001008,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xc7dd201c7e8b3929abc34eb14408a46515227e162d9c4a2a7db041cd16e74423",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 3100.0,
+                "from_pct": 40.0,
+                "to_pct": 36.9
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 18100.0,
+                "from_pct": 30.0,
+                "to_pct": 48.1
+              },
+              {
+                "asset": "USDC",
+                "action": "SELL",
+                "amount_usd": 15000.0,
+                "from_pct": 30.0,
+                "to_pct": 15.0
+              }
+            ],
+            "portfolio_value": 99999.7,
+            "timestamp": "2026-03-25T16:18:48.876385+00:00"
+          },
+          "timestamp": "2026-03-25T16:18:48.876394+00:00",
+          "block_number": 12847001,
+          "gas_used": 0.001039,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x1973e0be1e07dc332e7823fcd425610475fc7fdc89fb95710984ada5783533b3",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.352,
+            "metrics": {
+              "sharpe_ratio": 0.03,
+              "total_return_pct": -0.02,
+              "max_drawdown_pct": 15.54,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:18:48.879169+00:00"
+          },
+          "timestamp": "2026-03-25T16:18:48.879180+00:00",
+          "block_number": 12847001,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 3
+    },
+    {
+      "block_number": 12847002,
+      "timestamp": "2026-03-25T16:18:48.886317+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x110ca3eb1762f2be35e341e4561d7ca2ed9d5ceaff8931a5bde0e34fad054d7e",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 7698.38,
+                "from_pct": 36.9,
+                "to_pct": 44.6
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 7698.38,
+                "from_pct": 48.1,
+                "to_pct": 40.4
+              }
+            ],
+            "portfolio_value": 99978.81006207,
+            "timestamp": "2026-03-25T16:18:48.882039+00:00"
+          },
+          "timestamp": "2026-03-25T16:18:48.882048+00:00",
+          "block_number": 12847002,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x988e378d0924f4e30931e5399c87a1c24e2e10cd678e29aaba654d629a8e2081",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.351,
+            "metrics": {
+              "sharpe_ratio": 0.028,
+              "total_return_pct": -0.05,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:18:48.885332+00:00"
+          },
+          "timestamp": "2026-03-25T16:18:48.885343+00:00",
+          "block_number": 12847002,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847003,
+      "timestamp": "2026-03-25T16:21:08.973468+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x3b4c5c2993dcc96e7dfda4291963440b4f6e031bcc6f895606afdc59e67a1e4b",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 2800.0,
+                "from_pct": 40.0,
+                "to_pct": 37.2
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 17800.0,
+                "from_pct": 30.0,
+                "to_pct": 47.8
+              },
+              {
+                "asset": "USDC",
+                "action": "SELL",
+                "amount_usd": 15000.0,
+                "from_pct": 30.0,
+                "to_pct": 15.0
+              }
+            ],
+            "portfolio_value": 99999.7,
+            "timestamp": "2026-03-25T16:21:08.967134+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:08.967144+00:00",
+          "block_number": 12847003,
+          "gas_used": 0.001039,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xc7ce28c1fb1ee2326f126a7716e4f973b39f9e96e9240ad5ca452b0996f3f10e",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.352,
+            "metrics": {
+              "sharpe_ratio": 0.027,
+              "total_return_pct": 0.0,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:08.972021+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:08.972033+00:00",
+          "block_number": 12847003,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847004,
+      "timestamp": "2026-03-25T16:21:09.490090+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xffdde7b658a36e048c4b450ac9cb388ce3a3860c84828085f8d53b5ebfbfff9d",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 5300.07,
+                "from_pct": 37.2,
+                "to_pct": 42.5
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 5300.07,
+                "from_pct": 47.8,
+                "to_pct": 42.5
+              }
+            ],
+            "portfolio_value": 100001.0999952,
+            "timestamp": "2026-03-25T16:21:09.484350+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:09.484358+00:00",
+          "block_number": 12847004,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x2071d55b230ca43c824baedf2f2549dada787b7a496539c264112aa40f7b78aa",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.352,
+            "metrics": {
+              "sharpe_ratio": 0.027,
+              "total_return_pct": 0.06,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:09.488928+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:09.488941+00:00",
+          "block_number": 12847004,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847005,
+      "timestamp": "2026-03-25T16:21:10.009819+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xb55d160edc648fc7f0cb6631de36fdf08b78467227b0027ad3709dd81aefb8aa",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 6503.66,
+                "from_pct": 42.5,
+                "to_pct": 36.0
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 6503.66,
+                "from_pct": 42.5,
+                "to_pct": 49.0
+              }
+            ],
+            "portfolio_value": 100056.15060294734,
+            "timestamp": "2026-03-25T16:21:10.004083+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:10.004093+00:00",
+          "block_number": 12847005,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xea48f81640d09e2177b4413ad634ef75f50f3882b1cf73c92c10c25af16652f2",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.352,
+            "metrics": {
+              "sharpe_ratio": 0.026,
+              "total_return_pct": 0.07,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:10.008595+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:10.008605+00:00",
+          "block_number": 12847005,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847006,
+      "timestamp": "2026-03-25T16:21:10.526692+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xe1857118f06379d36e52ccff4b61b4627121c6e08a79fecf9d25c68ca1eef06c",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 9806.62,
+                "from_pct": 36.0,
+                "to_pct": 45.8
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 9806.62,
+                "from_pct": 49.0,
+                "to_pct": 39.2
+              }
+            ],
+            "portfolio_value": 100067.35700411607,
+            "timestamp": "2026-03-25T16:21:10.520475+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:10.520483+00:00",
+          "block_number": 12847006,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x50f5d2180c0b686b16ee455446eb0181aaa1ef6e5c5aab896ff3cf5ba5cf46a7",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.352,
+            "metrics": {
+              "sharpe_ratio": 0.026,
+              "total_return_pct": 0.14,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:10.525651+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:10.525659+00:00",
+          "block_number": 12847006,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847007,
+      "timestamp": "2026-03-25T16:21:11.052755+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x7b9d59c64b15dd5c54b034fc99ef42c263748e5ff6c53d63d9f3691789e69cf5",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 9913.6,
+                "from_pct": 45.8,
+                "to_pct": 35.9
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 9913.6,
+                "from_pct": 39.2,
+                "to_pct": 49.1
+              }
+            ],
+            "portfolio_value": 100137.14411360475,
+            "timestamp": "2026-03-25T16:21:11.045957+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:11.045967+00:00",
+          "block_number": 12847007,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x8263286d3f7fa549cde7ca4381cba294e554642b8fed4ad013c39ea188f9ec31",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.353,
+            "metrics": {
+              "sharpe_ratio": 0.026,
+              "total_return_pct": 0.23,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:11.051294+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:11.051304+00:00",
+          "block_number": 12847007,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847008,
+      "timestamp": "2026-03-25T16:21:17.508672+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x83bf2b578fe07614a9909c20de625b7f32ffa05389025fb9999d5fa5e0874f78",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 2300.0,
+                "from_pct": 40.0,
+                "to_pct": 37.7
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 17300.0,
+                "from_pct": 30.0,
+                "to_pct": 47.3
+              },
+              {
+                "asset": "USDC",
+                "action": "SELL",
+                "amount_usd": 15000.0,
+                "from_pct": 30.0,
+                "to_pct": 15.0
+              }
+            ],
+            "portfolio_value": 99999.7,
+            "timestamp": "2026-03-25T16:21:17.500156+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:17.500166+00:00",
+          "block_number": 12847008,
+          "gas_used": 0.001039,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xee5b4bd2d5e3b1340549c6e388be82db0758af73cd45548c526cd9c7b7e70986",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.351,
+            "metrics": {
+              "sharpe_ratio": 0.023,
+              "total_return_pct": 0.03,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:17.505935+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:17.505953+00:00",
+          "block_number": 12847008,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847009,
+      "timestamp": "2026-03-25T16:21:18.031755+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xafed3f199ce276e547c37a880c18cb17b364c0f1238ac7f95e0247bec56ca1a7",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 4601.16,
+                "from_pct": 37.7,
+                "to_pct": 42.3
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 4601.16,
+                "from_pct": 47.3,
+                "to_pct": 42.7
+              }
+            ],
+            "portfolio_value": 100024.99992349999,
+            "timestamp": "2026-03-25T16:21:18.025331+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:18.025341+00:00",
+          "block_number": 12847009,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xe0b83331ea58ddf3cb7abadaeac7db6d6bc6a662820a4826a7a7284b8086c734",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.351,
+            "metrics": {
+              "sharpe_ratio": 0.022,
+              "total_return_pct": -0.0,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:18.030572+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:18.030583+00:00",
+          "block_number": 12847009,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847010,
+      "timestamp": "2026-03-25T16:21:18.556334+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x1de4f0213817c32145ef55684e5b5ef71f02f89399990a4b158c7c9b4c06c17f",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 5099.98,
+                "from_pct": 42.3,
+                "to_pct": 37.2
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 5099.98,
+                "from_pct": 42.7,
+                "to_pct": 47.8
+              }
+            ],
+            "portfolio_value": 99999.41357851941,
+            "timestamp": "2026-03-25T16:21:18.549472+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:18.549483+00:00",
+          "block_number": 12847010,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xcb68803943eb69c5003adfe28771811eafc0286721084e7867de931a0b8f65d0",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.35,
+            "metrics": {
+              "sharpe_ratio": 0.021,
+              "total_return_pct": -0.05,
+              "max_drawdown_pct": 15.57,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:18.554930+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:18.554944+00:00",
+          "block_number": 12847010,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847011,
+      "timestamp": "2026-03-25T16:21:19.089397+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xebf3220934bbdb70059071960176de94fa2053b1ed3a71e8c238730d50a1230b",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 2398.89,
+                "from_pct": 37.2,
+                "to_pct": 39.6
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 2398.89,
+                "from_pct": 47.8,
+                "to_pct": 45.4
+              }
+            ],
+            "portfolio_value": 99953.51384651402,
+            "timestamp": "2026-03-25T16:21:19.081586+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:19.081595+00:00",
+          "block_number": 12847011,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x710590b7168fe44767b0e54e06658619ff335e7851c619de916d9b7474da4b35",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.35,
+            "metrics": {
+              "sharpe_ratio": 0.021,
+              "total_return_pct": -0.07,
+              "max_drawdown_pct": 15.58,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:19.087777+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:19.087789+00:00",
+          "block_number": 12847011,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847012,
+      "timestamp": "2026-03-25T16:21:19.620582+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xff682064325bb85cec63ecf3a645d5d856493e9957da30b742d77f5a566bdb86",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 4996.52,
+                "from_pct": 39.6,
+                "to_pct": 34.6
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 4996.52,
+                "from_pct": 45.4,
+                "to_pct": 50.4
+              }
+            ],
+            "portfolio_value": 99930.1446220044,
+            "timestamp": "2026-03-25T16:21:19.613155+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:19.613165+00:00",
+          "block_number": 12847012,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xc0b8e10cd8bb67f3ef4b86e7c66c2e5902ebb687f010d59c8226de4677baeb6a",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.349,
+            "metrics": {
+              "sharpe_ratio": 0.02,
+              "total_return_pct": -0.1,
+              "max_drawdown_pct": 15.61,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:21:19.619138+00:00"
+          },
+          "timestamp": "2026-03-25T16:21:19.619148+00:00",
+          "block_number": 12847012,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847013,
+      "timestamp": "2026-03-25T16:34:27.447920+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x3f3f81892a66ba13c6271be5722e9f5783e14c468395858126dc636783043170",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 5100.0,
+                "from_pct": 40.0,
+                "to_pct": 34.9
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 20100.0,
+                "from_pct": 30.0,
+                "to_pct": 50.1
+              },
+              {
+                "asset": "USDC",
+                "action": "SELL",
+                "amount_usd": 15000.0,
+                "from_pct": 30.0,
+                "to_pct": 15.0
+              }
+            ],
+            "portfolio_value": 99999.7,
+            "timestamp": "2026-03-25T16:34:27.436898+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:27.436914+00:00",
+          "block_number": 12847013,
+          "gas_used": 0.001039,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xf2d94363114e402054fa2190d403fda4dde3a85e407cfcb964af513393b55dc7",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.349,
+            "metrics": {
+              "sharpe_ratio": 0.019,
+              "total_return_pct": -0.09,
+              "max_drawdown_pct": 15.61,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:34:27.445886+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:27.445908+00:00",
+          "block_number": 12847013,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847014,
+      "timestamp": "2026-03-25T16:34:27.977418+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xe9e77f88159849ea91e17b4c405ee03494fd09916cc6af9624ec9969cb55cb6a",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 1998.29,
+                "from_pct": 34.9,
+                "to_pct": 36.9
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 1998.29,
+                "from_pct": 50.1,
+                "to_pct": 48.1
+              }
+            ],
+            "portfolio_value": 99914.05025635,
+            "timestamp": "2026-03-25T16:34:27.967262+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:27.967272+00:00",
+          "block_number": 12847014,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x36711659094a9418cd3689cca7f9b5f6892f924e3c2e976cfbeabc9649f5971d",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.347,
+            "metrics": {
+              "sharpe_ratio": 0.018,
+              "total_return_pct": -0.2,
+              "max_drawdown_pct": 15.69,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:34:27.975291+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:27.975311+00:00",
+          "block_number": 12847014,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847015,
+      "timestamp": "2026-03-25T16:34:28.505257+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0xa6b700376176c0cbf2cb3ba7b4edfef079b9f7eb156da573c37c034ce61361b3",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.345,
+            "metrics": {
+              "sharpe_ratio": 0.016,
+              "total_return_pct": -0.35,
+              "max_drawdown_pct": 15.82,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:34:28.503040+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:28.503051+00:00",
+          "block_number": 12847015,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 1
+    },
+    {
+      "block_number": 12847016,
+      "timestamp": "2026-03-25T16:34:29.036437+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x7c250e8e0c593cd4cc600f13ab6fee5a04b17790a4b8a3f4a058b359944011fb",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "SELL",
+                "amount_usd": 2590.9,
+                "from_pct": 36.9,
+                "to_pct": 34.3
+              },
+              {
+                "asset": "SUI",
+                "action": "BUY",
+                "amount_usd": 2590.9,
+                "from_pct": 48.1,
+                "to_pct": 50.7
+              }
+            ],
+            "portfolio_value": 99649.7587736241,
+            "timestamp": "2026-03-25T16:34:29.027286+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:29.027297+00:00",
+          "block_number": 12847016,
+          "gas_used": 0.001031,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0xc821d352b100e264615f5e16c0b288e9d8e59c1a45a04c5975bc990858cc4622",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.342,
+            "metrics": {
+              "sharpe_ratio": 0.014,
+              "total_return_pct": -0.54,
+              "max_drawdown_pct": 15.98,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:34:29.035005+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:29.035019+00:00",
+          "block_number": 12847016,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    },
+    {
+      "block_number": 12847017,
+      "timestamp": "2026-03-25T16:34:29.565099+00:00",
+      "transactions": [
+        {
+          "tx_hash": "0x0519ac74f51e76c6ceea09cd3d9e813a7189fa35c2dcf2e16e6e264cb3ff71be",
+          "tx_type": "portfolio_rebalance",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "actions": [
+              {
+                "asset": "BTC",
+                "action": "BUY",
+                "amount_usd": 25562.44,
+                "from_pct": 34.3,
+                "to_pct": 60.0
+              },
+              {
+                "asset": "SUI",
+                "action": "SELL",
+                "amount_usd": 27253.34,
+                "from_pct": 50.7,
+                "to_pct": 23.3
+              },
+              {
+                "asset": "USDC",
+                "action": "BUY",
+                "amount_usd": 1690.9,
+                "from_pct": 15.0,
+                "to_pct": 16.7
+              }
+            ],
+            "portfolio_value": 99464.44903148498,
+            "timestamp": "2026-03-25T16:34:29.555202+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:29.555211+00:00",
+          "block_number": 12847017,
+          "gas_used": 0.00104,
+          "status": "confirmed"
+        },
+        {
+          "tx_hash": "0x0cb0ee525292766dade126bc58817c86128f674520cbdea58d71de79c1f98037",
+          "tx_type": "raid_score_update",
+          "sender": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d",
+          "data": {
+            "agent_name": "agent_c",
+            "raid_score": 0.338,
+            "metrics": {
+              "sharpe_ratio": 0.012,
+              "total_return_pct": -0.8,
+              "max_drawdown_pct": 16.2,
+              "win_rate": 1.0
+            },
+            "timestamp": "2026-03-25T16:34:29.563567+00:00"
+          },
+          "timestamp": "2026-03-25T16:34:29.563577+00:00",
+          "block_number": 12847017,
+          "gas_used": 0.00102,
+          "status": "confirmed"
+        }
+      ],
+      "tx_count": 2
+    }
+  ],
+  "agent_registry": {
+    "agent_c": "0x8e3bb4a9e1782856efec2998031ad5c3e49410b87d1c139d78f83e5a8ed2e50d"
+  },
+  "raid_scores": {
+    "agent_c": [
+      {
+        "score": 0.351,
+        "metrics": {
+          "sharpe_ratio": 0.023,
+          "total_return_pct": 0.03,
+          "max_drawdown_pct": 15.57,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xee5b4bd2d5e3b1340549c6e388be82db0758af73cd45548c526cd9c7b7e70986",
+        "timestamp": "2026-03-25 16:21:17.505953+00:00"
+      },
+      {
+        "score": 0.351,
+        "metrics": {
+          "sharpe_ratio": 0.022,
+          "total_return_pct": -0.0,
+          "max_drawdown_pct": 15.57,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xe0b83331ea58ddf3cb7abadaeac7db6d6bc6a662820a4826a7a7284b8086c734",
+        "timestamp": "2026-03-25 16:21:18.030583+00:00"
+      },
+      {
+        "score": 0.35,
+        "metrics": {
+          "sharpe_ratio": 0.021,
+          "total_return_pct": -0.05,
+          "max_drawdown_pct": 15.57,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xcb68803943eb69c5003adfe28771811eafc0286721084e7867de931a0b8f65d0",
+        "timestamp": "2026-03-25 16:21:18.554944+00:00"
+      },
+      {
+        "score": 0.35,
+        "metrics": {
+          "sharpe_ratio": 0.021,
+          "total_return_pct": -0.07,
+          "max_drawdown_pct": 15.58,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0x710590b7168fe44767b0e54e06658619ff335e7851c619de916d9b7474da4b35",
+        "timestamp": "2026-03-25 16:21:19.087789+00:00"
+      },
+      {
+        "score": 0.349,
+        "metrics": {
+          "sharpe_ratio": 0.02,
+          "total_return_pct": -0.1,
+          "max_drawdown_pct": 15.61,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xc0b8e10cd8bb67f3ef4b86e7c66c2e5902ebb687f010d59c8226de4677baeb6a",
+        "timestamp": "2026-03-25 16:21:19.619148+00:00"
+      },
+      {
+        "score": 0.349,
+        "metrics": {
+          "sharpe_ratio": 0.019,
+          "total_return_pct": -0.09,
+          "max_drawdown_pct": 15.61,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xf2d94363114e402054fa2190d403fda4dde3a85e407cfcb964af513393b55dc7",
+        "timestamp": "2026-03-25 16:34:27.445908+00:00"
+      },
+      {
+        "score": 0.347,
+        "metrics": {
+          "sharpe_ratio": 0.018,
+          "total_return_pct": -0.2,
+          "max_drawdown_pct": 15.69,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0x36711659094a9418cd3689cca7f9b5f6892f924e3c2e976cfbeabc9649f5971d",
+        "timestamp": "2026-03-25 16:34:27.975311+00:00"
+      },
+      {
+        "score": 0.345,
+        "metrics": {
+          "sharpe_ratio": 0.016,
+          "total_return_pct": -0.35,
+          "max_drawdown_pct": 15.82,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xa6b700376176c0cbf2cb3ba7b4edfef079b9f7eb156da573c37c034ce61361b3",
+        "timestamp": "2026-03-25 16:34:28.503051+00:00"
+      },
+      {
+        "score": 0.342,
+        "metrics": {
+          "sharpe_ratio": 0.014,
+          "total_return_pct": -0.54,
+          "max_drawdown_pct": 15.98,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0xc821d352b100e264615f5e16c0b288e9d8e59c1a45a04c5975bc990858cc4622",
+        "timestamp": "2026-03-25 16:34:29.035019+00:00"
+      },
+      {
+        "score": 0.338,
+        "metrics": {
+          "sharpe_ratio": 0.012,
+          "total_return_pct": -0.8,
+          "max_drawdown_pct": 16.2,
+          "win_rate": 1.0
+        },
+        "tx_hash": "0x0cb0ee525292766dade126bc58817c86128f674520cbdea58d71de79c1f98037",
+        "timestamp": "2026-03-25 16:34:29.563577+00:00"
+      }
+    ]
+  },
+  "portfolio_states": {
+    "agent_c": {
+      "actions": [
+        {
+          "asset": "BTC",
+          "action": "BUY",
+          "amount_usd": 25562.44,
+          "from_pct": 34.3,
+          "to_pct": 60.0
+        },
+        {
+          "asset": "SUI",
+          "action": "SELL",
+          "amount_usd": 27253.34,
+          "from_pct": 50.7,
+          "to_pct": 23.3
+        },
+        {
+          "asset": "USDC",
+          "action": "BUY",
+          "amount_usd": 1690.9,
+          "from_pct": 15.0,
+          "to_pct": 16.7
+        }
+      ],
+      "value": 99464.44903148498,
+      "tx_hash": "0x0519ac74f51e76c6ceea09cd3d9e813a7189fa35c2dcf2e16e6e264cb3ff71be",
+      "timestamp": "2026-03-25 16:34:29.555211+00:00"
+    }
+  }
+}

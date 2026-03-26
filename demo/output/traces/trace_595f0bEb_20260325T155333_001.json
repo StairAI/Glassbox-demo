@@ -1,0 +1,28 @@
+{
+  "Header": {
+    "agent_id": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    "epoch_timestamp": "2026-03-25T15:53:33.095824+00:00",
+    "attestation_type": "framework_v1"
+  },
+  "Trigger_Event": {
+    "source": "news_stream",
+    "payload": {
+      "news_id": "news_0001",
+      "headline": "Bitcoin mining difficulty adjustment raises energy concerns",
+      "timestamp": "2026-03-25T15:53:33.095491+00:00",
+      "sentiment": -0.2,
+      "signal": "NEUTRAL"
+    }
+  },
+  "Context_Snapshot": "[ENCRYPTED:211 bytes]",
+  "Execution_Graph": "[ENCRYPTED:1043 bytes]",
+  "Terminal_Action": {
+    "type": "no_action",
+    "payload": {
+      "status": "monitoring",
+      "reason": "Thresholds not met",
+      "current_sentiment": -0.2,
+      "current_confidence": 0.6
+    }
+  }
+}

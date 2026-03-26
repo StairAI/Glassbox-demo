@@ -504,7 +504,645 @@ Agents cannot know which events are tests, forcing honest computation on all inp
 
 ---
 
-## 13. References
+## 13. Crypto Trading Agent Integration
+
+### 13.1 Overview
+
+This section extends the Glass Box Protocol to crypto trading agents, addressing the unique challenges of 24/7 markets, multi-stream data correlation, and real-time reasoning trace generation.
+
+**Key Differences from Traditional Trading:**
+- **24/7 Operation:** No market close, continuous monitoring required
+- **Volatility:** 10x+ price swings possible in hours
+- **Data Sources:** Social sentiment (Twitter), on-chain metrics, exchange flows
+- **Speed:** Sub-second execution required
+- **Risk:** Liquidation cascades, exchange failures, stablecoin de-pegging
+
+### 13.2 Reasoning Trace Generator for Trading Agents
+
+The `ReasoningTraceGenerator` intercepts agent decisions and compiles them into the Universal Ledger format:
+
+```python
+class ReasoningTraceGenerator:
+    """Generate Glass Box reasoning traces from trading agent decisions"""
+
+    def __init__(self, agent_id: str, sdk_client):
+        self.agent_id = agent_id
+        self.sdk = sdk_client
+        self.current_trace = None
+
+    def start_trace(self, trigger_event: dict):
+        """Initialize a new reasoning trace"""
+        self.current_trace = {
+            "Header": {
+                "agent_id": self.agent_id,
+                "epoch_timestamp": datetime.utcnow().isoformat() + "Z",
+                "attestation_type": "framework_v1"
+            },
+            "Trigger_Event": trigger_event,
+            "Context_Snapshot": {},
+            "Execution_Graph": [],
+            "Terminal_Action": None
+        }
+
+    def log_behavior(self, behavior: str, data: str, tool: str = None, params: dict = None):
+        """Log a step in the execution graph"""
+        step = {
+            "behavior": behavior,
+            "data": data
+        }
+        if tool:
+            step["tool"] = tool
+            step["params"] = params
+
+        self.current_trace["Execution_Graph"].append(step)
+
+    def set_context(self, context: dict):
+        """Set encrypted context snapshot"""
+        self.current_trace["Context_Snapshot"] = self._encrypt(context)
+
+    def set_terminal_action(self, action_type: str, payload: dict):
+        """Set final action outcome"""
+        self.current_trace["Terminal_Action"] = {
+            "type": action_type,
+            "payload": payload
+        }
+
+    def submit_trace(self):
+        """Encrypt and submit trace to ledger"""
+        # Encrypt execution graph
+        self.current_trace["Execution_Graph"] = self._encrypt(
+            self.current_trace["Execution_Graph"]
+        )
+
+        # Submit to Glass Box Protocol
+        response = self.sdk.submit_trace(self.current_trace)
+        return response
+
+    def _encrypt(self, data):
+        """Encrypt proprietary data with agent's private key"""
+        # Implementation: AES-256 encryption
+        return encrypted_data
+```
+
+### 13.3 Multi-Stream Confidence Calibration
+
+Extends the state machine with cross-stream validation and conflict resolution:
+
+```python
+def calculate_confidence(sentiment: float, state: AgentState) -> float:
+    """
+    Calculate confidence score based on multi-stream agreement.
+
+    High confidence: Multiple streams agree (0.85-1.0)
+    Medium confidence: Single strong signal (0.6-0.85)
+    Low confidence: Conflicting signals (0.0-0.6)
+    """
+
+    streams = {
+        'elon_musk': {
+            'sentiment': state.elon_sentiment,
+            'weight': 0.7
+        },
+        'donald_trump': {
+            'sentiment': state.trump_sentiment,
+            'weight': 0.5
+        }
+    }
+
+    # Check stream agreement
+    elon_signal = get_signal(state.elon_sentiment)
+    trump_signal = get_signal(state.trump_sentiment)
+
+    if elon_signal == trump_signal and elon_signal != 'NEUTRAL':
+        # Both streams agree → high confidence
+        base_confidence = 0.9
+    elif elon_signal != 'NEUTRAL' and trump_signal == 'NEUTRAL':
+        # Single strong signal → medium confidence
+        base_confidence = 0.7
+    elif elon_signal == 'NEUTRAL' and trump_signal == 'NEUTRAL':
+        # No clear signals → low confidence
+        base_confidence = 0.4
+    else:
+        # Conflicting signals → very low confidence
+        base_confidence = 0.3
+
+    # Adjust by sentiment magnitude
+    magnitude = abs(sentiment)
+    confidence = base_confidence * (0.5 + 0.5 * magnitude)
+
+    return min(1.0, confidence)
+
+def get_signal(sentiment: float) -> str:
+    """Convert sentiment to discrete signal"""
+    if sentiment > 0.3:
+        return 'BULLISH'
+    elif sentiment < -0.3:
+        return 'BEARISH'
+    else:
+        return 'NEUTRAL'
+```
+
+### 13.4 Reasoning Trace Example (Crypto Trading)
+
+Complete example showing Glass Box integration:
+
+```python
+# Initialize trace generator
+trace_gen = ReasoningTraceGenerator(
+    agent_id="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    sdk_client=glassbox_sdk
+)
+
+# Step 1: Trigger event arrives
+trigger = {
+    "source": "twitter_stream",
+    "payload": {
+        "author": "elon_musk",
+        "tweet": "Bitcoin is digital gold",
+        "sentiment": 0.85,
+        "timestamp": "2026-03-22T14:30:00Z"
+    }
+}
+trace_gen.start_trace(trigger)
+
+# Step 2: Load context (encrypted)
+context = {
+    "current_position": "MONITORING",
+    "portfolio": {"BTC": 0.5, "USDC": 50000},
+    "risk_limits": {"max_position_size": 100000},
+    "elon_sentiment": 0.65,
+    "trump_sentiment": 0.38,
+    "btc_price": 67500
+}
+trace_gen.set_context(context)
+
+# Step 3: Observing
+trace_gen.log_behavior(
+    "Observing",
+    "Ingested Elon Musk tweet: 'Bitcoin is digital gold'. Sentiment: +0.85"
+)
+
+# Step 4: Planning
+trace_gen.log_behavior(
+    "Planning",
+    """Multi-step analysis:
+    1. Update Elon sentiment stream: 0.65 → 0.72
+    2. Calculate confidence via cross-stream validation
+    3. Check execution criteria (confidence > 0.75, |sentiment| > 0.5)
+    4. Generate position sizing based on confidence
+    """
+)
+
+# Step 5: Reasoning
+new_sentiment = context['elon_sentiment'] * 0.7 + trigger['payload']['sentiment'] * 0.7 * 0.3
+confidence = calculate_confidence(new_sentiment, agent_state)
+
+trace_gen.log_behavior(
+    "Reasoning",
+    f"""Cross-stream validation:
+    - Elon stream: BULLISH (+0.72)
+    - Trump stream: BULLISH (+0.38)
+    - Streams align: YES
+    - Combined sentiment: +0.54
+    - Confidence: {confidence:.2f}
+
+    Risk analysis:
+    - Current BTC price: $67,500
+    - 30-day volatility: 45%
+    - Entry zone: $67,000-$68,000
+    - Stop-loss: $64,125 (-5%)
+    - Take-profit: $70,875 (+5%)
+
+    Decision: EXECUTE BUY SIGNAL
+    """
+)
+
+# Step 6: Acting
+trace_gen.log_behavior(
+    "Acting",
+    "Generating BUY signal for subscribers",
+    tool="signal_generator",
+    params={
+        "asset": "BTC",
+        "direction": "LONG",
+        "entry_price": 67500,
+        "stop_loss": 64125,
+        "take_profit": 70875,
+        "position_size": "75% (high confidence)",
+        "risk_reward_ratio": 1.67
+    }
+)
+
+# Step 7: Terminal action
+trace_gen.set_terminal_action(
+    "signal_generated",
+    {
+        "status": "published",
+        "signal_id": "sig_btc_long_20260322_143045",
+        "subscribers_notified": 147
+    }
+)
+
+# Submit to Glass Box Protocol
+response = trace_gen.submit_trace()
+print(f"Trace submitted: {response['trace_id']}")
+print(f"DA pointer: {response['da_pointer']}")
+```
+
+### 13.5 Actuarial Performance Tracking
+
+Track real-world outcomes for RAID scoring:
+
+```python
+class ActuarialTracker:
+    """Track 24-hour outcomes of agent signals for RAID scoring"""
+
+    def __init__(self, db_connection):
+        self.db = db_connection
+
+    def record_signal(self, trace_id: str, signal: dict):
+        """Record a trading signal for future validation"""
+        self.db.execute("""
+            INSERT INTO signal_outcomes (
+                trace_id,
+                agent_id,
+                signal_time,
+                asset,
+                direction,
+                entry_price,
+                stop_loss,
+                take_profit,
+                status
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'PENDING')
+        """, (
+            trace_id,
+            signal['agent_id'],
+            signal['timestamp'],
+            signal['asset'],
+            signal['direction'],
+            signal['entry_price'],
+            signal['stop_loss'],
+            signal['take_profit']
+        ))
+
+    def validate_outcomes(self):
+        """Run 24-hour validation on pending signals"""
+        pending_signals = self.db.query("""
+            SELECT * FROM signal_outcomes
+            WHERE status = 'PENDING'
+            AND signal_time < NOW() - INTERVAL '24 hours'
+        """)
+
+        for signal in pending_signals:
+            # Fetch actual price movement
+            price_data = self.get_price_history(
+                signal['asset'],
+                signal['signal_time'],
+                hours=24
+            )
+
+            outcome = self.evaluate_signal_outcome(signal, price_data)
+
+            self.db.execute("""
+                UPDATE signal_outcomes
+                SET status = %s,
+                    actual_return = %s,
+                    outcome_time = %s,
+                    outcome_notes = %s
+                WHERE trace_id = %s
+            """, (
+                outcome['status'],
+                outcome['return_pct'],
+                outcome['outcome_time'],
+                outcome['notes'],
+                signal['trace_id']
+            ))
+
+    def evaluate_signal_outcome(self, signal: dict, price_data: list) -> dict:
+        """Evaluate if signal was correct within 24 hours"""
+        entry = signal['entry_price']
+        stop = signal['stop_loss']
+        target = signal['take_profit']
+
+        for timestamp, price in price_data:
+            if signal['direction'] == 'LONG':
+                if price <= stop:
+                    return {
+                        'status': 'STOPPED_OUT',
+                        'return_pct': (price - entry) / entry * 100,
+                        'outcome_time': timestamp,
+                        'notes': f'Stop loss hit at ${price}'
+                    }
+                elif price >= target:
+                    return {
+                        'status': 'TARGET_HIT',
+                        'return_pct': (price - entry) / entry * 100,
+                        'outcome_time': timestamp,
+                        'notes': f'Take profit hit at ${price}'
+                    }
+            else:  # SHORT
+                if price >= stop:
+                    return {
+                        'status': 'STOPPED_OUT',
+                        'return_pct': (entry - price) / entry * 100,
+                        'outcome_time': timestamp,
+                        'notes': f'Stop loss hit at ${price}'
+                    }
+                elif price <= target:
+                    return {
+                        'status': 'TARGET_HIT',
+                        'return_pct': (entry - price) / entry * 100,
+                        'outcome_time': timestamp,
+                        'notes': f'Take profit hit at ${price}'
+                    }
+
+        # Neither stop nor target hit in 24h
+        current_price = price_data[-1][1]
+        return_pct = (current_price - entry) / entry * 100
+        if signal['direction'] == 'SHORT':
+            return_pct = -return_pct
+
+        return {
+            'status': 'TIMEOUT',
+            'return_pct': return_pct,
+            'outcome_time': price_data[-1][0],
+            'notes': f'24h expired, current unrealized P&L: {return_pct:.2f}%'
+        }
+
+    def calculate_agent_performance(self, agent_id: str, days: int = 30) -> dict:
+        """Calculate agent's actuarial performance for RAID scoring"""
+        results = self.db.query("""
+            SELECT
+                COUNT(*) as total_signals,
+                SUM(CASE WHEN status = 'TARGET_HIT' THEN 1 ELSE 0 END) as wins,
+                SUM(CASE WHEN status = 'STOPPED_OUT' THEN 1 ELSE 0 END) as losses,
+                AVG(actual_return) as avg_return,
+                MAX(actual_return) as max_return,
+                MIN(actual_return) as min_return
+            FROM signal_outcomes
+            WHERE agent_id = %s
+            AND signal_time > NOW() - INTERVAL '%s days'
+            AND status != 'PENDING'
+        """, (agent_id, days))
+
+        total = results['total_signals']
+        wins = results['wins']
+        losses = results['losses']
+
+        win_rate = wins / total if total > 0 else 0
+        avg_return = results['avg_return']
+
+        # Actuarial performance score (0.0 to 1.0)
+        # Combines win rate and average return
+        actuarial_score = (win_rate * 0.6 + (avg_return / 10) * 0.4)
+        actuarial_score = max(0.0, min(1.0, actuarial_score))
+
+        return {
+            'total_signals': total,
+            'win_rate': win_rate,
+            'avg_return_pct': avg_return,
+            'actuarial_score': actuarial_score,
+            'sharpe_ratio': self.calculate_sharpe(agent_id, days)
+        }
+```
+
+### 13.6 Enhanced Risk Management for Crypto
+
+Crypto-specific risk factors beyond traditional trading:
+
+```python
+class CryptoRiskManager:
+    """Crypto-specific risk management layer"""
+
+    def __init__(self):
+        self.risk_factors = {
+            'liquidation_cascade': 0.0,
+            'exchange_risk': 0.0,
+            'stablecoin_depeg': 0.0,
+            'network_congestion': 0.0,
+            'regulatory_shock': 0.0
+        }
+
+    def assess_systemic_risk(self) -> dict:
+        """Assess market-wide systemic risks"""
+
+        # Check for liquidation cascade risk
+        open_interest = self.get_aggregate_open_interest()
+        funding_rates = self.get_funding_rates()
+
+        if open_interest > 30e9 and funding_rates['btc'] > 0.1:
+            self.risk_factors['liquidation_cascade'] = 0.8
+
+        # Check stablecoin depeg risk
+        usdt_price = self.get_price('USDT')
+        usdc_price = self.get_price('USDC')
+
+        if abs(usdt_price - 1.0) > 0.02 or abs(usdc_price - 1.0) > 0.02:
+            self.risk_factors['stablecoin_depeg'] = 0.9
+
+        # Check exchange health
+        exchange_reserves = self.get_exchange_reserves()
+        for exchange, reserves in exchange_reserves.items():
+            if reserves['btc_ratio'] < 0.1:  # Less than 10% reserves
+                self.risk_factors['exchange_risk'] = 0.7
+
+        return self.risk_factors
+
+    def should_halt_trading(self) -> bool:
+        """Emergency halt if systemic risk too high"""
+        max_risk = max(self.risk_factors.values())
+        return max_risk > 0.75
+
+    def apply_position_limits(self, base_size: float) -> float:
+        """Reduce position size based on systemic risk"""
+        risk_multiplier = 1.0 - max(self.risk_factors.values())
+        adjusted_size = base_size * risk_multiplier
+        return max(0.1, adjusted_size)  # Minimum 10% position
+```
+
+### 13.7 On-Chain Metrics Integration
+
+Crypto's "fundamentals" - network health indicators:
+
+```python
+class OnChainMetrics:
+    """Track blockchain fundamentals for signal validation"""
+
+    def __init__(self, provider):
+        self.provider = provider
+
+    def get_network_health(self, asset: str) -> dict:
+        """Fetch on-chain metrics for validation"""
+
+        if asset == 'BTC':
+            metrics = {
+                'hash_rate': self.get_hash_rate(),
+                'difficulty': self.get_difficulty(),
+                'mempool_size': self.get_mempool_size(),
+                'avg_fee': self.get_avg_transaction_fee(),
+                'active_addresses': self.get_active_addresses(),
+                'exchange_netflow': self.get_exchange_netflow(),
+                'whale_movements': self.get_whale_transactions()
+            }
+
+            # Bullish indicators
+            bullish_score = 0
+            if metrics['exchange_netflow'] < -1000:  # BTC leaving exchanges
+                bullish_score += 0.3
+            if metrics['whale_movements']['accumulation'] > 0.7:
+                bullish_score += 0.3
+            if metrics['active_addresses'] > metrics['30d_avg']:
+                bullish_score += 0.2
+
+            metrics['sentiment'] = 'BULLISH' if bullish_score > 0.6 else 'NEUTRAL'
+            metrics['confidence'] = bullish_score
+
+            return metrics
+
+    def validate_signal_with_onchain(self, signal: str, metrics: dict) -> bool:
+        """Validate trading signal against on-chain data"""
+
+        if signal == 'BULLISH':
+            # Check if on-chain supports bullish thesis
+            return (
+                metrics['exchange_netflow'] < 0 and  # Coins leaving exchanges
+                metrics['whale_movements']['accumulation'] > 0.5
+            )
+        elif signal == 'BEARISH':
+            # Check if on-chain supports bearish thesis
+            return (
+                metrics['exchange_netflow'] > 0 and  # Coins entering exchanges
+                metrics['whale_movements']['distribution'] > 0.5
+            )
+        return True  # Neutral - no conflict
+```
+
+### 13.8 Continuous Operation Architecture
+
+24/7 monitoring with fault tolerance:
+
+```python
+class ContinuousAgentRunner:
+    """Run trading agent 24/7 with fault tolerance"""
+
+    def __init__(self, agent: TradingAgent):
+        self.agent = agent
+        self.is_running = False
+        self.health_status = 'HEALTHY'
+
+    async def run(self):
+        """Main event loop"""
+        self.is_running = True
+
+        # Initialize streams
+        twitter_stream = TwitterStream(['elon_musk', 'donald_trump'])
+        onchain_stream = OnChainStream(['BTC', 'ETH'])
+
+        while self.is_running:
+            try:
+                # Non-blocking event collection
+                events = await asyncio.gather(
+                    twitter_stream.poll(),
+                    onchain_stream.poll(),
+                    return_exceptions=True
+                )
+
+                for event in events:
+                    if isinstance(event, Exception):
+                        self.log_error(event)
+                        continue
+
+                    # Process event through agent
+                    await self.agent.process_event(event)
+
+                # Health check every 60 seconds
+                if self.should_health_check():
+                    await self.perform_health_check()
+
+                # Prevent tight loop
+                await asyncio.sleep(1)
+
+            except Exception as e:
+                self.log_error(e)
+                self.health_status = 'DEGRADED'
+
+                # Exponential backoff on errors
+                await asyncio.sleep(min(60, 2 ** self.error_count))
+
+    async def perform_health_check(self):
+        """Verify all systems operational"""
+        checks = {
+            'twitter_api': self.check_twitter_connection(),
+            'onchain_data': self.check_onchain_connection(),
+            'glassbox_sdk': self.check_glassbox_connection(),
+            'database': self.check_database_connection()
+        }
+
+        failures = [k for k, v in checks.items() if not v]
+
+        if len(failures) > 2:
+            self.health_status = 'CRITICAL'
+            self.alert_operator(f"Multiple systems down: {failures}")
+        elif len(failures) > 0:
+            self.health_status = 'DEGRADED'
+        else:
+            self.health_status = 'HEALTHY'
+```
+
+### 13.9 Database Schema Extensions
+
+Additional tables for crypto trading:
+
+```sql
+-- Signal outcomes for actuarial tracking
+CREATE TABLE signal_outcomes (
+    trace_id VARCHAR(100) PRIMARY KEY REFERENCES reasoning_traces(trace_id),
+    agent_id VARCHAR(66) REFERENCES agents(agent_id),
+    signal_time TIMESTAMP,
+    asset VARCHAR(10),
+    direction VARCHAR(10),  -- LONG/SHORT
+    entry_price DECIMAL(18,8),
+    stop_loss DECIMAL(18,8),
+    take_profit DECIMAL(18,8),
+    status VARCHAR(20),     -- PENDING/TARGET_HIT/STOPPED_OUT/TIMEOUT
+    actual_return DECIMAL(10,4),
+    outcome_time TIMESTAMP,
+    outcome_notes TEXT
+);
+
+-- On-chain metrics cache
+CREATE TABLE onchain_metrics (
+    id SERIAL PRIMARY KEY,
+    asset VARCHAR(10),
+    timestamp TIMESTAMP,
+    hash_rate BIGINT,
+    active_addresses INTEGER,
+    exchange_netflow DECIMAL(18,8),
+    whale_accumulation DECIMAL(4,3),
+    sentiment VARCHAR(20)
+);
+
+-- Systemic risk log
+CREATE TABLE systemic_risk_log (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP,
+    liquidation_cascade_risk DECIMAL(4,3),
+    exchange_risk DECIMAL(4,3),
+    stablecoin_depeg_risk DECIMAL(4,3),
+    network_congestion_risk DECIMAL(4,3),
+    regulatory_shock_risk DECIMAL(4,3),
+    trading_halted BOOLEAN
+);
+
+-- Indexes for performance
+CREATE INDEX idx_signal_outcomes_agent ON signal_outcomes(agent_id, signal_time);
+CREATE INDEX idx_signal_outcomes_status ON signal_outcomes(status, signal_time);
+CREATE INDEX idx_onchain_metrics_asset ON onchain_metrics(asset, timestamp);
+```
+
+---
+
+## 14. References
 
 - **Celestia:** https://celestia.org
 - **EigenDA:** https://www.eigenlayer.xyz/eigenda
@@ -512,9 +1150,11 @@ Agents cannot know which events are tests, forcing honest computation on all inp
 - **Pyth Network:** https://pyth.network
 - **zkTLS:** https://blog.opacity.network/zktls-the-future-of-private-data-verification
 - **AWS Nitro Enclaves:** https://aws.amazon.com/ec2/nitro/nitro-enclaves
+- **Glassnode (On-Chain Analytics):** https://glassnode.com
+- **CryptoQuant (Exchange Flows):** https://cryptoquant.com
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** March 22, 2026
+**Document Version:** 1.1
+**Last Updated:** March 25, 2026
 **Status:** Active Development
