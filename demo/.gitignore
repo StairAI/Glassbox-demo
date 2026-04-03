@@ -1,0 +1,43 @@
+# Environment variables
+config/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Data files
+data/*.db
+data/*.db-journal
+
+# Output files
+output/logs/*
+output/traces/*
+output/signals/*
+output/reports/*
+!output/logs/.gitkeep
+!output/traces/.gitkeep
+!output/signals/.gitkeep
+!output/reports/.gitkeep
+
+# Intermediate plans (optional - uncomment if you want to ignore)
+# intermediate_plan/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Walrus CLI
+.walrus/

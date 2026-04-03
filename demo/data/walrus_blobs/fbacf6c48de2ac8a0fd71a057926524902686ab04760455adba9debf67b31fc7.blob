@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:46:30+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "New U.S. Bill Backs Domestic Bitcoin Mining Industry",
+      "url": "cryptopanic://New U.S. Bill Backs Domestic Bitcoin Mining Industry",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.899278",
+  "source": "cryptopanic"
+}

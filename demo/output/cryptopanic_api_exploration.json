@@ -1,0 +1,826 @@
+{
+  "1. Basic Posts (No Filter)": {
+    "status": 200,
+    "data": {
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "title": "Crypto Market Experiences $124 Million Liquidation in 24 Hours",
+          "description": "In the past 24 hours, the cryptocurrency market witnessed liquidations totaling $124 million, according to ChainCatcher. Data from Coinglass reveals that long positions accounted for $49. 86 million, while short positions amounted to $74. 32 million",
+          "published_at": "2026-03-29T08:43:33Z",
+          "created_at": "2026-03-29T08:43:33+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "description": "Joao Wedson, founder of the cryptocurrency analysis platform Alphractal, explained why the Bitcoin price absolutely needs to be protected. Continue Reading: CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "published_at": "2026-03-29T08:38:06Z",
+          "created_at": "2026-03-29T08:38:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Sui Approaches 800K Users as Token Unlock Nears \u2014 Can Price Stay Resilient?",
+          "description": "Sui is gaining traction at a pivotal moment, combining rapid user growth with an imminent supply event. As of March 29, 2026, SUI is trading around $0. 8673, maintaining mild weekly gains, while its BTC pair holds near 0. 00001300",
+          "published_at": "2026-03-29T08:34:09Z",
+          "created_at": "2026-03-29T08:34:09+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Cardano Founder Charles Hoskinson Accuses Ripple of Using the CLARITY Act to Crush Competition",
+          "description": "One of crypto&#8217;s most outspoken founders has launched an attack on Ripple and its CEO Brad Garlinghouse, accusing the company of shaping the CLARITY Act in ways that benefit Ripple while placing devastating burdens on every other blockchain project in the industry. Charles Hoskinson, founder of Cardano, did not hold back. The Core Accusation Hoskinson&#8217;s &hellip;",
+          "published_at": "2026-03-29T08:33:40Z",
+          "created_at": "2026-03-29T08:33:40+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "\ufe0f RESULTS: Comments are split between bullish, bearish and \"dead inside\". \n\nSaying that we're uncertain would be an understatement.",
+          "description": null,
+          "published_at": "2026-03-29T08:26:51Z",
+          "created_at": "2026-03-29T08:26:51+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Opens Crypto Access With Bitcoin and Ether ETNs",
+          "description": "BNP Paribas now offers Bitcoin and Ether ETNs to French retail clients. Here&#8217;s what the move means for crypto access in banking. BNP Paribas is bringing crypto closer to everyday investors. The French banking giant announced it will offer six crypto-linked exchange-traded notes to retail clients in France",
+          "published_at": "2026-03-29T08:25:07Z",
+          "created_at": "2026-03-29T08:25:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": " BULLISH: KALSHI SECURES LICENSE TO OFFER MARGIN TRADING TO INSTITUTIONAL INVESTORS\n\nPrediction market platform @Kalshi has been cleared to offer margin trading to professional clients through its affiliate Kinetic Markets, which received a futures commission merchant license",
+          "description": null,
+          "published_at": "2026-03-29T08:16:00Z",
+          "created_at": "2026-03-29T08:16:00+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Middle East Conflict Intensifies with Strikes on Tehran and Drone Interceptions",
+          "description": "The ongoing conflict in the Middle East has escalated into its fifth week, with significant developments occurring over the weekend. Bloomberg posted on X that Israel launched strikes on Tehran, marking a notable intensification in the regional tensions. Meanwhile, Saudi Arabia successfully intercepted nearly a dozen drones, highlighting the growing complexity of the situation. This escalation follows the involvement of Yemen-based Houthi militants, who entered the conflict on Saturday, further complicating the geopolitical landscape in the region",
+          "published_at": "2026-03-29T08:15:12Z",
+          "created_at": "2026-03-29T08:15:12+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Coin Center\uff1a\u82e5CLARITY\u6cd5\u6848\u672a\u901a\u8fc7\uff0c\u7f8e\u56fd\u653f\u5e9c\u672a\u6765\u6216\u518d\u6b21\u52a0\u5f3a\u52a0\u5bc6\u76d1\u7ba1",
+          "description": "Odaily\u661f\u7403\u65e5\u62a5\u62a5\u9053\uff0cCoin Center \u6267\u884c\u8463\u4e8b Peter Van Valkenburgh \u8868\u793a\uff0c\u82e5\u52a0\u5bc6\u5e02\u573a\u7ed3\u6784\u6cd5\u6848\uff08CLARITY \u6cd5\u6848\uff09\u672a\u80fd\u901a\u8fc7\uff0c\u672a\u6765\u5bf9\u884c\u4e1a\u4e0d\u53cb\u597d\u7684\u7f8e\u56fd\u653f\u5e9c\u53ef\u80fd\u518d\u6b21\u52a0\u5f3a\u5bf9\u52a0\u5bc6\u884c\u4e1a\u7684\u76d1\u7ba1\uff0cCLARITY \u6cd5\u6848\u53ca Blockchain Regulatory Certainty Act \u4e2d\u6709\u5173\u5f00\u53d1\u8005\u4fdd\u62a4\u7684\u7acb\u6cd5\u82e5\u88ab\u5426\u51b3\uff0c\u800c\u4f18\u5148\u8003\u8651\u77ed\u671f\u5546\u4e1a\u5229\u76ca\u53ca\u5f53\u524d\u76d1\u7ba1\u73af\u5883\uff0c\u5c06\u53ef\u80fd\u4f7f\u884c\u4e1a\u9762\u4e34\u4e0d\u5229\u5c40\u9762\u3002 Peter Van Valkenburgh \u8868\u793a\uff0c\u901a\u8fc7 CLARITY \u6cd5\u6848\u7684\u76ee\u7684\u5728\u4e8e\u4ee5\u6cd5\u5f8b\u7ea6\u675f\u672a\u6765\u653f\u5e9c\uff0c\u800c\u975e\u4f9d\u8d56\u5f53\u524d\u653f\u5e9c\u6001\u5ea6\uff1b\u82e5\u7f3a\u4e4f\u76f8\u5173\u6cd5\u5f8b\u4fdd\u62a4\uff0c\u52a0\u5bc6\u884c\u4e1a\u53ef\u80fd\u53d7\u6267\u6cd5\u88c1\u91cf\u3001\u653f\u7b56\u53d8\u5316\u53ca\u4e0d\u786e\u5b9a\u6027\u5f71\u54cd\u3002\u636e\u5176\u62ab\u9732\uff0cCLARITY \u6cd5\u6848\u56e0\u94f6\u884c\u3001\u52a0\u5bc6\u4f01\u4e1a\u53ca\u7acb\u6cd5\u8005\u672a\u80fd\u5c31\u5173\u952e\u6761\u6b3e\uff08\u5305\u62ec\u662f\u5426\u5141\u8bb8\u7a33\u5b9a\u5e01\u6536\u76ca\uff09\u8fbe\u6210\u4e00\u81f4\uff0c\u5df2\u5728\u53c2\u8bae\u9662\u53d7\u963b\u3002\u8be5\u6cd5\u6848\u6db5\u76d6\u52a0\u5bc6\u4e2d\u4ecb\u6ce8\u518c\u6846\u67b6\u3001\u6570\u5b57\u8d44\u4ea7\u76d1\u7ba1\u53ca\u4ee3\u5e01\u5206\u7c7b\u7b49\u5185\u5bb9\u3002 \u6b64\u5916\uff0c\u5728\u7f3a\u4e4f\u7acb\u6cd5\u660e\u786e\u6027\u7684\u60c5\u51b5\u4e0b\uff0c\u672a\u6765\u653f\u5e9c\u53f8\u6cd5\u90e8\u53ef\u80fd\u52a0\u5f3a\u5bf9\u9690\u79c1\u5de5\u5177\u5f00\u53d1\u8005\u7684\u6267\u6cd5\uff0c\u5c06\u5176\u89c6\u4e3a\u672a\u6ce8\u518c\u7684\u8d44\u91d1\u4f20\u8f93\u673a\u6784\uff0c\u540c\u65f6\u73b0\u6709\u76d1\u7ba1\u89e3\u91ca\u6027\u6307\u5f15\u4e5f\u53ef\u80fd\u88ab\u64a4\u9500\u3002\u6b64\u524d\u7f8e\u56fd\u8bc1\u5238\u4ea4\u6613\u59d4\u5458\u4f1a\u524d\u4e3b\u5e2d Gary Gensler \u56e0\u901a\u8fc7\u6267\u6cd5\u884c\u52a8\u53ca\u4e0e\u52a0\u5bc6\u4f01\u4e1a\u8fbe\u6210\u548c\u89e3\u63a8\u52a8\u653f\u7b56\uff0c\u800c\u975e\u6b63\u5f0f\u89c4\u5219\u5236\u5b9a\uff0c\u53d7\u5230\u884c\u4e1a\u6279\u8bc4\uff0c\u81ea\u5176\u4e8e 2025 \u5e74 1 \u6708 20 \u65e5\u5378\u4efb\u4ee5\u6765\uff0c\u7f8e\u56fd\u8bc1\u5238\u4ea4\u6613\u59d4\u5458\u4f1a\u5df2\u64a4\u9500\u591a\u8d77\u9488\u5bf9\u52a0\u5bc6\u4f01\u4e1a\u7684\u957f\u671f\u6267\u6cd5\u6848\u4ef6\uff0c\u5e76\u53d1\u5e03\u66f4\u4e3a\u5bbd\u677e\u7684\u76d1\u7ba1\u6307\u5f15\u3002",
+          "published_at": "2026-03-29T08:13:38Z",
+          "created_at": "2026-03-29T08:13:38+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Coin Center: If CLARITY Act Fails to Pass, US Government May Strengthen Crypto Regulation in the Future",
+          "description": "According to Peter Van Valkenburgh, Executive Director of Coin Center, if the crypto market structure bill, the CLARITY Act, fails to pass, a future US government that is unfriendly to the industry may once again strengthen regulation of the crypto sector. If legislation concerning developer protections within the CLARITY Act and the Blockchain Regulatory Certainty Act is rejected, prioritizing short-term commercial interests and the current regulatory environment could potentially place the industry in an unfavorable position. As reported by Cointelegraph, Peter Van Valkenburgh stated that the purpose of passing the CLARITY Act is to legally bind future governments, rather than relying on the stance of the current administration. In the absence of such legal protections, the crypto industry could be impacted by enforcement discretion, policy changes, and uncertainty",
+          "published_at": "2026-03-29T08:11:26Z",
+          "created_at": "2026-03-29T08:11:26+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Shibarium's Growing Interest: 1,200 Applications Since August Launch",
+          "description": "Shibarium, the layer-2 network associated with Shiba Inu, has garnered significant attention since its launch in August 2023, attracting approximately 1,200 applications. According to NS3. AI, despite the initial lack of a rally in SHIB until late 2024, the network's development and related initiatives like ShibOS are expected to foster wider ecosystem adoption in the future.",
+          "published_at": "2026-03-29T08:09:01Z",
+          "created_at": "2026-03-29T08:09:01+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six Bitcoin, Ether ETNs for retail clients in France",
+          "description": "Crypto ETN adoption is spreading across Europe as banks expand offerings and the UK reopens retail access after lifting its ban.",
+          "published_at": "2026-03-29T08:05:18Z",
+          "created_at": "2026-03-29T08:05:18+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Could SpaceX\u2019s IPO Be the Catalyst That Sends Dogecoin Above $0.10?",
+          "description": "Speculation surrounding a potential SpaceX IPO is beginning to ripple through financial markets, and Dogecoin is once again at the center of attention. &#160; With Elon Musk closely tied to both the aerospace giant and the meme coin, traders are watching for a familiar pattern\u2014hype-driven momentum. As DOGE trades just below $0. 10, the setup suggests a [&#8230;] The post Could SpaceX\u2019s IPO Be the Catalyst That Sends Dogecoin Above $0",
+          "published_at": "2026-03-29T08:03:02Z",
+          "created_at": "2026-03-29T08:03:02+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "U.S. Ground Operation Plan Against Iran Sparks Debate",
+          "description": "A reported plan by the United States for ground operations against Iran has reignited discussions around the \"42-day Iraq conquest\" model. According to NS3. AI, the strategy is described as a surgical decapitation approach focusing on Kharg Island rather than a full-scale occupation. Various media outlets and think tanks have cautioned that this plan could potentially lead to a new strategic quagmire",
+          "published_at": "2026-03-29T08:02:51Z",
+          "created_at": "2026-03-29T08:02:51+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Netanyahu's Longstanding Focus on Iran Explained by RAND Expert",
+          "description": "Israeli Prime Minister Benjamin Netanyahu's focus on Iran has been a central theme of his political career for the past four decades. Bloomberg posted on X, RAND Israel Policy Chair Shira Efron discussed the motivations behind Netanyahu's decision to engage in conflict with Iran. Efron highlighted that for Netanyahu, Iran represents a significant ideological and strategic challenge, akin to a religious conviction. This perspective has shaped his foreign policy decisions and actions throughout his tenure",
+          "published_at": "2026-03-29T08:00:36Z",
+          "created_at": "2026-03-29T08:00:36+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Crazy stats shows @StellarOrg aggressive RWA transaction and volume growth from the start of 2026 with YoY growth up near 600%.\n\nThis report was by @AlliumLabs who are used by major players like @Grayscale and @Visa. Could they use the $XLM chain in the future?",
+          "description": null,
+          "published_at": "2026-03-29T08:00:32Z",
+          "created_at": "2026-03-29T08:00:32+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Tether Engages Big Four Auditor, Moves Toward Full Reserves Audit",
+          "description": "Tether has hired a Big Four auditor for a full financial audit of USDT reserves, a major transparency move for the largest stablecoin issuer amid expanding operations and regulatory focus.",
+          "published_at": "2026-03-29T08:00:00Z",
+          "created_at": "2026-03-29T08:00:00+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Solana SOL Crypto Loses Momentum Below $110 \u2013 Here Is Why Recovery Looks Difficult",
+          "description": "\"Solana's cryptocurrency, known as SOL, has recently experienced a noticeable decline in momentum as it trades below the $110 mark. This article aims to explore the various factors contributing to this downward trend and provide an analysis of the challenges the asset may face in achieving a recovery in the near future.\"",
+          "published_at": "2026-03-29T07:59:14Z",
+          "created_at": "2026-03-29T07:59:14+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Crypto Bill Delays Prompt Major Warning From White House Advisor",
+          "description": "A top White House advisor has warned cryptocurrency industry players, cautioning that obstructing the current Clarity Act compromise could leave the entire sector vulnerable to much harsher regulatory treatment under a future Democratic admin.",
+          "published_at": "2026-03-29T07:55:06Z",
+          "created_at": "2026-03-29T07:55:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "EY Launches Blockchain Privacy Sandbox for Enhanced Smart Contract Development",
+          "description": "EY has announced the introduction of the EY Blockchain Privacy Sandbox, a web-based development environment designed for enterprises and developers to build and test privacy-protecting smart contracts on EVM-compatible public blockchains. According to PANews, this sandbox utilizes the open-source zero-knowledge proof compiler, Starlight, allowing Solidity contracts to be transformed into privacy applications without the need for a local environment. It also offers sample projects to expedite development verification, significantly lowering the barriers for enterprises experimenting with privacy technologies. EY's global blockchain leader stated that this initiative aims to enable companies to effectively validate the feasibility of privacy applications before large-scale deployment, thereby promoting the widespread adoption of privacy innovations",
+          "published_at": "2026-03-29T07:52:48Z",
+          "created_at": "2026-03-29T07:52:48+00:00",
+          "kind": "news"
+        }
+      ]
+    }
+  },
+  "2. BTC Currency Filter": {
+    "status": 200,
+    "data": {
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "title": "CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "description": "Joao Wedson, founder of the cryptocurrency analysis platform Alphractal, explained why the Bitcoin price absolutely needs to be protected. Continue Reading: CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "published_at": "2026-03-29T08:38:06Z",
+          "created_at": "2026-03-29T08:38:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Sui Approaches 800K Users as Token Unlock Nears \u2014 Can Price Stay Resilient?",
+          "description": "Sui is gaining traction at a pivotal moment, combining rapid user growth with an imminent supply event. As of March 29, 2026, SUI is trading around $0. 8673, maintaining mild weekly gains, while its BTC pair holds near 0. 00001300",
+          "published_at": "2026-03-29T08:34:09Z",
+          "created_at": "2026-03-29T08:34:09+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Opens Crypto Access With Bitcoin and Ether ETNs",
+          "description": "BNP Paribas now offers Bitcoin and Ether ETNs to French retail clients. Here&#8217;s what the move means for crypto access in banking. BNP Paribas is bringing crypto closer to everyday investors. The French banking giant announced it will offer six crypto-linked exchange-traded notes to retail clients in France",
+          "published_at": "2026-03-29T08:25:07Z",
+          "created_at": "2026-03-29T08:25:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six Bitcoin, Ether ETNs for retail clients in France",
+          "description": "Crypto ETN adoption is spreading across Europe as banks expand offerings and the UK reopens retail access after lifting its ban.",
+          "published_at": "2026-03-29T08:05:18Z",
+          "created_at": "2026-03-29T08:05:18+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six crypto etns for France, regulated exposure to BTC and ETH",
+          "description": "BNP Paribas is broadening access to digital assets for French investors by adding crypto ETNs to its stock exchange offering. BNP Paribas adds six new crypto-asset ETNs BNP Paribas Commercial Banking in France has decided to expand its exchange-traded product range to include crypto-asset ETNs, giving retail clients a new way to gain exposure to [&#8230;]",
+          "published_at": "2026-03-29T07:39:51Z",
+          "created_at": "2026-03-29T07:39:51+00:00",
+          "kind": "blog"
+        },
+        {
+          "title": "The Real Reason Behind 75% Bitcoin Price Crash Prediction By This Expert",
+          "description": "Peter Brandt warns Bitcoin could crash 75% if history repeats the 2022 downturn, despite current strength near $110K. Bitcoin\u2019s $110K surge raises concern of market overheating, with rising liquidations and speculative interest signaling potential volatility. Technical indicators show Bitcoin&#8217;s bullish momentum slowing, with resistance near $110K and support around $108K\u2013$108. 5K",
+          "published_at": "2026-03-29T07:13:36Z",
+          "created_at": "2026-03-29T07:13:36+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Between War and the Fed: The Crisis Testing the Digital Gold Myth",
+          "description": "US-Iran tensions, oil above $100, and the Fed holding at 3. 75%. Bitcoin oscillates between $65,000 and $70,000. But the real question is not the price \u2014 it is whether BTC still holds up as a credible store of value in times of crisis.",
+          "published_at": "2026-03-29T07:13:08Z",
+          "created_at": "2026-03-29T07:13:08+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US PPI Inflation Comes in at 2.6%, JPMorgan Gives Dire Warning",
+          "description": "Key Insights: The headline PPI inflation comes in at 2. 6% while the PPI month-over-month inflation dropped despite Trump tariff jitters. The PPI increased slowly month-over-month, eventually resulting in traders fully pricing two Fed rate cuts this year. Bitcoin and other crypto prices fell ahead of Friday\u2019s options expiry and geopolitical tensions in the Middle East",
+          "published_at": "2026-03-29T07:09:55Z",
+          "created_at": "2026-03-29T07:09:55+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin News: MicroStrategy\u2019s Michael Saylor Proposes Apple to Buy BTC",
+          "description": "Key Insights: Strategy Chairman Michael Saylor wants Apple to replace stock buybacks with Bitcoin investments. Online support grows as crypto advocates rally behind the bold proposal. Michael Saylor\u2019s track record of Bitcoin advocacy includes similar pitches to Tesla and Microsoft",
+          "published_at": "2026-03-29T07:09:52Z",
+          "created_at": "2026-03-29T07:09:52+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US CPI Inflation Rises to 2.4%, What\u2019s Next for Bitcoin Price",
+          "description": "Key Insights: The CPI inflation rose to 2. 4% in the U. S. comes but came below a forecast of 2",
+          "published_at": "2026-03-29T07:09:33Z",
+          "created_at": "2026-03-29T07:09:33+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Jack Mallers: I Price Bitcoin the Same Way I Value My Life",
+          "description": "Jack Mallers explains why the only two truly scarce things in life are your time on earth and Bitcoin's 21 million supply cap. Click here to get 10% off bitcoin 2026 Conference in Las Vegas: https://tickets. b. tc/event/bitcoin-2026?promoCodeTask=apply&amp;promoCodeInput=YT10 #JackMallers #Bitcoin #BTC #CryptoCurrency #Crypto #21Million #BitcoinScarcity #HODL #BitcoinConference #Strike #Investing #Shorts DISCLAIMER: The views and opinions expressed in this show are those of the participants and do not necessarily reflect the official policy or position of BTC Inc",
+          "published_at": "2026-03-29T07:00:00Z",
+          "created_at": "2026-03-29T07:00:00+00:00",
+          "kind": "media"
+        },
+        {
+          "title": "",
+          "description": "\ud83d\udcc9 \u6316\u77ff\u8d8a\u6765\u8d8a\u96be\uff0c\u8f6c\u578b\u8d8a\u6765\u8d8a\u5feb - CoinShares \u62a5\u544a\u6307\u51fa\uff0c\u4e0a\u5e02\u77ff\u4f01\u6316 1 \u679a BTC \u7684\u5e73\u5747\u6210\u672c\u5df2\u8fbe 79,995 \u7f8e\u5143 - \u4f46 BTC \u73b0\u4ef7\u4ecd\u5f98\u5f8a\u5728 6. 8 \u4e07~7 \u4e07\u7f8e\u5143\uff0c\u610f\u5473\u7740\u6316\u4e00\u679a\u53ef\u80fd\u4e8f\u635f\u8fd1 1. 9 \u4e07\u7f8e\u5143 - \u5728\u76c8\u5229\u538b\u529b\u4e0b\uff0c\u77ff\u4f01\u6b63\u5927\u4e3e\u62bc\u6ce8 AI \u4e0e\u9ad8\u6027\u80fd\u8ba1\u7b97\uff08HPC\uff09\uff0c\u76f8\u5173\u5408\u540c\u603b\u89c4\u6a21\u5df2\u8d85\u8fc7 700 \u4ebf\u7f8e\u5143 - \u4ece\u201c\u6bd4\u7279\u5e01\u77ff\u5de5\u201d\u5230\u201c\u6570\u636e\u4e2d\u5fc3\u8fd0\u8425\u5546\u201d\uff0c\u8fd9\u573a\u884c\u4e1a\u8f6c\u5411\uff0c\u6216\u8bb8\u6b63\u5728\u91cd\u5851\u77ff\u4e1a\u7684\u5e95\u5c42\u903b\u8f91",
+          "published_at": "2026-03-29T06:59:50Z",
+          "created_at": "2026-03-29T06:59:50+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "MARA\u2019s pivot to AI is net positive for Bitcoin, experts believe \u2013 Here\u2019s why",
+          "description": "Analyst projected that sustained West Asia crisis could offer small BTC miners massive opportunities.",
+          "published_at": "2026-03-29T06:00:57Z",
+          "created_at": "2026-03-29T06:00:57+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "USD/JPY Hits 160 Again \u2013 Is a Bitcoin Crash Coming Next?",
+          "description": "USD/JPY crosses 160 for the first time since July 2024, raising attention from global investors. July 2024 BOJ intervention dropped USD/JPY 20 points, Bitcoin 30%, and S&#38;P 500 10%. Strengthening yen raises borrowing costs for leveraged investors, affecting stocks and crypto markets",
+          "published_at": "2026-03-29T05:45:17Z",
+          "created_at": "2026-03-29T05:45:17+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin BTC Crypto Faces Macro Pressure From Rising Yields \u2013 Here Is What Traders Should Watch",
+          "description": "\"Bitcoin (BTC), the leading cryptocurrency, is currently experiencing significant macroeconomic pressure driven by the rising yields in the bond market. This situation poses challenges for traders, and here are the key factors they should monitor closely to navigate the evolving landscape effectively.\"",
+          "published_at": "2026-03-29T05:32:10Z",
+          "created_at": "2026-03-29T05:32:10+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Sell-Off Reveals Whale-Driven Rotation as Retail Capitulates and Leverage Resets",
+          "description": "Whales drove the sell-off, absorbed liquidity, while retail exited and leverage flushed across the market. Bitcoin\u2019s recent price action points to a calculated liquidity event rather than broad market weakness. A sharp decline initially appeared tied to macro uncertainty, but the underlying data tells a different story",
+          "published_at": "2026-03-29T04:15:10Z",
+          "created_at": "2026-03-29T04:15:10+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "HUT 8 Builds Flex Data Centers For Ai, Bitcoin",
+          "description": "Hut 8 is building modular data centers that can switch between AI workloads and bitcoin mining, aiming to improve flexibility and adapt to shifting demand for computing power.",
+          "published_at": "2026-03-29T04:00:00Z",
+          "created_at": "2026-03-29T04:00:00+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin: Not Just a Risk Asset, Data Reveals Truth",
+          "description": "Oshins talks about Bitcoin: Not Just a Risk Asset, Data Reveals Truth Brought to you by Bitcoinwell. com a bitcoin-only platform on a mission to enable independence. #bitcoin #bitcoinnews #shortsopen",
+          "published_at": "2026-03-29T04:00:00Z",
+          "created_at": "2026-03-29T04:00:00+00:00",
+          "kind": "media"
+        },
+        {
+          "title": "Bitcoin(BTC) Surpasses 67,000 USDT with a 1.36% Increase in 24 Hours",
+          "description": "On Mar 29, 2026, 03:17 AM(UTC). According to Binance Market Data, Bitcoin has crossed the 67,000 USDT benchmark and is now trading at 67,052. 148438 USDT, with a narrowed 1. 36% increase in 24 hours.",
+          "published_at": "2026-03-29T03:17:07Z",
+          "created_at": "2026-03-29T03:17:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Launches Six Crypto Asset-Linked ETNs",
+          "description": "BNP Paribas has officially announced the launch of six exchange-traded notes (ETNs) linked to crypto assets, providing investors with indirect exposure to assets like Bitcoin and Ethereum without the need to hold them directly. According to Foresight News, these products are based on the performance of crypto assets and are issued by several well-known asset management firms, adhering to the MiFID II regulatory framework to enhance investor protection. The ETNs will be available for subscription to individual clients, entrepreneurial clients, and private banking clients in France starting March 30, 2026, with plans to gradually expand to a broader wealth management clientele.",
+          "published_at": "2026-03-29T03:08:40Z",
+          "created_at": "2026-03-29T03:08:40+00:00",
+          "kind": "news"
+        }
+      ]
+    }
+  },
+  "3. SUI Currency Filter": {
+    "status": 200,
+    "data": {
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "title": "Sui Approaches 800K Users as Token Unlock Nears \u2014 Can Price Stay Resilient?",
+          "description": "Sui is gaining traction at a pivotal moment, combining rapid user growth with an imminent supply event. As of March 29, 2026, SUI is trading around $0. 8673, maintaining mild weekly gains, while its BTC pair holds near 0. 00001300",
+          "published_at": "2026-03-29T08:34:09Z",
+          "created_at": "2026-03-29T08:34:09+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Sui Network Upgrades to Enhance Security and Functionality",
+          "description": "Sui has officially announced the upgrade of its mainnet to version V1. 68. 1, alongside a protocol update to version 118. According to Foresight News, the upgrade introduces address aliases on the mainnet, enhances metadata security within the Sui System, and resolves issues that could lead to full node crashes during simulations of transactions with invalid fund withdrawals.",
+          "published_at": "2026-03-29T01:43:33Z",
+          "created_at": "2026-03-29T01:43:33+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Here\u2019s Why Bitcoin Still Leads Crypto: SUI Founder",
+          "description": "A SUI founder says Bitcoin&#8217;s dominance comes down to one thing: ownership. Here&#8217;s what crypto needs to do to match that standard. Bitcoin&#8217;s dominance in crypto has never really faded. One SUI founder, Evan, recently shared his take on why that is",
+          "published_at": "2026-03-27T07:00:27Z",
+          "created_at": "2026-03-27T07:00:27+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "4 Major Reasons Why SUI Crypto May Lead Next Crypto Market Rally",
+          "description": "Key Insights: Sui crypto soars to eighth position in Total Value Locked at nearly $2 billion in an unreal bullish DeFi push. 10% of TVL are Bitcoin-related assets, driving increased demand on the Sui network. SUI ETF and ecosystem growth might support the coin\u2019s rally to a new ATH",
+          "published_at": "2026-03-26T18:15:07Z",
+          "created_at": "2026-03-26T18:15:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Launch of MemWal: Enhancing AI Agents' Memory Capabilities on Sui Network",
+          "description": "Walrus, a storage protocol operating on the Sui network, has introduced MemWal, a specialized memory layer aimed at improving AI agents' functionality. According to NS3. AI, MemWal is crafted to enable AI agents to permanently store and share conversational and reasoning data, facilitating applications like multi-agent collaboration.",
+          "published_at": "2026-03-25T17:33:28Z",
+          "created_at": "2026-03-25T17:33:28+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "SUI User Growth Surges as Price Hits a Key Turning Point \u2014 What\u2019s Next?",
+          "description": "The Sui platform is seeing a sharp rise in user activity, with both daily active users and new accounts spiking in recent weeks. At one point, new users surged close to the 800K mark, highlighting a sudden wave of attention on the network. But the price isn\u2019t reflecting that strength\u2014at least not yet. In the &hellip;",
+          "published_at": "2026-03-25T13:22:07Z",
+          "created_at": "2026-03-25T13:22:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "MNT price prediction as Mantle DeFi TVL surpasses that of Sui",
+          "description": "Mantle&#8217;s DeFi TVL surges, surpassing major rival networks. Mantle (MNT) price lags despite strong ecosystem growth. The key MNT price levels to watch are the $0. 75 resistance and the $0",
+          "published_at": "2026-03-24T17:09:54Z",
+          "created_at": "2026-03-24T17:09:54+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Revolut Introduces SUI Token Staking Feature",
+          "description": "British fintech company Revolut has expanded its offerings by adding support for SUI token staking. According to Foresight News, users can now directly stake SUI tokens through the Revolut app, enhancing the platform's cryptocurrency services.",
+          "published_at": "2026-03-24T06:06:41Z",
+          "created_at": "2026-03-24T06:06:41+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Mantle DeFi TVL Surpasses Avalanche and Sui, Crossing $755M With +230% Growth in 6 Months",
+          "description": "Mantle DeFi TVL Surpasses Avalanche and Sui, Crossing $755M With +230% Growth in 6 Months",
+          "published_at": "2026-03-23T09:46:54Z",
+          "created_at": "2026-03-23T09:46:54+00:00",
+          "kind": "news"
+        }
+      ]
+    }
+  },
+  "4. Multiple Currencies (BTC,ETH)": {
+    "status": 200,
+    "data": {
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "title": "CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "description": "Joao Wedson, founder of the cryptocurrency analysis platform Alphractal, explained why the Bitcoin price absolutely needs to be protected. Continue Reading: CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "published_at": "2026-03-29T08:38:06Z",
+          "created_at": "2026-03-29T08:38:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Sui Approaches 800K Users as Token Unlock Nears \u2014 Can Price Stay Resilient?",
+          "description": "Sui is gaining traction at a pivotal moment, combining rapid user growth with an imminent supply event. As of March 29, 2026, SUI is trading around $0. 8673, maintaining mild weekly gains, while its BTC pair holds near 0. 00001300",
+          "published_at": "2026-03-29T08:34:09Z",
+          "created_at": "2026-03-29T08:34:09+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Opens Crypto Access With Bitcoin and Ether ETNs",
+          "description": "BNP Paribas now offers Bitcoin and Ether ETNs to French retail clients. Here&#8217;s what the move means for crypto access in banking. BNP Paribas is bringing crypto closer to everyday investors. The French banking giant announced it will offer six crypto-linked exchange-traded notes to retail clients in France",
+          "published_at": "2026-03-29T08:25:07Z",
+          "created_at": "2026-03-29T08:25:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six Bitcoin, Ether ETNs for retail clients in France",
+          "description": "Crypto ETN adoption is spreading across Europe as banks expand offerings and the UK reopens retail access after lifting its ban.",
+          "published_at": "2026-03-29T08:05:18Z",
+          "created_at": "2026-03-29T08:05:18+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six crypto etns for France, regulated exposure to BTC and ETH",
+          "description": "BNP Paribas is broadening access to digital assets for French investors by adding crypto ETNs to its stock exchange offering. BNP Paribas adds six new crypto-asset ETNs BNP Paribas Commercial Banking in France has decided to expand its exchange-traded product range to include crypto-asset ETNs, giving retail clients a new way to gain exposure to [&#8230;]",
+          "published_at": "2026-03-29T07:39:51Z",
+          "created_at": "2026-03-29T07:39:51+00:00",
+          "kind": "blog"
+        },
+        {
+          "title": "The Real Reason Behind 75% Bitcoin Price Crash Prediction By This Expert",
+          "description": "Peter Brandt warns Bitcoin could crash 75% if history repeats the 2022 downturn, despite current strength near $110K. Bitcoin\u2019s $110K surge raises concern of market overheating, with rising liquidations and speculative interest signaling potential volatility. Technical indicators show Bitcoin&#8217;s bullish momentum slowing, with resistance near $110K and support around $108K\u2013$108. 5K",
+          "published_at": "2026-03-29T07:13:36Z",
+          "created_at": "2026-03-29T07:13:36+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Top Expert Predicts Ethereum Price Rally to $4k: Here\u2019s Why ETH May Rally Ahead",
+          "description": "Ethereum price has reclaimed the 200 Moving Average as it moved past $2,700. Amid the bullish trend, the Ethereum price will likely rally towards $4,000 per expert projections. Ethereum whale activity has continued to increase as it excels in the DeFi ecosystem. Ethereum (ETH) is currently demonstrating its prowess as the leading market altcoin",
+          "published_at": "2026-03-29T07:13:21Z",
+          "created_at": "2026-03-29T07:13:21+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Between War and the Fed: The Crisis Testing the Digital Gold Myth",
+          "description": "US-Iran tensions, oil above $100, and the Fed holding at 3. 75%. Bitcoin oscillates between $65,000 and $70,000. But the real question is not the price \u2014 it is whether BTC still holds up as a credible store of value in times of crisis.",
+          "published_at": "2026-03-29T07:13:08Z",
+          "created_at": "2026-03-29T07:13:08+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US PPI Inflation Comes in at 2.6%, JPMorgan Gives Dire Warning",
+          "description": "Key Insights: The headline PPI inflation comes in at 2. 6% while the PPI month-over-month inflation dropped despite Trump tariff jitters. The PPI increased slowly month-over-month, eventually resulting in traders fully pricing two Fed rate cuts this year. Bitcoin and other crypto prices fell ahead of Friday\u2019s options expiry and geopolitical tensions in the Middle East",
+          "published_at": "2026-03-29T07:09:55Z",
+          "created_at": "2026-03-29T07:09:55+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin News: MicroStrategy\u2019s Michael Saylor Proposes Apple to Buy BTC",
+          "description": "Key Insights: Strategy Chairman Michael Saylor wants Apple to replace stock buybacks with Bitcoin investments. Online support grows as crypto advocates rally behind the bold proposal. Michael Saylor\u2019s track record of Bitcoin advocacy includes similar pitches to Tesla and Microsoft",
+          "published_at": "2026-03-29T07:09:52Z",
+          "created_at": "2026-03-29T07:09:52+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Breaking: Societe Generale Launches USD CoinVertible (USDCV) Stablecoin",
+          "description": "Key Insights: Societe Generale\u2019s crypto arm Societe Generale-FORGE announced USD CoinVertible (USD) stablecoin launch. USDCV stablecoin will exist on both the Ethereum and Solana public blockchains, which could increase its adioption. The stablecoin issuer had already launched EUR CoinVertible (EURCV) stablecoin in April 2023 and shared collateral composition and valuation on a daily basis",
+          "published_at": "2026-03-29T07:09:43Z",
+          "created_at": "2026-03-29T07:09:43+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "19,000,000 RLUSD Stablecoin Minted on Ethereum After 30-Day Hiatus",
+          "description": "After 30 days, Ripple resumed RLUSD activity with a 19 million token mint on Ethereum. The minting comes just days before the U. S. Senate votes on the GENIUS Act, a bill that could tighten stablecoin regulations",
+          "published_at": "2026-03-29T07:09:34Z",
+          "created_at": "2026-03-29T07:09:34+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US CPI Inflation Rises to 2.4%, What\u2019s Next for Bitcoin Price",
+          "description": "Key Insights: The CPI inflation rose to 2. 4% in the U. S. comes but came below a forecast of 2",
+          "published_at": "2026-03-29T07:09:33Z",
+          "created_at": "2026-03-29T07:09:33+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Jack Mallers: I Price Bitcoin the Same Way I Value My Life",
+          "description": "Jack Mallers explains why the only two truly scarce things in life are your time on earth and Bitcoin's 21 million supply cap. Click here to get 10% off bitcoin 2026 Conference in Las Vegas: https://tickets. b. tc/event/bitcoin-2026?promoCodeTask=apply&amp;promoCodeInput=YT10 #JackMallers #Bitcoin #BTC #CryptoCurrency #Crypto #21Million #BitcoinScarcity #HODL #BitcoinConference #Strike #Investing #Shorts DISCLAIMER: The views and opinions expressed in this show are those of the participants and do not necessarily reflect the official policy or position of BTC Inc",
+          "published_at": "2026-03-29T07:00:00Z",
+          "created_at": "2026-03-29T07:00:00+00:00",
+          "kind": "media"
+        },
+        {
+          "title": "",
+          "description": "\ud83d\udcc9 \u6316\u77ff\u8d8a\u6765\u8d8a\u96be\uff0c\u8f6c\u578b\u8d8a\u6765\u8d8a\u5feb - CoinShares \u62a5\u544a\u6307\u51fa\uff0c\u4e0a\u5e02\u77ff\u4f01\u6316 1 \u679a BTC \u7684\u5e73\u5747\u6210\u672c\u5df2\u8fbe 79,995 \u7f8e\u5143 - \u4f46 BTC \u73b0\u4ef7\u4ecd\u5f98\u5f8a\u5728 6. 8 \u4e07~7 \u4e07\u7f8e\u5143\uff0c\u610f\u5473\u7740\u6316\u4e00\u679a\u53ef\u80fd\u4e8f\u635f\u8fd1 1. 9 \u4e07\u7f8e\u5143 - \u5728\u76c8\u5229\u538b\u529b\u4e0b\uff0c\u77ff\u4f01\u6b63\u5927\u4e3e\u62bc\u6ce8 AI \u4e0e\u9ad8\u6027\u80fd\u8ba1\u7b97\uff08HPC\uff09\uff0c\u76f8\u5173\u5408\u540c\u603b\u89c4\u6a21\u5df2\u8d85\u8fc7 700 \u4ebf\u7f8e\u5143 - \u4ece\u201c\u6bd4\u7279\u5e01\u77ff\u5de5\u201d\u5230\u201c\u6570\u636e\u4e2d\u5fc3\u8fd0\u8425\u5546\u201d\uff0c\u8fd9\u573a\u884c\u4e1a\u8f6c\u5411\uff0c\u6216\u8bb8\u6b63\u5728\u91cd\u5851\u77ff\u4e1a\u7684\u5e95\u5c42\u903b\u8f91",
+          "published_at": "2026-03-29T06:59:50Z",
+          "created_at": "2026-03-29T06:59:50+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Ethereum ETH Crypto Builds Quietly as Speed Debate Grows \u2013 Here Is What This Means Long Term",
+          "description": "\"Ethereum, often referred to as ETH in the cryptocurrency community, is steadily advancing and developing its capabilities behind the scenes, even as discussions and debates regarding transaction speed and network efficiency intensify. This situation raises important implications for the future of the Ethereum ecosystem and its broader impact on the cryptocurrency market as a whole. In this article, we will explore the significance of these developments and what they might mean for the long-term trajectory of Ethereum and its various applications in decentralized finance, smart contracts, and blockchain technology.\"",
+          "published_at": "2026-03-29T06:55:06Z",
+          "created_at": "2026-03-29T06:55:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Solana SOL Crypto Surpasses Ethereum in Developers \u2013 Here Is Why This Could Drive Growth",
+          "description": "\"Recent analysis reveals that Solana's cryptocurrency, known as SOL, has surpassed Ethereum in terms of the number of active developers contributing to its ecosystem. This shift in developer engagement could potentially be a significant factor driving Solana's growth in the competitive landscape of blockchain technology. Factors such as Solana's high transaction speeds, lower fees, and scalability solutions are attracting developers seeking to build innovative decentralized applications and projects, further establishing Solana as a formidable contender in the crypto space.\"",
+          "published_at": "2026-03-29T06:35:29Z",
+          "created_at": "2026-03-29T06:35:29+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "MARA\u2019s pivot to AI is net positive for Bitcoin, experts believe \u2013 Here\u2019s why",
+          "description": "Analyst projected that sustained West Asia crisis could offer small BTC miners massive opportunities.",
+          "published_at": "2026-03-29T06:00:57Z",
+          "created_at": "2026-03-29T06:00:57+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "21Shares to Distribute ETH and SOL ETF Staking Proceeds to Investors on March 31",
+          "description": "21Shares will distribute staking proceeds from its Ethereum and Solana ETF products to investors on March 31, passing through on-chain yield directly to fund holders.",
+          "published_at": "2026-03-29T05:47:59Z",
+          "created_at": "2026-03-29T05:47:59+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "USD/JPY Hits 160 Again \u2013 Is a Bitcoin Crash Coming Next?",
+          "description": "USD/JPY crosses 160 for the first time since July 2024, raising attention from global investors. July 2024 BOJ intervention dropped USD/JPY 20 points, Bitcoin 30%, and S&#38;P 500 10%. Strengthening yen raises borrowing costs for leveraged investors, affecting stocks and crypto markets",
+          "published_at": "2026-03-29T05:45:17Z",
+          "created_at": "2026-03-29T05:45:17+00:00",
+          "kind": "news"
+        }
+      ]
+    }
+  },
+  "5. Filter by Kind (news only)": {
+    "status": 200,
+    "data": {
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "title": "CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "description": "Joao Wedson, founder of the cryptocurrency analysis platform Alphractal, explained why the Bitcoin price absolutely needs to be protected. Continue Reading: CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "published_at": "2026-03-29T08:38:06Z",
+          "created_at": "2026-03-29T08:38:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Sui Approaches 800K Users as Token Unlock Nears \u2014 Can Price Stay Resilient?",
+          "description": "Sui is gaining traction at a pivotal moment, combining rapid user growth with an imminent supply event. As of March 29, 2026, SUI is trading around $0. 8673, maintaining mild weekly gains, while its BTC pair holds near 0. 00001300",
+          "published_at": "2026-03-29T08:34:09Z",
+          "created_at": "2026-03-29T08:34:09+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Opens Crypto Access With Bitcoin and Ether ETNs",
+          "description": "BNP Paribas now offers Bitcoin and Ether ETNs to French retail clients. Here&#8217;s what the move means for crypto access in banking. BNP Paribas is bringing crypto closer to everyday investors. The French banking giant announced it will offer six crypto-linked exchange-traded notes to retail clients in France",
+          "published_at": "2026-03-29T08:25:07Z",
+          "created_at": "2026-03-29T08:25:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six Bitcoin, Ether ETNs for retail clients in France",
+          "description": "Crypto ETN adoption is spreading across Europe as banks expand offerings and the UK reopens retail access after lifting its ban.",
+          "published_at": "2026-03-29T08:05:18Z",
+          "created_at": "2026-03-29T08:05:18+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "The Real Reason Behind 75% Bitcoin Price Crash Prediction By This Expert",
+          "description": "Peter Brandt warns Bitcoin could crash 75% if history repeats the 2022 downturn, despite current strength near $110K. Bitcoin\u2019s $110K surge raises concern of market overheating, with rising liquidations and speculative interest signaling potential volatility. Technical indicators show Bitcoin&#8217;s bullish momentum slowing, with resistance near $110K and support around $108K\u2013$108. 5K",
+          "published_at": "2026-03-29T07:13:36Z",
+          "created_at": "2026-03-29T07:13:36+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Between War and the Fed: The Crisis Testing the Digital Gold Myth",
+          "description": "US-Iran tensions, oil above $100, and the Fed holding at 3. 75%. Bitcoin oscillates between $65,000 and $70,000. But the real question is not the price \u2014 it is whether BTC still holds up as a credible store of value in times of crisis.",
+          "published_at": "2026-03-29T07:13:08Z",
+          "created_at": "2026-03-29T07:13:08+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US PPI Inflation Comes in at 2.6%, JPMorgan Gives Dire Warning",
+          "description": "Key Insights: The headline PPI inflation comes in at 2. 6% while the PPI month-over-month inflation dropped despite Trump tariff jitters. The PPI increased slowly month-over-month, eventually resulting in traders fully pricing two Fed rate cuts this year. Bitcoin and other crypto prices fell ahead of Friday\u2019s options expiry and geopolitical tensions in the Middle East",
+          "published_at": "2026-03-29T07:09:55Z",
+          "created_at": "2026-03-29T07:09:55+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin News: MicroStrategy\u2019s Michael Saylor Proposes Apple to Buy BTC",
+          "description": "Key Insights: Strategy Chairman Michael Saylor wants Apple to replace stock buybacks with Bitcoin investments. Online support grows as crypto advocates rally behind the bold proposal. Michael Saylor\u2019s track record of Bitcoin advocacy includes similar pitches to Tesla and Microsoft",
+          "published_at": "2026-03-29T07:09:52Z",
+          "created_at": "2026-03-29T07:09:52+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US CPI Inflation Rises to 2.4%, What\u2019s Next for Bitcoin Price",
+          "description": "Key Insights: The CPI inflation rose to 2. 4% in the U. S. comes but came below a forecast of 2",
+          "published_at": "2026-03-29T07:09:33Z",
+          "created_at": "2026-03-29T07:09:33+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "",
+          "description": "\ud83d\udcc9 \u6316\u77ff\u8d8a\u6765\u8d8a\u96be\uff0c\u8f6c\u578b\u8d8a\u6765\u8d8a\u5feb - CoinShares \u62a5\u544a\u6307\u51fa\uff0c\u4e0a\u5e02\u77ff\u4f01\u6316 1 \u679a BTC \u7684\u5e73\u5747\u6210\u672c\u5df2\u8fbe 79,995 \u7f8e\u5143 - \u4f46 BTC \u73b0\u4ef7\u4ecd\u5f98\u5f8a\u5728 6. 8 \u4e07~7 \u4e07\u7f8e\u5143\uff0c\u610f\u5473\u7740\u6316\u4e00\u679a\u53ef\u80fd\u4e8f\u635f\u8fd1 1. 9 \u4e07\u7f8e\u5143 - \u5728\u76c8\u5229\u538b\u529b\u4e0b\uff0c\u77ff\u4f01\u6b63\u5927\u4e3e\u62bc\u6ce8 AI \u4e0e\u9ad8\u6027\u80fd\u8ba1\u7b97\uff08HPC\uff09\uff0c\u76f8\u5173\u5408\u540c\u603b\u89c4\u6a21\u5df2\u8d85\u8fc7 700 \u4ebf\u7f8e\u5143 - \u4ece\u201c\u6bd4\u7279\u5e01\u77ff\u5de5\u201d\u5230\u201c\u6570\u636e\u4e2d\u5fc3\u8fd0\u8425\u5546\u201d\uff0c\u8fd9\u573a\u884c\u4e1a\u8f6c\u5411\uff0c\u6216\u8bb8\u6b63\u5728\u91cd\u5851\u77ff\u4e1a\u7684\u5e95\u5c42\u903b\u8f91",
+          "published_at": "2026-03-29T06:59:50Z",
+          "created_at": "2026-03-29T06:59:50+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "MARA\u2019s pivot to AI is net positive for Bitcoin, experts believe \u2013 Here\u2019s why",
+          "description": "Analyst projected that sustained West Asia crisis could offer small BTC miners massive opportunities.",
+          "published_at": "2026-03-29T06:00:57Z",
+          "created_at": "2026-03-29T06:00:57+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "USD/JPY Hits 160 Again \u2013 Is a Bitcoin Crash Coming Next?",
+          "description": "USD/JPY crosses 160 for the first time since July 2024, raising attention from global investors. July 2024 BOJ intervention dropped USD/JPY 20 points, Bitcoin 30%, and S&#38;P 500 10%. Strengthening yen raises borrowing costs for leveraged investors, affecting stocks and crypto markets",
+          "published_at": "2026-03-29T05:45:17Z",
+          "created_at": "2026-03-29T05:45:17+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin BTC Crypto Faces Macro Pressure From Rising Yields \u2013 Here Is What Traders Should Watch",
+          "description": "\"Bitcoin (BTC), the leading cryptocurrency, is currently experiencing significant macroeconomic pressure driven by the rising yields in the bond market. This situation poses challenges for traders, and here are the key factors they should monitor closely to navigate the evolving landscape effectively.\"",
+          "published_at": "2026-03-29T05:32:10Z",
+          "created_at": "2026-03-29T05:32:10+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Sell-Off Reveals Whale-Driven Rotation as Retail Capitulates and Leverage Resets",
+          "description": "Whales drove the sell-off, absorbed liquidity, while retail exited and leverage flushed across the market. Bitcoin\u2019s recent price action points to a calculated liquidity event rather than broad market weakness. A sharp decline initially appeared tied to macro uncertainty, but the underlying data tells a different story",
+          "published_at": "2026-03-29T04:15:10Z",
+          "created_at": "2026-03-29T04:15:10+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "HUT 8 Builds Flex Data Centers For Ai, Bitcoin",
+          "description": "Hut 8 is building modular data centers that can switch between AI workloads and bitcoin mining, aiming to improve flexibility and adapt to shifting demand for computing power.",
+          "published_at": "2026-03-29T04:00:00Z",
+          "created_at": "2026-03-29T04:00:00+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin(BTC) Surpasses 67,000 USDT with a 1.36% Increase in 24 Hours",
+          "description": "On Mar 29, 2026, 03:17 AM(UTC). According to Binance Market Data, Bitcoin has crossed the 67,000 USDT benchmark and is now trading at 67,052. 148438 USDT, with a narrowed 1. 36% increase in 24 hours.",
+          "published_at": "2026-03-29T03:17:07Z",
+          "created_at": "2026-03-29T03:17:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Launches Six Crypto Asset-Linked ETNs",
+          "description": "BNP Paribas has officially announced the launch of six exchange-traded notes (ETNs) linked to crypto assets, providing investors with indirect exposure to assets like Bitcoin and Ethereum without the need to hold them directly. According to Foresight News, these products are based on the performance of crypto assets and are issued by several well-known asset management firms, adhering to the MiFID II regulatory framework to enhance investor protection. The ETNs will be available for subscription to individual clients, entrepreneurial clients, and private banking clients in France starting March 30, 2026, with plans to gradually expand to a broader wealth management clientele.",
+          "published_at": "2026-03-29T03:08:40Z",
+          "created_at": "2026-03-29T03:08:40+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Is Bitcoin\u2019s price at risk of $58K after U.S 10-year yields near 5%, oil-driven inflation",
+          "description": "Bitcoin is poised to close March in the red, extending a six-month streak of outflows.",
+          "published_at": "2026-03-29T03:00:56Z",
+          "created_at": "2026-03-29T03:00:56+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Hashrate Reclaims 1 ZH/s as Hashprice Slides Lower",
+          "description": "Bitcoin\u2019s hashrate has climbed back above 1,000 exahash per second (EH/s), or 1 zettahash per second (ZH/s), even as hashprice has pulled back over the past week. Hashprice Falls 6. 65% in Three Days As of Saturday, March 28, the network is running at 1. 02 ZH/s, or 1,022 EH/s. The seven-day average from hashrateindex. com sits at [&#8230;]",
+          "published_at": "2026-03-29T02:30:36Z",
+          "created_at": "2026-03-29T02:30:36+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Senator Warren Seeks Commerce Department Records on Bitmain Amid Security Concerns",
+          "description": "Senator Elizabeth Warren has requested the U. S. Commerce Department to provide records related to Bitmain, focusing on any measures taken concerning potential national security issues. According to The Block, the inquiry also brings attention to connections with the Trump family following American Bitcoin's purchase of 16,000 Bitmain rigs for $314 million in August 2025.",
+          "published_at": "2026-03-29T02:21:16Z",
+          "created_at": "2026-03-29T02:21:16+00:00",
+          "kind": "news"
+        }
+      ]
+    }
+  },
+  "6. Filter by Region (en)": {
+    "status": 200,
+    "data": {
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "title": "CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "description": "Joao Wedson, founder of the cryptocurrency analysis platform Alphractal, explained why the Bitcoin price absolutely needs to be protected. Continue Reading: CEO of a Leading Analytics Firm: \u201cIf the Bitcoin Price Drops Below $60,490, the Bear Market Will Intensify\u201d",
+          "published_at": "2026-03-29T08:38:06Z",
+          "created_at": "2026-03-29T08:38:06+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Sui Approaches 800K Users as Token Unlock Nears \u2014 Can Price Stay Resilient?",
+          "description": "Sui is gaining traction at a pivotal moment, combining rapid user growth with an imminent supply event. As of March 29, 2026, SUI is trading around $0. 8673, maintaining mild weekly gains, while its BTC pair holds near 0. 00001300",
+          "published_at": "2026-03-29T08:34:09Z",
+          "created_at": "2026-03-29T08:34:09+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Opens Crypto Access With Bitcoin and Ether ETNs",
+          "description": "BNP Paribas now offers Bitcoin and Ether ETNs to French retail clients. Here&#8217;s what the move means for crypto access in banking. BNP Paribas is bringing crypto closer to everyday investors. The French banking giant announced it will offer six crypto-linked exchange-traded notes to retail clients in France",
+          "published_at": "2026-03-29T08:25:07Z",
+          "created_at": "2026-03-29T08:25:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six Bitcoin, Ether ETNs for retail clients in France",
+          "description": "Crypto ETN adoption is spreading across Europe as banks expand offerings and the UK reopens retail access after lifting its ban.",
+          "published_at": "2026-03-29T08:05:18Z",
+          "created_at": "2026-03-29T08:05:18+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas adds six crypto etns for France, regulated exposure to BTC and ETH",
+          "description": "BNP Paribas is broadening access to digital assets for French investors by adding crypto ETNs to its stock exchange offering. BNP Paribas adds six new crypto-asset ETNs BNP Paribas Commercial Banking in France has decided to expand its exchange-traded product range to include crypto-asset ETNs, giving retail clients a new way to gain exposure to [&#8230;]",
+          "published_at": "2026-03-29T07:39:51Z",
+          "created_at": "2026-03-29T07:39:51+00:00",
+          "kind": "blog"
+        },
+        {
+          "title": "The Real Reason Behind 75% Bitcoin Price Crash Prediction By This Expert",
+          "description": "Peter Brandt warns Bitcoin could crash 75% if history repeats the 2022 downturn, despite current strength near $110K. Bitcoin\u2019s $110K surge raises concern of market overheating, with rising liquidations and speculative interest signaling potential volatility. Technical indicators show Bitcoin&#8217;s bullish momentum slowing, with resistance near $110K and support around $108K\u2013$108. 5K",
+          "published_at": "2026-03-29T07:13:36Z",
+          "created_at": "2026-03-29T07:13:36+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Between War and the Fed: The Crisis Testing the Digital Gold Myth",
+          "description": "US-Iran tensions, oil above $100, and the Fed holding at 3. 75%. Bitcoin oscillates between $65,000 and $70,000. But the real question is not the price \u2014 it is whether BTC still holds up as a credible store of value in times of crisis.",
+          "published_at": "2026-03-29T07:13:08Z",
+          "created_at": "2026-03-29T07:13:08+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US PPI Inflation Comes in at 2.6%, JPMorgan Gives Dire Warning",
+          "description": "Key Insights: The headline PPI inflation comes in at 2. 6% while the PPI month-over-month inflation dropped despite Trump tariff jitters. The PPI increased slowly month-over-month, eventually resulting in traders fully pricing two Fed rate cuts this year. Bitcoin and other crypto prices fell ahead of Friday\u2019s options expiry and geopolitical tensions in the Middle East",
+          "published_at": "2026-03-29T07:09:55Z",
+          "created_at": "2026-03-29T07:09:55+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin News: MicroStrategy\u2019s Michael Saylor Proposes Apple to Buy BTC",
+          "description": "Key Insights: Strategy Chairman Michael Saylor wants Apple to replace stock buybacks with Bitcoin investments. Online support grows as crypto advocates rally behind the bold proposal. Michael Saylor\u2019s track record of Bitcoin advocacy includes similar pitches to Tesla and Microsoft",
+          "published_at": "2026-03-29T07:09:52Z",
+          "created_at": "2026-03-29T07:09:52+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "US CPI Inflation Rises to 2.4%, What\u2019s Next for Bitcoin Price",
+          "description": "Key Insights: The CPI inflation rose to 2. 4% in the U. S. comes but came below a forecast of 2",
+          "published_at": "2026-03-29T07:09:33Z",
+          "created_at": "2026-03-29T07:09:33+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Jack Mallers: I Price Bitcoin the Same Way I Value My Life",
+          "description": "Jack Mallers explains why the only two truly scarce things in life are your time on earth and Bitcoin's 21 million supply cap. Click here to get 10% off bitcoin 2026 Conference in Las Vegas: https://tickets. b. tc/event/bitcoin-2026?promoCodeTask=apply&amp;promoCodeInput=YT10 #JackMallers #Bitcoin #BTC #CryptoCurrency #Crypto #21Million #BitcoinScarcity #HODL #BitcoinConference #Strike #Investing #Shorts DISCLAIMER: The views and opinions expressed in this show are those of the participants and do not necessarily reflect the official policy or position of BTC Inc",
+          "published_at": "2026-03-29T07:00:00Z",
+          "created_at": "2026-03-29T07:00:00+00:00",
+          "kind": "media"
+        },
+        {
+          "title": "",
+          "description": "\ud83d\udcc9 \u6316\u77ff\u8d8a\u6765\u8d8a\u96be\uff0c\u8f6c\u578b\u8d8a\u6765\u8d8a\u5feb - CoinShares \u62a5\u544a\u6307\u51fa\uff0c\u4e0a\u5e02\u77ff\u4f01\u6316 1 \u679a BTC \u7684\u5e73\u5747\u6210\u672c\u5df2\u8fbe 79,995 \u7f8e\u5143 - \u4f46 BTC \u73b0\u4ef7\u4ecd\u5f98\u5f8a\u5728 6. 8 \u4e07~7 \u4e07\u7f8e\u5143\uff0c\u610f\u5473\u7740\u6316\u4e00\u679a\u53ef\u80fd\u4e8f\u635f\u8fd1 1. 9 \u4e07\u7f8e\u5143 - \u5728\u76c8\u5229\u538b\u529b\u4e0b\uff0c\u77ff\u4f01\u6b63\u5927\u4e3e\u62bc\u6ce8 AI \u4e0e\u9ad8\u6027\u80fd\u8ba1\u7b97\uff08HPC\uff09\uff0c\u76f8\u5173\u5408\u540c\u603b\u89c4\u6a21\u5df2\u8d85\u8fc7 700 \u4ebf\u7f8e\u5143 - \u4ece\u201c\u6bd4\u7279\u5e01\u77ff\u5de5\u201d\u5230\u201c\u6570\u636e\u4e2d\u5fc3\u8fd0\u8425\u5546\u201d\uff0c\u8fd9\u573a\u884c\u4e1a\u8f6c\u5411\uff0c\u6216\u8bb8\u6b63\u5728\u91cd\u5851\u77ff\u4e1a\u7684\u5e95\u5c42\u903b\u8f91",
+          "published_at": "2026-03-29T06:59:50Z",
+          "created_at": "2026-03-29T06:59:50+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "MARA\u2019s pivot to AI is net positive for Bitcoin, experts believe \u2013 Here\u2019s why",
+          "description": "Analyst projected that sustained West Asia crisis could offer small BTC miners massive opportunities.",
+          "published_at": "2026-03-29T06:00:57Z",
+          "created_at": "2026-03-29T06:00:57+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "USD/JPY Hits 160 Again \u2013 Is a Bitcoin Crash Coming Next?",
+          "description": "USD/JPY crosses 160 for the first time since July 2024, raising attention from global investors. July 2024 BOJ intervention dropped USD/JPY 20 points, Bitcoin 30%, and S&#38;P 500 10%. Strengthening yen raises borrowing costs for leveraged investors, affecting stocks and crypto markets",
+          "published_at": "2026-03-29T05:45:17Z",
+          "created_at": "2026-03-29T05:45:17+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin BTC Crypto Faces Macro Pressure From Rising Yields \u2013 Here Is What Traders Should Watch",
+          "description": "\"Bitcoin (BTC), the leading cryptocurrency, is currently experiencing significant macroeconomic pressure driven by the rising yields in the bond market. This situation poses challenges for traders, and here are the key factors they should monitor closely to navigate the evolving landscape effectively.\"",
+          "published_at": "2026-03-29T05:32:10Z",
+          "created_at": "2026-03-29T05:32:10+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin Sell-Off Reveals Whale-Driven Rotation as Retail Capitulates and Leverage Resets",
+          "description": "Whales drove the sell-off, absorbed liquidity, while retail exited and leverage flushed across the market. Bitcoin\u2019s recent price action points to a calculated liquidity event rather than broad market weakness. A sharp decline initially appeared tied to macro uncertainty, but the underlying data tells a different story",
+          "published_at": "2026-03-29T04:15:10Z",
+          "created_at": "2026-03-29T04:15:10+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "HUT 8 Builds Flex Data Centers For Ai, Bitcoin",
+          "description": "Hut 8 is building modular data centers that can switch between AI workloads and bitcoin mining, aiming to improve flexibility and adapt to shifting demand for computing power.",
+          "published_at": "2026-03-29T04:00:00Z",
+          "created_at": "2026-03-29T04:00:00+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "Bitcoin: Not Just a Risk Asset, Data Reveals Truth",
+          "description": "Oshins talks about Bitcoin: Not Just a Risk Asset, Data Reveals Truth Brought to you by Bitcoinwell. com a bitcoin-only platform on a mission to enable independence. #bitcoin #bitcoinnews #shortsopen",
+          "published_at": "2026-03-29T04:00:00Z",
+          "created_at": "2026-03-29T04:00:00+00:00",
+          "kind": "media"
+        },
+        {
+          "title": "Bitcoin(BTC) Surpasses 67,000 USDT with a 1.36% Increase in 24 Hours",
+          "description": "On Mar 29, 2026, 03:17 AM(UTC). According to Binance Market Data, Bitcoin has crossed the 67,000 USDT benchmark and is now trading at 67,052. 148438 USDT, with a narrowed 1. 36% increase in 24 hours.",
+          "published_at": "2026-03-29T03:17:07Z",
+          "created_at": "2026-03-29T03:17:07+00:00",
+          "kind": "news"
+        },
+        {
+          "title": "BNP Paribas Launches Six Crypto Asset-Linked ETNs",
+          "description": "BNP Paribas has officially announced the launch of six exchange-traded notes (ETNs) linked to crypto assets, providing investors with indirect exposure to assets like Bitcoin and Ethereum without the need to hold them directly. According to Foresight News, these products are based on the performance of crypto assets and are issued by several well-known asset management firms, adhering to the MiFID II regulatory framework to enhance investor protection. The ETNs will be available for subscription to individual clients, entrepreneurial clients, and private banking clients in France starting March 30, 2026, with plans to gradually expand to a broader wealth management clientele.",
+          "published_at": "2026-03-29T03:08:40Z",
+          "created_at": "2026-03-29T03:08:40+00:00",
+          "kind": "news"
+        }
+      ]
+    }
+  },
+  "7. Pagination Test (Page 2)": {
+    "status": 200,
+    "data": {
+      "status": "invalid",
+      "info": "Exceeded API limit - only 20 items allowed for DEVELOPER API plan"
+    }
+  }
+}

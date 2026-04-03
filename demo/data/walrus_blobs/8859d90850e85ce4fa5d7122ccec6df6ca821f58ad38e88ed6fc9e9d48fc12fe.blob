@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:28:02+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "US Opens $10T Retirement Market to Crypto: Can Bitcoin (BTC) Really Benefit?",
+      "url": "cryptopanic://US Opens $10T Retirement Market to Crypto: Can Bitcoin (BTC) Really Benefit?",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.919250",
+  "source": "cryptopanic"
+}

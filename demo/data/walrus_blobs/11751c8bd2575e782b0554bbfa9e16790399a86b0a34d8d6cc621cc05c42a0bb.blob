@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T15:00:56+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Crypto Market Crash: Bitcoin Falls to $66K, Altcoins Drop Up to 72%",
+      "url": "cryptopanic://Crypto Market Crash: Bitcoin Falls to $66K, Altcoins Drop Up to 72%",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.879773",
+  "source": "cryptopanic"
+}

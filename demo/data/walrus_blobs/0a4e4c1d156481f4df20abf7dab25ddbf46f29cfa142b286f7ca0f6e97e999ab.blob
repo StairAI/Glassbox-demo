@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T15:25:26+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Bitcoin Payments Go Mainstream as Jack Dorsey\u2019s Square Auto-Enables BTC for Millions of U.S. Sellers",
+      "url": "cryptopanic://Bitcoin Payments Go Mainstream as Jack Dorsey\u2019s Square Auto-Enables BTC for Millions of U.S. Sellers",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.860549",
+  "source": "cryptopanic"
+}

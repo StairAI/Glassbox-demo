@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:26:46+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Interactive Brokers Adds BTC, ETH, SOL, XRP for EEA Clients",
+      "url": "cryptopanic://Interactive Brokers Adds BTC, ETH, SOL, XRP for EEA Clients",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.924742",
+  "source": "cryptopanic"
+}

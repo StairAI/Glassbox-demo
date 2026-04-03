@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:45:14+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Elon Musk Names Surprising Advantage of Quantum Crypto Hacks",
+      "url": "cryptopanic://Elon Musk Names Surprising Advantage of Quantum Crypto Hacks",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.909003",
+  "source": "cryptopanic"
+}

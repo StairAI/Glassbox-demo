@@ -489,18 +489,271 @@ Agents cannot know which events are tests, forcing honest computation on all inp
 - Trading agent focus
 - Centralized Reputation Engine
 - Manual RAID scoring
+- Basic metadata-based ownership (sponsor pattern)
 
 ### Phase 2: Decentralization (6-12 months)
 - Self-hosted agent support
 - Blind Sequencer implementation
 - zkTLS/TEE attestation
 - Automated RAID calculation
+- **Smart Contract Account Management** (Account Abstraction)
 
 ### Phase 3: Ecosystem Expansion (12-24 months)
 - Multi-domain agent support (not just trading)
 - Reputation API marketplace
 - Cross-chain deployment
 - DAO governance for measurement matrix
+
+---
+
+## 12.1 Future Roadmap: Smart Contract Account Management
+
+### Overview
+
+Currently, the protocol uses a **Sponsor Pattern** where a single wallet pays for all gas fees, and data ownership is managed through metadata fields. For production-grade multi-project deployments, the protocol will implement **Account Abstraction** via smart contract-managed accounts.
+
+### Current Implementation (Sponsor Pattern)
+
+**Architecture:**
+```
+Your Main Wallet (1 private key)
+    ↓ Signs all transactions, pays all gas
+    ↓ Sets owner metadata field per project
+Data published with owner="0xProjectA" (metadata only)
+```
+
+**Limitations:**
+- No on-chain enforcement of ownership
+- All gas paid from single wallet
+- No programmatic parent-child relationship
+- Cannot query accounts by parent on-chain
+
+### Future Implementation (Smart Contract Accounts)
+
+**Architecture:**
+```
+Your Main Wallet (0xParent) + 1 private key
+    ↓ (on-chain control via Move smart contract)
+Managed Account A (0xProjectA) - no private key needed
+Managed Account B (0xProjectB) - no private key needed
+Managed Account C (0xProjectC) - no private key needed
+```
+
+**Benefits:**
+1. **One Private Key**: Control all accounts with main wallet
+2. **On-Chain Relationship**: Parent-child enforced by smart contract
+3. **Separate Gas Budgets**: Each project has its own SUI balance
+4. **Revocable**: Parent can deactivate accounts programmatically
+5. **Queryable**: Find all accounts created by parent wallet
+6. **No Key Management**: Managed accounts don't have private keys
+
+### Technical Design
+
+#### Move Smart Contract
+
+```move
+module publisher::account_manager {
+    struct ManagedAccount has key, store {
+        id: UID,
+        parent: address,           // Parent wallet (controls this account)
+        owner_label: address,      // Project identifier
+        balance: Balance<SUI>,     // Gas budget for this project
+        created_at: u64,
+        is_active: bool
+    }
+
+    /// Create managed account (only parent can call)
+    public entry fun create_account(
+        owner_label: address,
+        ctx: &mut TxContext
+    );
+
+    /// Fund account (only parent can fund)
+    public entry fun fund_account(
+        account: &mut ManagedAccount,
+        payment: Coin<SUI>,
+        ctx: &mut TxContext
+    );
+
+    /// Withdraw funds (only parent can withdraw)
+    public entry fun withdraw_from_account(
+        account: &mut ManagedAccount,
+        amount: u64,
+        ctx: &mut TxContext
+    );
+
+    /// Deactivate account (only parent)
+    public entry fun deactivate_account(
+        account: &mut ManagedAccount,
+        ctx: &mut TxContext
+    );
+}
+```
+
+#### Python Account Manager
+
+```python
+class SUIAccountManager:
+    """Manages smart contract accounts on SUI"""
+
+    def __init__(
+        self,
+        parent_private_key: str,
+        package_id: str,
+        network: str = "testnet"
+    ):
+        self.parent_keypair = load_keypair(parent_private_key)
+        self.package_id = package_id
+        self.client = SyncClient(SuiConfig.testnet_config())
+
+    def create_managed_account(
+        self,
+        owner_label: str,
+        initial_funding_sui: float = 0.1
+    ) -> dict:
+        """
+        Create new managed account controlled by parent wallet.
+
+        Returns:
+            {
+                "account_id": "0x...",
+                "parent": "0x...",
+                "owner_label": "0x...",
+                "balance": 0.1
+            }
+        """
+        # Call smart contract to create account
+        # Fund with initial SUI for gas
+        pass
+
+    def fund_account(self, account_id: str, amount_sui: float) -> str:
+        """Transfer SUI from parent to managed account"""
+        pass
+
+    def get_account_balance(self, account_id: str) -> float:
+        """Query managed account balance"""
+        pass
+
+    def list_managed_accounts(self) -> list:
+        """List all accounts created by parent wallet"""
+        pass
+```
+
+#### Integration with OnChainPublisher
+
+```python
+class OnChainPublisher:
+    def __init__(
+        self,
+        parent_private_key: str,
+        managed_account_id: Optional[str] = None,  # NEW
+        account_manager_package: str = None,       # NEW
+        walrus_client: Optional[WalrusClient] = None,
+        package_id: str = None,
+        simulated: bool = False
+    ):
+        """
+        Publisher that can use managed accounts for gas.
+
+        Args:
+            parent_private_key: Main wallet (signs transactions)
+            managed_account_id: Optional managed account to pay gas from
+            account_manager_package: Account manager contract package ID
+        """
+        self.parent_key = parent_private_key
+        self.managed_account_id = managed_account_id
+
+    def publish_news_trigger(
+        self,
+        news_data: Dict[str, Any],
+        use_managed_account: bool = True
+    ) -> NewsTrigger:
+        """
+        Publish news trigger using managed account for gas.
+
+        Gas deducted from managed account's balance.
+        Owner label set from managed account metadata.
+        """
+        pass
+```
+
+### Usage Example
+
+```python
+# Step 1: Initialize account manager
+account_mgr = SUIAccountManager(
+    parent_private_key="suiprivkey1qqe5zz9t0...",  # Your ONE key
+    package_id="0xACCOUNT_MANAGER_PACKAGE",
+    network="testnet"
+)
+
+# Step 2: Create managed accounts per project
+project_a = account_mgr.create_managed_account(
+    owner_label="0xProjectAAAAA",
+    initial_funding_sui=1.0  # 1 SUI for gas
+)
+
+project_b = account_mgr.create_managed_account(
+    owner_label="0xProjectBBBBB",
+    initial_funding_sui=0.5
+)
+
+# Step 3: Publish data using managed accounts
+publisher_a = OnChainPublisher(
+    parent_private_key="suiprivkey1qqe5zz9t0...",
+    managed_account_id=project_a["account_id"],
+    account_manager_package="0xACCOUNT_MANAGER_PACKAGE"
+)
+
+# Gas paid from Project A's managed account
+trigger = publisher_a.publish_news_trigger(
+    news_data={"articles": [...]},
+    use_managed_account=True
+)
+
+# Step 4: Monitor and refill accounts
+balance = account_mgr.get_account_balance(project_a["account_id"])
+if balance < 0.1:
+    account_mgr.fund_account(project_a["account_id"], 1.0)
+```
+
+### Implementation Phases
+
+**Phase 2.1: Contract Development (Months 6-8)**
+- Implement Move smart contract
+- Deploy to testnet
+- Security audit
+- Integration tests
+
+**Phase 2.2: SDK Integration (Months 8-10)**
+- Python account manager
+- OnChainPublisher integration
+- Migration tools from sponsor pattern
+
+**Phase 2.3: Production Rollout (Months 10-12)**
+- Mainnet deployment
+- Documentation
+- Migration guides
+- Monitoring dashboards
+
+### Migration Path
+
+Existing users on sponsor pattern can migrate smoothly:
+
+1. **Keep sponsor pattern** for simple use cases (default)
+2. **Opt-in to managed accounts** for multi-project deployments
+3. **Backward compatibility** maintained indefinitely
+
+### Security Considerations
+
+- **Parent Key Protection**: Single point of failure, requires secure key management
+- **Account Deactivation**: Emergency stop if parent key compromised
+- **Balance Monitoring**: Automated alerts when account balances low
+- **Audit Trail**: All parent-child operations logged on-chain
+
+### Reference Documentation
+
+Full technical specification: [docs/SMART_CONTRACT_ACCOUNTS.md](../demo/docs/SMART_CONTRACT_ACCOUNTS.md)
 
 ---
 

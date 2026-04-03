@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:20:07+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Giant US Company Announces Big News for Bitcoin (BTC) and 10 Altcoins Including XRP!",
+      "url": "cryptopanic://Giant US Company Announces Big News for Bitcoin (BTC) and 10 Altcoins Including XRP!",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.935721",
+  "source": "cryptopanic"
+}

@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:22:00+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Bitcoin's Best Buy Zone? CryptoQuant Reveals Key Oversold Level",
+      "url": "cryptopanic://Bitcoin's Best Buy Zone? CryptoQuant Reveals Key Oversold Level",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.929978",
+  "source": "cryptopanic"
+}

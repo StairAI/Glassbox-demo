@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:07:00+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Matador Technologies Launches Bitcoin Yield Strategy With Galaxy",
+      "url": "cryptopanic://Matador Technologies Launches Bitcoin Yield Strategy With Galaxy",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.941090",
+  "source": "cryptopanic"
+}

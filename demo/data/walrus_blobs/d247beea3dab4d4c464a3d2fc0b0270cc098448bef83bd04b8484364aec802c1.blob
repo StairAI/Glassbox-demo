@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T14:41:16+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Bitfarms targets zero bitcoin on the balance sheet as it pivots to AI",
+      "url": "cryptopanic://Bitfarms targets zero bitcoin on the balance sheet as it pivots to AI",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.914189",
+  "source": "cryptopanic"
+}

@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "currencies": [],
+      "domain": null,
+      "kind": "news",
+      "published_at": "2026-03-31T15:10:55+00:00",
+      "sentiment": null,
+      "source": "cryptopanic",
+      "title": "Google slashes quantum cracking estimates by 20X creating $600 billion countdown for Bitcoin and Ethereum",
+      "url": "cryptopanic://Google slashes quantum cracking estimates by 20X creating $600 billion countdown for Bitcoin and Ethereum",
+      "votes": null
+    }
+  ],
+  "currencies": [],
+  "fetched_at": "2026-04-01T23:26:43.875243",
+  "source": "cryptopanic"
+}
