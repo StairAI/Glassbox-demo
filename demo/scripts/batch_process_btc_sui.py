@@ -11,7 +11,7 @@ Leverages existing modules:
 - NewsPipeline (news extraction)
 - OnChainPublisher (Walrus + SUI publishing)
 - AgentA (sentiment analysis)
-- TriggerRegistry (trigger tracking)
+- SignalRegistry (signal tracking)
 """
 
 import os
@@ -27,7 +27,7 @@ from src.pipeline.news_pipeline import NewsPipeline
 from src.blockchain.sui_publisher import OnChainPublisher
 from src.storage.walrus_client import WalrusClient
 from src.agents.agent_a_sentiment import AgentA
-from src.demo.trigger_registry import TriggerRegistry
+from src.demo.signal_registry import SignalRegistry
 from src.storage.activity_db import ActivityDB
 from dotenv import load_dotenv
 
@@ -134,7 +134,7 @@ def fetch_batch_news(
 
 def publish_news_to_sui(
     publisher: OnChainPublisher,
-    registry: TriggerRegistry,
+    registry: SignalRegistry,
     db: ActivityDB,
     token: str,
     articles: List[Dict]
@@ -144,13 +144,13 @@ def publish_news_to_sui(
 
     Args:
         publisher: OnChainPublisher instance
-        registry: TriggerRegistry for tracking
+        registry: SignalRegistry for tracking
         db: ActivityDB for logging
         token: Token symbol
         articles: List of articles
 
     Returns:
-        Trigger ID
+        Signal ID
     """
     print(f"\n{'=' * 80}")
     print(f"PUBLISHING {token} NEWS TO SUI")
@@ -167,7 +167,7 @@ def publish_news_to_sui(
     print(f"  Data size: {len(str(news_data)):,} bytes")
 
     # Publish using existing OnChainPublisher
-    trigger = publisher.publish_news_trigger(
+    signal = publisher.publish_news_signal(
         news_data=news_data,
         producer=f"batch_processor_{token.lower()}"
     )
@@ -175,41 +175,41 @@ def publish_news_to_sui(
     # Log to database
     db.log_walrus_operation(
         operation_type="store",
-        blob_id=trigger.walrus_blob_id,
-        size_bytes=trigger.size_bytes,
+        blob_id=signal.walrus_blob_id,
+        size_bytes=signal.size_bytes,
         metadata={"token": token, "article_count": len(articles)},
         success=True
     )
 
     db.log_sui_transaction(
-        transaction_type="publish_news_trigger",
-        object_id=trigger.object_id,
+        transaction_type="publish_news_signal",
+        object_id=signal.object_id,
         metadata={
             "token": token,
-            "walrus_blob_id": trigger.walrus_blob_id,
+            "walrus_blob_id": signal.walrus_blob_id,
             "article_count": len(articles)
         },
         status="success"
     )
 
-    # Register trigger
-    trigger_id = registry.register_trigger({
-        "trigger_type": "news",
-        "object_id": trigger.object_id,
-        "walrus_blob_id": trigger.walrus_blob_id,
-        "data_hash": trigger.data_hash,  # Add data_hash for verification
-        "articles_count": trigger.articles_count,
-        "size_bytes": trigger.size_bytes,
+    # Register signal
+    signal_id = registry.register_signal({
+        "signal_type": "news",
+        "object_id": signal.object_id,
+        "walrus_blob_id": signal.walrus_blob_id,
+        "data_hash": signal.data_hash,  # Add data_hash for verification
+        "articles_count": signal.articles_count,
+        "size_bytes": signal.size_bytes,
         "producer": f"batch_processor_{token.lower()}",
-        "timestamp": trigger.timestamp.isoformat() if hasattr(trigger.timestamp, 'isoformat') else trigger.timestamp
+        "timestamp": signal.timestamp.isoformat() if hasattr(signal.timestamp, 'isoformat') else signal.timestamp
     })
 
     print(f"\n✓ Published to SUI")
-    print(f"  Trigger ID: {trigger_id}")
-    print(f"  Walrus Blob: {trigger.walrus_blob_id[:32]}...")
-    print(f"  SUI Object: {trigger.object_id[:32]}...")
+    print(f"  Signal ID: {signal_id}")
+    print(f"  Walrus Blob: {signal.walrus_blob_id[:32]}...")
+    print(f"  SUI Object: {signal.object_id[:32]}...")
 
-    return trigger_id
+    return signal_id
 
 
 def process_with_agent_a(
@@ -218,7 +218,7 @@ def process_with_agent_a(
     token: str
 ) -> None:
     """
-    Process news triggers with Agent A to generate sentiment signals.
+    Process news signals with Agent A to generate sentiment signals.
 
     Args:
         agent: AgentA instance
@@ -231,13 +231,13 @@ def process_with_agent_a(
 
     start_time = time.time()
 
-    # Run Agent A (processes all unprocessed news triggers)
-    signal_triggers = agent.run(max_triggers=1)
+    # Run Agent A (processes all unprocessed news signals)
+    signal_signals = agent.run(max_signals=1)
 
     processing_time_ms = (time.time() - start_time) * 1000
 
-    if signal_triggers:
-        signal = signal_triggers[0]
+    if signal_signals:
+        signal = signal_signals[0]
 
         print(f"\n✓ Sentiment Signal Generated")
         print(f"\n  Sentiment Scores:")
@@ -254,9 +254,9 @@ def process_with_agent_a(
         print(f"  Reasoning Trace: {signal.walrus_trace_id[:32] if signal.walrus_trace_id else 'N/A'}...")
 
         # Log processing to database
-        db.log_trigger_processing(
-            trigger_id=signal.object_id,
-            trigger_type="signal",
+        db.log_signal_processing(
+            signal_id=signal.object_id,
+            signal_type="insight",
             agent_id="agent_a_sentiment",
             output_data=signal.signal_value,
             confidence=signal.confidence,
@@ -281,7 +281,7 @@ def process_with_agent_a(
         print(f"  Signal Object ID: {signal.object_id[:32]}...")
 
     else:
-        print("\n✗ No signals generated (no unprocessed triggers)")
+        print("\n✗ No signals generated (no unprocessed signals)")
 
 
 def main():
@@ -303,7 +303,7 @@ def main():
 
     walrus_client = WalrusClient()
     publisher = OnChainPublisher(walrus_client=walrus_client)
-    registry = TriggerRegistry()
+    registry = SignalRegistry()
 
     api_token = os.getenv("CRYPTOPANIC_API_TOKEN")
     pipeline = NewsPipeline(api_token=api_token, publisher=publisher)
@@ -333,7 +333,7 @@ def main():
 
     # Publish to SUI
     print("\n[4/6] Publishing BTC news to SUI...")
-    btc_trigger_id = publish_news_to_sui(publisher, registry, db, "BTC", btc_articles)
+    btc_signal_id = publish_news_to_sui(publisher, registry, db, "BTC", btc_articles)
 
     # Process with Agent A
     print("\n[5/6] Processing BTC with Agent A...")
@@ -353,7 +353,7 @@ def main():
 
     # Publish to SUI
     print("\n[4/6] Publishing SUI news to SUI...")
-    sui_trigger_id = publish_news_to_sui(publisher, registry, db, "SUI", sui_articles)
+    sui_signal_id = publish_news_to_sui(publisher, registry, db, "SUI", sui_articles)
 
     # Process with Agent A
     print("\n[5/6] Processing SUI with Agent A...")
@@ -374,32 +374,32 @@ def main():
     print(f"  News Articles: {stats['news_articles']}")
     print(f"  Walrus Operations: {stats['walrus_operations']}")
     print(f"  SUI Transactions: {stats['sui_transactions']}")
-    print(f"  Trigger Processing: {stats['trigger_processing']}")
+    print(f"  Signal Processing: {stats['signal_processing']}")
 
     print(f"\nProcessing Summary:")
     print(f"  BTC Articles: {len(btc_articles)}")
     print(f"  SUI Articles: {len(sui_articles)}")
     print(f"  Total Articles: {len(btc_articles) + len(sui_articles)}")
 
-    print(f"\nTrigger Registry:")
-    news_triggers = registry.get_triggers(trigger_type="news")
-    signal_triggers = registry.get_triggers(trigger_type="signal")
-    print(f"  News Triggers: {len(news_triggers)}")
-    print(f"  Signal Triggers: {len(signal_triggers)}")
+    print(f"\nSignal Registry:")
+    news_signals = registry.get_signals(signal_type="news")
+    signal_signals = registry.get_signals(signal_type="insight")
+    print(f"  News Signals: {len(news_signals)}")
+    print(f"  Signal Signals: {len(signal_signals)}")
 
     print(f"\n✓ Complete end-to-end flow:")
     print(f"  1. Extracted news from CryptoPanic API")
     print(f"  2. Stored articles in local database")
     print(f"  3. Published news data to Walrus (decentralized storage)")
-    print(f"  4. Created triggers on SUI blockchain")
-    print(f"  5. Agent A read triggers from SUI")
+    print(f"  4. Created signals on SUI blockchain")
+    print(f"  5. Agent A read signals from SUI")
     print(f"  6. Agent A fetched full data from Walrus")
     print(f"  7. Agent A analyzed sentiment")
     print(f"  8. Agent A published signals back to SUI")
     print(f"  9. All activities logged in database")
 
     print(f"\n📊 View database: sqlite3 data/activity.db")
-    print(f"📋 View triggers: cat data/trigger_registry.json")
+    print(f"📋 View signals: cat data/signal_registry.json")
     print()
 
     db.close()

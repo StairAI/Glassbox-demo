@@ -7,7 +7,7 @@ This database tracks:
 - Walrus storage operations
 - SUI blockchain transactions
 - Agent processing activities
-- Trigger creations and signal outputs
+- Signal creations and signal outputs
 """
 
 import sqlite3
@@ -97,13 +97,13 @@ class ActivityDB:
         )
         """)
 
-        # Trigger Processing
+        # Signal Processing
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS trigger_processing (
+        CREATE TABLE IF NOT EXISTS signal_processing (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
-            trigger_id TEXT NOT NULL,
-            trigger_type TEXT NOT NULL,
+            signal_id TEXT NOT NULL,
+            signal_type TEXT NOT NULL,
             agent_id TEXT,
             input_data TEXT,
             output_data TEXT,
@@ -151,7 +151,7 @@ class ActivityDB:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_api_calls_api_name ON api_calls(api_name)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_walrus_blob_id ON walrus_operations(blob_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_sui_tx_digest ON sui_transactions(transaction_digest)")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_trigger_id ON trigger_processing(trigger_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_signal_id ON signal_processing(signal_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_news_article_id ON news_articles(article_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_news_article_url ON news_articles(url)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_mocked_account_address ON mocked_accounts(account_address)")
@@ -355,7 +355,7 @@ class ActivityDB:
         Log a SUI blockchain transaction.
 
         Args:
-            transaction_type: Type of transaction (e.g., "publish_trigger", "publish_signal")
+            transaction_type: Type of transaction (e.g., "publish_signal", "publish_signal")
             transaction_digest: SUI transaction digest
             object_id: Created/modified object ID
             sender: Sender address
@@ -419,10 +419,10 @@ class ActivityDB:
     # TRIGGER PROCESSING
     # ==================================================================================
 
-    def log_trigger_processing(
+    def log_signal_processing(
         self,
-        trigger_id: str,
-        trigger_type: str,
+        signal_id: str,
+        signal_type: str,
         agent_id: Optional[str] = None,
         input_data: Optional[Dict] = None,
         output_data: Optional[Dict] = None,
@@ -433,11 +433,11 @@ class ActivityDB:
         error_message: Optional[str] = None
     ) -> int:
         """
-        Log agent trigger processing.
+        Log agent signal processing.
 
         Args:
-            trigger_id: Trigger ID
-            trigger_type: Trigger type (e.g., "news", "signal")
+            signal_id: Signal ID
+            signal_type: Signal type (e.g., "news", "signal")
             agent_id: Agent that processed it
             input_data: Input data
             output_data: Output data
@@ -453,15 +453,15 @@ class ActivityDB:
         cursor = self.conn.cursor()
 
         cursor.execute("""
-        INSERT INTO trigger_processing (
-            timestamp, trigger_id, trigger_type, agent_id,
+        INSERT INTO signal_processing (
+            timestamp, signal_id, signal_type, agent_id,
             input_data, output_data, confidence, reasoning_blob_id,
             processing_time_ms, success, error_message
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             datetime.utcnow().isoformat(),
-            trigger_id,
-            trigger_type,
+            signal_id,
+            signal_type,
             agent_id,
             json.dumps(input_data) if input_data else None,
             json.dumps(output_data) if output_data else None,
@@ -780,7 +780,7 @@ class ActivityDB:
         stats = {}
 
         for table in ["api_calls", "walrus_operations", "sui_transactions",
-                      "trigger_processing", "news_articles", "mocked_accounts"]:
+                      "signal_processing", "news_articles", "mocked_accounts"]:
             cursor.execute(f"SELECT COUNT(*) FROM {table}")
             stats[table] = cursor.fetchone()[0]
 

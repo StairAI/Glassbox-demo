@@ -1,4 +1,4 @@
-# Walrus + Trigger Architecture Plan
+# Walrus + Signal Architecture Plan
 
 **Date**: 2026-03-28
 **Status**: 🎯 Planning
@@ -8,7 +8,7 @@
 Simplify the architecture with:
 1. **Walrus** for large data storage (news articles)
 2. **On-chain oracles** for price data (already on SUI)
-3. **Unified Trigger abstraction** for agent inputs
+3. **Unified Signal abstraction** for agent inputs
 
 ## Key Simplifications
 
@@ -16,22 +16,22 @@ Simplify the architecture with:
 ```
 CryptoPanic API → NewsPipeline → Walrus (full data)
                               → SUI (metadata + blob_id)
-                              → Trigger: NewsTrigger
+                              → Signal: NewsSignal
 ```
 
 ### 2. Price Data Flow
 ```
 On-chain Oracle (Pyth/Switchboard) → SuiPricePipeline → Read from SUI
-                                                       → Trigger: PriceTrigger
+                                                       → Signal: PriceSignal
 ```
 
 ### 3. Agent Input
 ```
-All agents receive: List[Trigger]
+All agents receive: List[Signal]
 
-Trigger types:
-- NewsTrigger: {blob_id, data_hash, timestamp}
-- PriceTrigger: {symbol, price, oracle_source}
+Signal types:
+- NewsSignal: {blob_id, data_hash, timestamp}
+- PriceSignal: {symbol, price, oracle_source}
 ```
 
 ---
@@ -67,8 +67,8 @@ Trigger types:
 │                      SUI BLOCKCHAIN                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  NewsTrigger Object              PriceTrigger Object           │
-│  • trigger_type: "news"          • trigger_type: "price"       │
+│  NewsSignal Object              PriceSignal Object           │
+│  • signal_type: "news"          • signal_type: "price"       │
 │  • walrus_blob_id                • symbol                      │
 │  • data_hash                     • price_usd                   │
 │  • timestamp                     • oracle_source               │
@@ -76,18 +76,18 @@ Trigger types:
 │                                                                 │
 └──────────────┬──────────────────────────────────┬──────────────┘
                │                                  │
-               │ Unified Trigger Interface        │
+               │ Unified Signal Interface        │
                ▼                                  ▼
     ┌──────────────────────────────────────────────────┐
     │            Agent Input Layer                     │
     │                                                  │
-    │  process(triggers: List[Trigger])                │
+    │  process(signals: List[Signal])                │
     │                                                  │
-    │  for trigger in triggers:                        │
-    │      if trigger.type == "news":                  │
-    │          data = walrus.fetch(trigger.blob_id)    │
-    │      elif trigger.type == "price":               │
-    │          data = trigger.price_usd                │
+    │  for signal in signals:                        │
+    │      if signal.type == "news":                  │
+    │          data = walrus.fetch(signal.blob_id)    │
+    │      elif signal.type == "price":               │
+    │          data = signal.price_usd                │
     │                                                  │
     └──────────────────┬───────────────────────────────┘
                        │
@@ -141,9 +141,9 @@ class WalrusClient:
 
 ---
 
-### Phase 2: Unified Trigger Abstraction ✅
+### Phase 2: Unified Signal Abstraction ✅
 
-**File**: `src/core/trigger.py`
+**File**: `src/core/signal.py`
 
 ```python
 from abc import ABC, abstractmethod
@@ -152,26 +152,26 @@ from dataclasses import dataclass
 from datetime import datetime
 
 @dataclass
-class Trigger(ABC):
+class Signal(ABC):
     """
-    Base class for all agent triggers.
+    Base class for all agent signals.
 
-    All agent inputs are triggers - lightweight references to data.
+    All agent inputs are signals - lightweight references to data.
     """
-    trigger_type: str           # "news", "price", "signal"
+    signal_type: str           # "news", "price", "insight"
     timestamp: datetime
     object_id: str              # SUI object ID
 
     @abstractmethod
     def fetch_full_data(self) -> Dict[str, Any]:
-        """Fetch the full data referenced by this trigger."""
+        """Fetch the full data referenced by this signal."""
         pass
 
 
 @dataclass
-class NewsTrigger(Trigger):
+class NewsSignal(Signal):
     """
-    Trigger for news data.
+    Signal for news data.
     Full data stored on Walrus, only metadata on-chain.
     """
     walrus_blob_id: str         # Reference to Walrus
@@ -188,9 +188,9 @@ class NewsTrigger(Trigger):
 
 
 @dataclass
-class PriceTrigger(Trigger):
+class PriceSignal(Signal):
     """
-    Trigger for price data.
+    Signal for price data.
     Data already on-chain from oracle, no need for Walrus.
     """
     symbol: str                 # "BTC", "ETH", "SUI"
@@ -199,7 +199,7 @@ class PriceTrigger(Trigger):
     confidence: Optional[float] # Oracle confidence
 
     def fetch_full_data(self) -> Dict[str, Any]:
-        """Price data is already in trigger (small enough)."""
+        """Price data is already in signal (small enough)."""
         return {
             "symbol": self.symbol,
             "price_usd": self.price_usd,
@@ -218,7 +218,7 @@ class PriceTrigger(Trigger):
 ```python
 class OnChainPublisher:
     """
-    Publishes triggers to SUI blockchain.
+    Publishes signals to SUI blockchain.
 
     Uses Walrus for large data, direct storage for small data.
     """
@@ -236,13 +236,13 @@ class OnChainPublisher:
         # Threshold: if data > 1KB, use Walrus
         self.walrus_threshold_bytes = 1024
 
-    def publish_news_trigger(
+    def publish_news_signal(
         self,
         news_data: Dict[str, Any],
         producer: str
     ) -> str:
         """
-        Publish news trigger.
+        Publish news signal.
         - Full data → Walrus
         - Metadata → SUI
         """
@@ -252,9 +252,9 @@ class OnChainPublisher:
 
         blob_id = self.walrus_client.store(data_bytes)
 
-        # 2. Create trigger metadata (lightweight!)
-        trigger_metadata = {
-            "trigger_type": "news",
+        # 2. Create signal metadata (lightweight!)
+        signal_metadata = {
+            "signal_type": "news",
             "walrus_blob_id": blob_id,
             "data_hash": data_hash,
             "size_bytes": len(data_bytes),
@@ -264,11 +264,11 @@ class OnChainPublisher:
         }
 
         # 3. Publish metadata to SUI (< 500 bytes)
-        object_id = self._publish_to_sui(trigger_metadata)
+        object_id = self._publish_to_sui(signal_metadata)
 
         return object_id
 
-    def publish_price_trigger(
+    def publish_price_signal(
         self,
         symbol: str,
         price_usd: float,
@@ -276,11 +276,11 @@ class OnChainPublisher:
         confidence: Optional[float] = None
     ) -> str:
         """
-        Publish price trigger.
+        Publish price signal.
         - Data is small, store directly on SUI
         """
-        trigger_data = {
-            "trigger_type": "price",
+        signal_data = {
+            "signal_type": "price",
             "symbol": symbol,
             "price_usd": price_usd,
             "oracle_source": oracle_source,
@@ -288,7 +288,7 @@ class OnChainPublisher:
             "timestamp": int(datetime.now().timestamp())
         }
 
-        object_id = self._publish_to_sui(trigger_data)
+        object_id = self._publish_to_sui(signal_data)
 
         return object_id
 ```
@@ -324,7 +324,7 @@ class NewsPipeline:
         Fetch news and publish to Walrus + SUI.
 
         Returns:
-            object_id: SUI object ID of the trigger
+            object_id: SUI object ID of the signal
         """
         # Step 1: Fetch from API
         articles = self.source.fetch_news(currencies=currencies, limit=limit)
@@ -334,7 +334,7 @@ class NewsPipeline:
 
         # Step 3: Publish to Walrus + SUI
         # (Walrus handles full data, SUI stores metadata)
-        object_id = self.publisher.publish_news_trigger(
+        object_id = self.publisher.publish_news_signal(
             news_data=news_data,
             producer="news_pipeline"
         )
@@ -367,25 +367,25 @@ class SuiPricePipeline:
         self.publisher = publisher
         self.oracle_package_id = oracle_package_id
 
-    def read_and_publish_trigger(
+    def read_and_publish_signal(
         self,
         symbol: str
     ) -> str:
         """
-        Read price from on-chain oracle and create trigger.
+        Read price from on-chain oracle and create signal.
 
         Args:
             symbol: Asset symbol (e.g., "BTC")
 
         Returns:
-            object_id: SUI object ID of the trigger
+            object_id: SUI object ID of the signal
         """
         # Step 1: Read from on-chain oracle
         price_data = self._read_oracle_price(symbol)
 
-        # Step 2: Publish trigger to SUI
+        # Step 2: Publish signal to SUI
         # (No Walrus needed - data is already on-chain and small)
-        object_id = self.publisher.publish_price_trigger(
+        object_id = self.publisher.publish_price_signal(
             symbol=symbol,
             price_usd=price_data["price"],
             oracle_source=price_data["source"],
@@ -418,27 +418,27 @@ class SuiPricePipeline:
 
 ### Phase 6: Update Smart Contract ✅
 
-**File**: `smart_contracts/trigger.move`
+**File**: `smart_contracts/signal.move`
 
 ```move
-module glass_box::trigger {
+module glass_box::signal {
     use sui::object::{Self, UID};
     use sui::tx_context::TxContext;
     use sui::transfer;
     use sui::event;
 
-    /// Base trigger object
-    struct TriggerObject has key, store {
+    /// Base signal object
+    struct SignalObject has key, store {
         id: UID,
-        trigger_type: vector<u8>,   // "news", "price", "signal"
+        signal_type: vector<u8>,   // "news", "price", "insight"
         timestamp: u64,
         producer: vector<u8>,
     }
 
-    /// News trigger - references Walrus
-    struct NewsTrigger has key, store {
+    /// News signal - references Walrus
+    struct NewsSignal has key, store {
         id: UID,
-        trigger_type: vector<u8>,   // "news"
+        signal_type: vector<u8>,   // "news"
         walrus_blob_id: vector<u8>, // Walrus reference
         data_hash: vector<u8>,      // SHA-256
         size_bytes: u64,
@@ -447,10 +447,10 @@ module glass_box::trigger {
         producer: vector<u8>,
     }
 
-    /// Price trigger - data on-chain
-    struct PriceTrigger has key, store {
+    /// Price signal - data on-chain
+    struct PriceSignal has key, store {
         id: UID,
-        trigger_type: vector<u8>,   // "price"
+        signal_type: vector<u8>,   // "price"
         symbol: vector<u8>,
         price_usd: u64,             // Scaled by 1e8
         oracle_source: vector<u8>,  // "pyth", "switchboard"
@@ -458,15 +458,15 @@ module glass_box::trigger {
         timestamp: u64,
     }
 
-    /// Event emitted when trigger is created
-    struct TriggerCreated has copy, drop {
-        trigger_id: address,
-        trigger_type: vector<u8>,
+    /// Event emitted when signal is created
+    struct SignalCreated has copy, drop {
+        signal_id: address,
+        signal_type: vector<u8>,
         timestamp: u64,
     }
 
-    /// Publish news trigger
-    public entry fun publish_news_trigger(
+    /// Publish news signal
+    public entry fun publish_news_signal(
         walrus_blob_id: vector<u8>,
         data_hash: vector<u8>,
         size_bytes: u64,
@@ -475,9 +475,9 @@ module glass_box::trigger {
         producer: vector<u8>,
         ctx: &mut TxContext
     ) {
-        let trigger = NewsTrigger {
+        let signal = NewsSignal {
             id: object::new(ctx),
-            trigger_type: b"news",
+            signal_type: b"news",
             walrus_blob_id,
             data_hash,
             size_bytes,
@@ -486,19 +486,19 @@ module glass_box::trigger {
             producer,
         };
 
-        let trigger_id = object::uid_to_address(&trigger.id);
+        let signal_id = object::uid_to_address(&signal.id);
 
-        event::emit(TriggerCreated {
-            trigger_id,
-            trigger_type: b"news",
+        event::emit(SignalCreated {
+            signal_id,
+            signal_type: b"news",
             timestamp,
         });
 
-        transfer::public_share_object(trigger);
+        transfer::public_share_object(signal);
     }
 
-    /// Publish price trigger
-    public entry fun publish_price_trigger(
+    /// Publish price signal
+    public entry fun publish_price_signal(
         symbol: vector<u8>,
         price_usd: u64,
         oracle_source: vector<u8>,
@@ -506,9 +506,9 @@ module glass_box::trigger {
         timestamp: u64,
         ctx: &mut TxContext
     ) {
-        let trigger = PriceTrigger {
+        let signal = PriceSignal {
             id: object::new(ctx),
-            trigger_type: b"price",
+            signal_type: b"price",
             symbol,
             price_usd,
             oracle_source,
@@ -516,15 +516,15 @@ module glass_box::trigger {
             timestamp,
         };
 
-        let trigger_id = object::uid_to_address(&trigger.id);
+        let signal_id = object::uid_to_address(&signal.id);
 
-        event::emit(TriggerCreated {
-            trigger_id,
-            trigger_type: b"price",
+        event::emit(SignalCreated {
+            signal_id,
+            signal_type: b"price",
             timestamp,
         });
 
-        transfer::public_share_object(trigger);
+        transfer::public_share_object(signal);
     }
 }
 ```
@@ -541,32 +541,32 @@ module glass_box::trigger {
 ### 2. Leverage Existing Infrastructure
 - Price oracles already on SUI
 - No need to fetch from off-chain APIs
-- Just read and create triggers
+- Just read and create signals
 
 ### 3. Unified Agent Interface
 ```python
-# All agents receive triggers
-def process(self, triggers: List[Trigger]) -> AgentOutput:
-    for trigger in triggers:
-        if isinstance(trigger, NewsTrigger):
-            data = trigger.fetch_full_data()  # From Walrus
-        elif isinstance(trigger, PriceTrigger):
-            data = trigger.fetch_full_data()  # Already in trigger
+# All agents receive signals
+def process(self, signals: List[Signal]) -> AgentOutput:
+    for signal in signals:
+        if isinstance(signal, NewsSignal):
+            data = signal.fetch_full_data()  # From Walrus
+        elif isinstance(signal, PriceSignal):
+            data = signal.fetch_full_data()  # Already in signal
 ```
 
 ### 4. Clear Separation
 - **NewsPipeline**: Fetch from API → Walrus + SUI
-- **SuiPricePipeline**: Read from SUI → Create trigger
-- **Agents**: Process triggers (unified interface)
+- **SuiPricePipeline**: Read from SUI → Create signal
+- **Agents**: Process signals (unified interface)
 
 ---
 
 ## Next Steps
 
 1. ✅ Implement WalrusClient
-2. ✅ Create Trigger abstraction
+2. ✅ Create Signal abstraction
 3. ✅ Update OnChainPublisher with Walrus support
 4. ✅ Update NewsPipeline to use Walrus
 5. ✅ Create SuiPricePipeline for on-chain oracle
-6. ✅ Update smart contract with trigger types
+6. ✅ Update smart contract with signal types
 7. ✅ Create demo showing full flow

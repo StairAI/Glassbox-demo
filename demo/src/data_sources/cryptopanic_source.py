@@ -227,6 +227,10 @@ class CryptoPanicSource(NewsSource):
         """Check if CryptoPanic API is available."""
         return self._client.ping()
 
+    def test_connection(self) -> bool:
+        """Test connection to CryptoPanic API."""
+        return self.is_available()
+
     def validate_response(self, response_data: Dict) -> bool:
         """
         Validate CryptoPanic API response structure.

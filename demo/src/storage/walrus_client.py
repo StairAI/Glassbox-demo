@@ -208,76 +208,145 @@ class WalrusClient:
 
     def _real_store(self, data: bytes, blob_id: str) -> str:
         """
-        Store data on real Walrus network.
+        Store data on real Walrus network with retry logic.
 
         This uses the Walrus publisher API:
         PUT /v1/blobs
         Body: raw bytes
         Returns: {newlyCreated: {blobObject: {blobId: ...}}}
+
+        Implements exponential backoff for retries on timeout/network errors.
         """
         import requests
+        import time
 
-        try:
-            response = requests.put(
-                f"{self.publisher_url}/v1/blobs",
-                data=data,
-                headers={"Content-Type": "application/octet-stream"},
-                timeout=30
-            )
+        max_retries = 3
+        base_timeout = 30
 
-            if response.status_code != 200:
-                raise WalrusError(
-                    f"Walrus storage failed: {response.status_code} {response.text}"
+        for attempt in range(max_retries):
+            try:
+                # Increase timeout with each retry
+                timeout = base_timeout * (attempt + 1)
+
+                if attempt > 0:
+                    # Exponential backoff: wait 2^attempt seconds before retry
+                    wait_time = 2 ** attempt
+                    logger.info(f"[Walrus] Retry {attempt}/{max_retries} after {wait_time}s wait (timeout={timeout}s)")
+                    time.sleep(wait_time)
+
+                response = requests.put(
+                    f"{self.publisher_url}/v1/blobs",
+                    data=data,
+                    headers={"Content-Type": "application/octet-stream"},
+                    timeout=timeout
                 )
 
-            result = response.json()
-            certified_blob_id = result.get("newlyCreated", {}).get("blobObject", {}).get("blobId")
+                if response.status_code != 200:
+                    raise WalrusError(
+                        f"Walrus storage failed: {response.status_code} {response.text}"
+                    )
 
-            if not certified_blob_id:
-                # Blob might already exist
-                certified_blob_id = result.get("alreadyCertified", {}).get("blobId")
+                result = response.json()
+                certified_blob_id = result.get("newlyCreated", {}).get("blobObject", {}).get("blobId")
 
-            if not certified_blob_id:
-                raise WalrusError(f"Unexpected Walrus response: {result}")
+                if not certified_blob_id:
+                    # Blob might already exist
+                    certified_blob_id = result.get("alreadyCertified", {}).get("blobId")
 
-            logger.info(f"[Walrus] Stored {len(data)} bytes, blob_id={certified_blob_id}")
+                if not certified_blob_id:
+                    raise WalrusError(f"Unexpected Walrus response: {result}")
 
-            return certified_blob_id
+                if attempt > 0:
+                    logger.info(f"[Walrus] ✓ Succeeded on retry {attempt}")
+                logger.info(f"[Walrus] Stored {len(data)} bytes, blob_id={certified_blob_id}")
 
-        except requests.RequestException as e:
-            raise WalrusError(f"Walrus storage request failed: {e}") from e
+                return certified_blob_id
+
+            except requests.Timeout as e:
+                if attempt == max_retries - 1:
+                    # Final attempt failed
+                    raise WalrusError(
+                        f"Walrus storage timeout after {max_retries} attempts: {e}"
+                    ) from e
+                else:
+                    logger.warning(f"[Walrus] Timeout on attempt {attempt + 1}/{max_retries}: {e}")
+                    continue
+
+            except requests.RequestException as e:
+                if attempt == max_retries - 1:
+                    # Final attempt failed
+                    raise WalrusError(
+                        f"Walrus storage request failed after {max_retries} attempts: {e}"
+                    ) from e
+                else:
+                    logger.warning(f"[Walrus] Request error on attempt {attempt + 1}/{max_retries}: {e}")
+                    continue
 
     def _real_fetch(self, blob_id: str) -> bytes:
         """
-        Fetch data from real Walrus network.
+        Fetch data from real Walrus network with retry logic.
 
-        This would use the Walrus aggregator API:
-        GET /v1/{blob_id}
+        This uses the Walrus aggregator API:
+        GET /v1/blobs/{blob_id}
         Returns: raw bytes
+
+        Implements exponential backoff for retries on timeout/network errors.
         """
         import requests
+        import time
 
-        try:
-            # Try both /v1/{blob_id} and /v1/blobs/{blob_id}
-            response = requests.get(
-                f"{self.aggregator_url}/v1/blobs/{blob_id}",
-                timeout=30
-            )
+        max_retries = 3
+        base_timeout = 30
 
-            if response.status_code == 404:
-                raise WalrusError(f"Blob not found: {blob_id}")
+        for attempt in range(max_retries):
+            try:
+                # Increase timeout with each retry
+                timeout = base_timeout * (attempt + 1)
 
-            if response.status_code != 200:
-                raise WalrusError(
-                    f"Walrus fetch failed: {response.status_code} {response.text}"
+                if attempt > 0:
+                    # Exponential backoff: wait 2^attempt seconds before retry
+                    wait_time = 2 ** attempt
+                    logger.info(f"[Walrus] Fetch retry {attempt}/{max_retries} after {wait_time}s wait (timeout={timeout}s)")
+                    time.sleep(wait_time)
+
+                response = requests.get(
+                    f"{self.aggregator_url}/v1/blobs/{blob_id}",
+                    timeout=timeout
                 )
 
-            logger.info(f"[Walrus] Fetched {len(response.content)} bytes")
+                if response.status_code == 404:
+                    raise WalrusError(f"Blob not found: {blob_id}")
 
-            return response.content
+                if response.status_code != 200:
+                    raise WalrusError(
+                        f"Walrus fetch failed: {response.status_code} {response.text}"
+                    )
 
-        except requests.RequestException as e:
-            raise WalrusError(f"Walrus fetch request failed: {e}") from e
+                if attempt > 0:
+                    logger.info(f"[Walrus] ✓ Fetch succeeded on retry {attempt}")
+                logger.info(f"[Walrus] Fetched {len(response.content)} bytes")
+
+                return response.content
+
+            except requests.Timeout as e:
+                if attempt == max_retries - 1:
+                    # Final attempt failed
+                    raise WalrusError(
+                        f"Walrus fetch timeout after {max_retries} attempts: {e}"
+                    ) from e
+                else:
+                    logger.warning(f"[Walrus] Fetch timeout on attempt {attempt + 1}/{max_retries}: {e}")
+                    continue
+
+            except requests.RequestException as e:
+                if attempt == max_retries - 1:
+                    # Final attempt failed
+                    raise WalrusError(
+                        f"Walrus fetch request failed after {max_retries} attempts: {e}"
+                    ) from e
+                else:
+                    logger.warning(f"[Walrus] Fetch request error on attempt {attempt + 1}/{max_retries}: {e}")
+                    continue
 
 
 class WalrusHelper:

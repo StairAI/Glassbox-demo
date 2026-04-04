@@ -3,51 +3,67 @@
 Agent A: Sentiment Analysis Agent
 
 This agent:
-1. Reads news triggers from TriggerRegistry
+1. Accepts news signals as input (List[Signal])
 2. Fetches full news data from Walrus
 3. Analyzes sentiment with LLM
-4. Generates sentiment scores for BTC/ETH
-5. Stores reasoning trace on Walrus
-6. Publishes sentiment signal trigger
+4. Generates sentiment scores for target tokens
+5. Records all reasoning steps using ReasoningLedger SDK
+6. Outputs InsightSignal with sentiment scores
+
+This agent now extends the abstract Agent base class.
 """
 
 import os
 from typing import Dict, List, Any, Optional
 from datetime import datetime
-import hashlib
 import json
 
-from src.core.trigger import NewsTrigger, SignalTrigger
-from src.demo.trigger_registry import TriggerRegistry
-from src.blockchain.sui_publisher import OnChainPublisher
-from src.storage.walrus_client import WalrusClient, WalrusHelper
+from src.abstract import Agent, Signal, NewsSignal, InsightSignal
+from src.reasoning_ledger.reasoning_ledger_sdk import ReasoningLedger
+from src.storage.walrus_client import WalrusClient
 
 
-class AgentA:
-    """Agent A: Sentiment Analysis for crypto news"""
+class AgentASentiment(Agent):
+    """
+    Agent A: Sentiment Analysis for crypto news
+
+    Extends the abstract Agent base class to provide:
+    - Standardized signal input/output
+    - Automatic reasoning trace recording
+    - LLM-based sentiment analysis
+    """
 
     def __init__(
         self,
-        registry: TriggerRegistry,
-        publisher: OnChainPublisher,
+        reasoning_ledger: Optional[ReasoningLedger] = None,
+        walrus_client: Optional[WalrusClient] = None,
         target_tokens: Optional[List[str]] = None,
-        api_key: Optional[str] = None
+        api_key: Optional[str] = None,
+        agent_version: str = "2.0"
     ):
         """
         Initialize Agent A.
 
         Args:
-            registry: TriggerRegistry for reading news triggers
-            publisher: OnChainPublisher for publishing sentiment signals
-            target_tokens: List of tokens to analyze (e.g., ["BTC", "ETH"])
+            reasoning_ledger: ReasoningLedger for storing reasoning traces
+            walrus_client: WalrusClient for fetching news data
+            target_tokens: List of tokens to analyze (e.g., ["BTC", "ETH", "SUI"])
             api_key: Anthropic API key
+            agent_version: Agent version for traceability
         """
-        self.registry = registry
-        self.publisher = publisher
+        # Initialize parent Agent class
+        super().__init__(
+            agent_id="agent_a_sentiment",
+            agent_version=agent_version,
+            reasoning_ledger=reasoning_ledger
+        )
+
+        # Agent-specific configuration
+        self.walrus_client = walrus_client
         self.target_tokens = target_tokens or ["BTC", "ETH"]
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
 
-        # Initialize LLM client (Claude only)
+        # Initialize LLM client
         self._init_llm()
 
     def _init_llm(self):
@@ -56,130 +72,110 @@ class AgentA:
             import anthropic
             self.llm_client = anthropic.Anthropic(api_key=self.api_key)
             self.llm_available = True
+            print(f"  ✓ LLM initialized: Claude Sonnet 4.5")
         except ImportError:
-            print("WARNING: Anthropic package not installed. Install with: pip install anthropic")
+            print("  WARNING: Anthropic package not installed. Using fallback sentiment.")
             self.llm_available = False
         except Exception as e:
-            print(f"WARNING: Failed to initialize Claude: {e}")
+            print(f"  WARNING: Failed to initialize Claude: {e}. Using fallback sentiment.")
             self.llm_available = False
 
-    def run(self, max_triggers: int = 1) -> List[SignalTrigger]:
+    # ==================================================================================
+    # CORE INTERFACE - Required by abstract Agent
+    # ==================================================================================
+
+    def process_signals(self, signals: List[Signal]) -> Dict[str, Any]:
         """
-        Main execution loop for Agent A.
+        Process news signals and generate sentiment scores.
+
+        This is the core reasoning logic called by Agent.run().
 
         Args:
-            max_triggers: Maximum number of news triggers to process
+            signals: List of input signals (expected to be NewsSignals)
 
         Returns:
-            List of generated SignalTriggers
+            Dict with sentiment scores and confidence
         """
-        print()
-        print("╔" + "=" * 78 + "╗")
-        print("║" + " " * 20 + "AGENT A: SENTIMENT ANALYSIS" + " " * 25 + "║")
-        print("╚" + "=" * 78 + "╝")
-        print()
+        # Step 1: Fetch news data from signals
+        all_articles = []
+        for signal in signals:
+            if isinstance(signal, NewsSignal):
+                # Fetch full news data
+                news_data = signal.fetch_full_data(walrus_client=self.walrus_client)
+                articles = news_data.get('articles', [])
+                all_articles.extend(articles)
 
-        # Step 1: Read news triggers
-        print("[Step 1] Reading news triggers from registry...")
-        news_triggers = self.registry.get_triggers(trigger_type="news", limit=max_triggers)
-
-        if not news_triggers:
-            print("  No news triggers found")
-            return []
-
-        print(f"  Found {len(news_triggers)} news trigger(s)")
-        print()
-
-        # Step 2: Process each trigger
-        signal_triggers = []
-        for i, trigger_data in enumerate(news_triggers, 1):
-            print(f"[Processing {i}/{len(news_triggers)}] Trigger: {trigger_data['trigger_id']}")
-
-            try:
-                signal = self._process_news_trigger(trigger_data)
-                signal_triggers.append(signal)
-                print(f"  Sentiment signal generated")
-            except Exception as e:
-                print(f"  Error: {e}")
-            print()
-
-        print("=" * 80)
-        print(f"AGENT A: Processed {len(signal_triggers)}/{len(news_triggers)} triggers")
-        print("=" * 80)
-        print()
-
-        return signal_triggers
-
-    def _process_news_trigger(self, trigger_data: Dict) -> SignalTrigger:
-        """Process a single news trigger and generate sentiment signal."""
-
-        # Step 1: Fetch full news data from Walrus
-        print("  [1/5] Fetching news data from Walrus...")
-        trigger_obj = NewsTrigger(
-            object_id=trigger_data['trigger_id'],
-            walrus_blob_id=trigger_data['walrus_blob_id'],
-            data_hash=trigger_data['data_hash'],
-            size_bytes=trigger_data['size_bytes'],
-            articles_count=trigger_data['articles_count'],
-            timestamp=datetime.fromisoformat(trigger_data['timestamp']),
-            producer=trigger_data['producer']
+        self.record_step(
+            step_name="fetch_news_data",
+            description="Fetched news articles from Walrus",
+            input_data={"signal_count": len(signals)},
+            output_data={"articles_count": len(all_articles)}
         )
 
-        # Pass the publisher's walrus_client to use the same instance
-        news_data = trigger_obj.fetch_full_data(walrus_client=self.publisher.walrus_client)
-        print(f"    Fetched {len(news_data['articles'])} articles")
+        # Step 2: Analyze sentiment
+        sentiment_scores = self._analyze_sentiment(all_articles)
 
-        # Step 2: Analyze sentiment with LLM
-        print("  [2/5] Analyzing sentiment with LLM...")
-        sentiment_scores = self._analyze_sentiment(news_data['articles'])
-        print(f"    Generated sentiment scores")
+        self.record_step(
+            step_name="analyze_sentiment",
+            description=f"Analyzed sentiment for {len(self.target_tokens)} tokens",
+            input_data={
+                "target_tokens": self.target_tokens,
+                "articles_count": len(all_articles)
+            },
+            output_data=sentiment_scores,
+            confidence=sentiment_scores.get("overall_confidence", 0.8)
+        )
 
-        # Step 3: Create reasoning trace
-        print("  [3/5] Creating reasoning trace...")
-        reasoning_trace = {
-            "agent": "agent_a_sentiment",
-            "input_trigger": trigger_data['trigger_id'],
-            "input_walrus_blob": trigger_data['walrus_blob_id'],
-            "articles_analyzed": len(news_data['articles']),
+        # Return output in format expected by Agent base class
+        return {
             "sentiment_scores": sentiment_scores,
-            "target_tokens": self.target_tokens,
-            "llm_provider": "anthropic",
-            "llm_model": "claude-sonnet-4.5-20250514",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        print(f"    Reasoning trace created")
-
-        # Step 4: Publish sentiment signal trigger (reasoning trace stored by publisher)
-        print("  [4/5] Publishing sentiment signal...")
-        signal_trigger = self.publisher.publish_signal_trigger(
-            signal_type="sentiment",
-            signal_value=sentiment_scores,
-            confidence=sentiment_scores.get("overall_confidence", 0.8),
-            producer="agent_a",
-            reasoning_trace=reasoning_trace  # Pass trace dict, publisher will store it
-        )
-
-        # Get the trace blob ID from the signal trigger
-        trace_blob_id = signal_trigger.walrus_trace_id
-
-        # Step 5: Register in TriggerRegistry
-        print("  [5/5] Registering signal trigger...")
-        signal_id = self.registry.register_trigger({
-            "trigger_type": "signal",
-            "signal_type": "sentiment",
-            "signal_value": sentiment_scores,
             "confidence": sentiment_scores.get("overall_confidence", 0.8),
-            "producer": "agent_a",
-            "walrus_trace_id": trace_blob_id if trace_blob_id else None,
-            "timestamp": datetime.utcnow().isoformat()
-        })
-        print(f"    Signal registered: {signal_id}")
+            "tokens_analyzed": self.target_tokens,
+            "articles_count": len(all_articles)
+        }
 
-        return signal_trigger
+    # ==================================================================================
+    # OPTIONAL HOOKS - Override for custom behavior
+    # ==================================================================================
+
+    def validate_input(self, signals: List[Signal]) -> bool:
+        """
+        Validate that we have news signals to process.
+
+        Args:
+            signals: Input signals
+
+        Returns:
+            True if valid, False otherwise
+        """
+        if not signals:
+            return False
+
+        # Check that at least one signal is a NewsSignal
+        has_news_signal = any(isinstance(s, NewsSignal) for s in signals)
+
+        if not has_news_signal:
+            print("  WARNING: No NewsSignal found in input signals")
+            return False
+
+        return True
+
+    def before_process(self, signals: List[Signal]) -> None:
+        """
+        Hook called before processing.
+
+        Use this for initialization, loading state, etc.
+        """
+        print(f"  Target tokens: {', '.join(self.target_tokens)}")
+        print(f"  LLM available: {self.llm_available}")
+
+    # ==================================================================================
+    # SENTIMENT ANALYSIS LOGIC
+    # ==================================================================================
 
     def _analyze_sentiment(self, articles: List[Dict]) -> Dict[str, Any]:
         """
-        Analyze sentiment of news articles using LLM.
+        Analyze sentiment of news articles using LLM or fallback.
 
         Args:
             articles: List of news articles
@@ -188,21 +184,35 @@ class AgentA:
             Dict with sentiment scores for each currency
         """
         if not self.llm_available:
-            # Fallback: Simple rule-based sentiment
             return self._fallback_sentiment(articles)
 
-        # Prepare prompt for LLM
+        # Prepare prompt
         articles_text = self._format_articles_for_llm(articles)
         prompt = self._create_sentiment_prompt(articles_text)
 
         try:
+            # Call LLM
             response = self._call_claude(prompt)
-            # Parse LLM response
+
+            # Record LLM call
+            self.record_llm_call(
+                prompt=prompt[:500],  # Truncate for storage
+                response=response[:500],
+                model="claude-sonnet-4-20250514",
+                provider="anthropic"
+            )
+
+            # Parse response
             sentiment_scores = self._parse_llm_response(response)
             return sentiment_scores
 
         except Exception as e:
-            print(f"    WARNING: Claude call failed: {e}. Using fallback sentiment.")
+            print(f"    WARNING: Claude call failed: {e}. Using fallback.")
+            self.record_step(
+                step_name="llm_fallback",
+                description=f"LLM call failed, using rule-based fallback",
+                input_data={"error": str(e)}
+            )
             return self._fallback_sentiment(articles)
 
     def _format_articles_for_llm(self, articles: List[Dict], max_articles: int = 10) -> str:
@@ -218,44 +228,37 @@ class AgentA:
         """Create prompt for sentiment analysis."""
         tokens_str = ", ".join(self.target_tokens)
 
-        # Build the JSON structure dynamically based on target tokens
+        # Build JSON structure dynamically
         json_fields = []
         for token in self.target_tokens:
             json_fields.append(f'  "target_token": "{token}",')
-            json_fields.append(f'  "target_token_sentiment": <score from -1.0 (very negative) to 1.0 (very positive)>,')
+            json_fields.append(f'  "target_token_sentiment": <score from -1.0 to 1.0>,')
 
         json_structure = "\n".join(json_fields)
 
-        return f"""Analyze the sentiment of these cryptocurrency news articles and provide sentiment scores for {tokens_str}.
+        return f"""Analyze the sentiment of these cryptocurrency news articles for {tokens_str}.
 
 News Articles:
 {articles_text}
 
-For each target token, analyze the sentiment expressed in these articles.
-
-Return a JSON response with this exact structure (one object per token):
+Return a JSON array with one object per token:
 [
 {{
 {json_structure}
-  "confidence": <confidence score from 0.0 to 1.0>,
-  "reasoning": "<brief explanation of the sentiment analysis for this token>"
+  "confidence": <0.0 to 1.0>,
+  "reasoning": "<brief explanation>"
 }}
 ]
 
-Important:
-- Return a JSON array with one object per target token
-- Each object must have: target_token, target_token_sentiment, confidence, reasoning
-- Sentiment score should be from -1.0 (very negative) to 1.0 (very positive)
-- Only return the JSON array, no other text."""
+Sentiment: -1.0 (very negative) to 1.0 (very positive)
+Return ONLY the JSON array."""
 
     def _call_claude(self, prompt: str) -> str:
-        """Call Claude API (Sonnet 4.5)."""
+        """Call Claude API."""
         response = self.llm_client.messages.create(
-            model="claude-sonnet-4.5-20250514",
+            model="claude-sonnet-4-20250514",
             max_tokens=2048,
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
+            messages=[{"role": "user", "content": prompt}],
             temperature=0.3
         )
         return response.content[0].text
@@ -263,18 +266,16 @@ Important:
     def _parse_llm_response(self, response: str) -> Dict[str, Any]:
         """Parse LLM response to extract sentiment scores."""
         try:
-            # Try to extract JSON array from response
             import re
             json_match = re.search(r'\[.*\]', response, re.DOTALL)
             if json_match:
                 sentiment_array = json.loads(json_match.group())
-
-                # Convert array to dict format for compatibility
-                result = {
+                return {
                     "tokens": sentiment_array,
-                    "overall_confidence": sum(item["confidence"] for item in sentiment_array) / len(sentiment_array)
+                    "overall_confidence": sum(
+                        item["confidence"] for item in sentiment_array
+                    ) / len(sentiment_array)
                 }
-                return result
             else:
                 raise ValueError("No JSON array found in response")
         except Exception as e:
@@ -283,13 +284,12 @@ Important:
 
     def _fallback_sentiment(self, articles: List[Dict]) -> Dict[str, Any]:
         """
-        Fallback sentiment analysis using simple rules.
+        Rule-based sentiment analysis fallback.
         Used when LLM is not available.
         """
         positive_words = ['bullish', 'surge', 'gain', 'rise', 'up', 'high', 'positive', 'growth']
         negative_words = ['bearish', 'drop', 'fall', 'down', 'crash', 'negative', 'decline', 'loss']
 
-        # Token name to search terms mapping
         token_search_terms = {
             "BTC": ['btc', 'bitcoin'],
             "ETH": ['eth', 'ethereum'],
@@ -307,34 +307,133 @@ Important:
             for article in articles:
                 text = (article.get('title', '') + ' ' + article.get('body', '')).lower()
 
-                # Check if this article mentions the token
                 if any(term in text for term in search_terms):
                     mention_count += 1
-
-                    # Count positive/negative words
                     pos_count = sum(1 for word in positive_words if word in text)
                     neg_count = sum(1 for word in negative_words if word in text)
 
-                    # Simple scoring
                     if pos_count + neg_count > 0:
                         article_score = (pos_count - neg_count) / (pos_count + neg_count)
                         token_score += article_score
 
-            # Normalize score
             if mention_count > 0:
                 token_score /= mention_count
 
-            # Clip to [-1, 1] range
             token_score = max(-1.0, min(1.0, token_score))
 
             token_results.append({
                 "target_token": token,
                 "target_token_sentiment": round(token_score, 2),
-                "confidence": 0.5,  # Lower confidence for rule-based
-                "reasoning": f"Rule-based sentiment analysis (Claude not available). Based on {mention_count} mentions."
+                "confidence": 0.5,
+                "reasoning": f"Rule-based analysis. {mention_count} mentions found."
             })
 
         return {
             "tokens": token_results,
             "overall_confidence": 0.5
         }
+
+
+# ==================================================================================
+# BACKWARD COMPATIBILITY WRAPPER (Optional)
+# ==================================================================================
+
+class AgentA:
+    """
+    Backward compatibility wrapper for the old AgentA interface.
+
+    This allows existing code to continue working while using the new
+    abstract Agent-based implementation under the hood.
+    """
+
+    def __init__(
+        self,
+        registry,
+        publisher,
+        target_tokens: Optional[List[str]] = None,
+        api_key: Optional[str] = None
+    ):
+        """Maintain old interface for backward compatibility."""
+        self.registry = registry
+        self.publisher = publisher
+
+        # Create ReasoningLedger from publisher's walrus_client
+        from src.reasoning_ledger.reasoning_ledger_sdk import ReasoningLedger
+        reasoning_ledger = ReasoningLedger(publisher.walrus_client)
+
+        # Initialize new agent
+        self.agent = AgentASentiment(
+            reasoning_ledger=reasoning_ledger,
+            walrus_client=publisher.walrus_client,
+            target_tokens=target_tokens,
+            api_key=api_key
+        )
+
+    def run(self, max_signals: int = 1) -> List[InsightSignal]:
+        """
+        Backward compatible run method.
+
+        Converts old registry-based interface to new signal-based interface.
+        """
+        print()
+        print("╔" + "=" * 78 + "╗")
+        print("║" + " " * 20 + "AGENT A: SENTIMENT ANALYSIS" + " " * 25 + "║")
+        print("╚" + "=" * 78 + "╝")
+        print()
+
+        # Get signals from registry (old way)
+        print("[Step 1] Reading news signals from registry...")
+        news_signal_dicts = self.registry.get_signals(signal_type="news", limit=max_signals)
+
+        if not news_signal_dicts:
+            print("  No news signals found")
+            return []
+
+        print(f"  Found {len(news_signal_dicts)} news signal(s)")
+        print()
+
+        # Convert to Signal objects
+        news_signals = []
+        for signal_data in news_signal_dicts:
+            signal_obj = NewsSignal(
+                object_id=signal_data['signal_id'],
+                walrus_blob_id=signal_data['walrus_blob_id'],
+                data_hash=signal_data['data_hash'],
+                size_bytes=signal_data['size_bytes'],
+                articles_count=signal_data['articles_count'],
+                timestamp=datetime.fromisoformat(signal_data['timestamp']),
+                producer=signal_data['producer']
+            )
+            news_signals.append(signal_obj)
+
+        # Process signals using new agent
+        print("[Step 2] Processing signals with AgentASentiment...")
+        try:
+            insight_signal = self.agent.run(signals=news_signals)
+
+            # Register in old registry for backward compatibility
+            print("[Step 3] Registering insight signal in registry...")
+            signal_id = self.registry.register_signal({
+                "signal_type": "insight",
+                "insight_type": "sentiment",
+                "signal_value": insight_signal.signal_value,
+                "confidence": insight_signal.confidence,
+                "producer": "agent_a",
+                "walrus_trace_id": insight_signal.walrus_trace_id,
+                "timestamp": insight_signal.timestamp.isoformat()
+            })
+            print(f"  ✓ Signal registered: {signal_id}")
+
+            print()
+            print("=" * 80)
+            print(f"AGENT A: Processing complete")
+            print("=" * 80)
+            print()
+
+            return [insight_signal]
+
+        except Exception as e:
+            print(f"  Error: {e}")
+            import traceback
+            traceback.print_exc()
+            return []

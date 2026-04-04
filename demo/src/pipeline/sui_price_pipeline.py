@@ -5,16 +5,16 @@ SuiPricePipeline: Pipeline to read price data from on-chain oracles
 KEY DIFFERENCE from NewsPipeline:
 - This READS from SUI blockchain (oracles like Pyth/Switchboard already post prices)
 - Does NOT fetch from off-chain APIs
-- Creates PriceTrigger from on-chain data
+- Creates PriceSignal from on-chain data
 
-This is a lighter pipeline that abstracts 3rd-party oracle data into our Trigger format.
+This is a lighter pipeline that abstracts 3rd-party oracle data into our Signal format.
 """
 
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
 from src.blockchain.sui_publisher import OnChainPublisher
-from src.core.trigger import PriceTrigger
+from src.abstract import PriceSignal
 
 
 class SuiPricePipeline:
@@ -23,8 +23,8 @@ class SuiPricePipeline:
 
     Unlike NewsPipeline (which fetches from off-chain APIs), this pipeline:
     1. READS price data from SUI blockchain oracles (Pyth, Switchboard, etc.)
-    2. TRANSFORMS to our standardized PriceTrigger format
-    3. PUBLISHES trigger to SUI (no Walrus needed - data is small)
+    2. TRANSFORMS to our standardized PriceSignal format
+    3. PUBLISHES signal to SUI (no Walrus needed - data is small)
 
     This is a "lighter" pipeline that abstracts 3rd-party posted data.
 
@@ -34,7 +34,7 @@ class SuiPricePipeline:
             publisher=OnChainPublisher(),
             oracle_type="pyth"
         )
-        trigger = pipeline.read_and_publish_trigger(symbol="BTC")
+        signal = pipeline.read_and_publish_signal(symbol="BTC")
     """
 
     # Oracle package IDs on SUI testnet
@@ -56,7 +56,7 @@ class SuiPricePipeline:
 
         Args:
             sui_client: pysui SuiClient for reading from blockchain
-            publisher: OnChainPublisher for creating triggers
+            publisher: OnChainPublisher for creating signals
             oracle_type: Oracle to use ("pyth", "switchboard", "custom")
             simulated: If True, simulate oracle reads (for demo/testing)
         """
@@ -69,23 +69,23 @@ class SuiPricePipeline:
         if not simulated and not sui_client:
             raise ValueError("sui_client required when simulated=False")
 
-    def read_and_publish_trigger(
+    def read_and_publish_signal(
         self,
         symbol: str
-    ) -> PriceTrigger:
+    ) -> PriceSignal:
         """
-        Read price from on-chain oracle and create trigger.
+        Read price from on-chain oracle and create signal.
 
         This is the complete pipeline flow:
         1. READ: Fetch price from on-chain oracle
         2. TRANSFORM: Convert to standardized format
-        3. PUBLISH: Create PriceTrigger on SUI
+        3. PUBLISH: Create PriceSignal on SUI
 
         Args:
             symbol: Asset symbol (e.g., "BTC", "ETH", "SUI")
 
         Returns:
-            PriceTrigger instance
+            PriceSignal instance
         """
         print(f"\n{'='*80}")
         print(f"SUI PRICE PIPELINE: Processing {symbol}")
@@ -105,10 +105,10 @@ class SuiPricePipeline:
         print(f"\n[2/3] TRANSFORM: Data already standardized (on-chain oracle)")
         print(f"  ✓ No transformation needed")
 
-        # Step 3: PUBLISH - Create trigger on SUI
-        print(f"\n[3/3] PUBLISH: Creating PriceTrigger on SUI")
+        # Step 3: PUBLISH - Create signal on SUI
+        print(f"\n[3/3] PUBLISH: Creating PriceSignal on SUI")
 
-        trigger = self.publisher.publish_price_trigger(
+        signal = self.publisher.publish_price_signal(
             symbol=symbol,
             price_usd=oracle_data['price_usd'],
             oracle_source=oracle_data['oracle_source'],
@@ -119,36 +119,36 @@ class SuiPricePipeline:
         print(f"{'='*80}")
         print(f"SUI PRICE PIPELINE: Complete")
         print(f"{'='*80}")
-        print(f"✓ Price trigger published: {trigger.object_id[:16]}...")
-        print(f"✓ Symbol: {trigger.symbol}")
-        print(f"✓ Price: ${trigger.price_usd:,.2f}")
+        print(f"✓ Price signal published: {signal.object_id[:16]}...")
+        print(f"✓ Symbol: {signal.symbol}")
+        print(f"✓ Price: ${signal.price_usd:,.2f}")
         print()
 
-        return trigger
+        return signal
 
     def read_and_publish_multiple(
         self,
         symbols: List[str]
-    ) -> List[PriceTrigger]:
+    ) -> List[PriceSignal]:
         """
-        Read and publish multiple price triggers.
+        Read and publish multiple price signals.
 
         Args:
             symbols: List of asset symbols (e.g., ["BTC", "ETH", "SUI"])
 
         Returns:
-            List of PriceTrigger instances
+            List of PriceSignal instances
         """
-        triggers = []
+        signals = []
 
         for symbol in symbols:
             try:
-                trigger = self.read_and_publish_trigger(symbol)
-                triggers.append(trigger)
+                signal = self.read_and_publish_signal(symbol)
+                signals.append(signal)
             except Exception as e:
                 print(f"✗ Failed to process {symbol}: {e}")
 
-        return triggers
+        return signals
 
     # === Private Methods ===
 
@@ -230,9 +230,9 @@ class SuiPricePipeline:
 
 class PriceScheduler:
     """
-    Scheduler for periodic price trigger creation.
+    Scheduler for periodic price signal creation.
 
-    Reads prices from oracle and creates triggers on schedule (e.g., every 1 minute).
+    Reads prices from oracle and creates signals on schedule (e.g., every 1 minute).
 
     Example:
         scheduler = PriceScheduler(pipeline=price_pipeline)
@@ -242,7 +242,7 @@ class PriceScheduler:
     def __init__(self, pipeline: SuiPricePipeline):
         self.pipeline = pipeline
 
-    def run_once(self, symbols: List[str]) -> List[PriceTrigger]:
+    def run_once(self, symbols: List[str]) -> List[PriceSignal]:
         """Run pipeline once for multiple symbols."""
         return self.pipeline.read_and_publish_multiple(symbols)
 
@@ -254,7 +254,7 @@ class PriceScheduler:
         """
         import time
 
-        print(f"Starting periodic price trigger creation (every {interval_seconds}s)")
+        print(f"Starting periodic price signal creation (every {interval_seconds}s)")
         print(f"Symbols: {symbols}")
         print()
 

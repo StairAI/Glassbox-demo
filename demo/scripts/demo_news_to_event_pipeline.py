@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Complete Example: Real News Data → SUI Event → Agent Trigger
+Complete Example: Real News Data → SUI Event → Agent Signal
 
 Demonstrates the full pipeline:
 1. Fetch real news from CryptoPanic
 2. Store in local DB
 3. Emit SUI event with reference
 4. Watch for event and retrieve full data
-5. Trigger agent with real data
+5. Signal agent with real data
 """
 
 import os
@@ -170,20 +170,20 @@ def simulate_event_watcher(events):
         print(f"   Sentiment: {event['sentiment']}")
         print(f"   DB ID: {event['db_id']}")
 
-        # Filter: Only trigger on bullish/bearish news
+        # Filter: Only signal on bullish/bearish news
         if event['sentiment'] in ['bullish', 'bearish']:
-            print(f"   ✓ Triggering agent (sentiment: {event['sentiment']})")
+            print(f"   ✓ Signaling agent (sentiment: {event['sentiment']})")
 
             # Fetch full data from DB
-            retrieve_and_trigger_agent(event['db_id'])
+            retrieve_and_signal_agent(event['db_id'])
         else:
             print(f"   ⊘ Skipping neutral news")
 
         print()
 
 
-def retrieve_and_trigger_agent(db_id: int):
-    """Step 5: Retrieve full data and trigger agent."""
+def retrieve_and_signal_agent(db_id: int):
+    """Step 5: Retrieve full data and signal agent."""
     print("   " + "-" * 60)
     print(f"   RETRIEVING FULL DATA FROM DB (ID: {db_id})")
 
@@ -243,12 +243,12 @@ def main():
     print(f"✓ Fetched {len(articles)} real articles from CryptoPanic")
     print(f"✓ Stored in local database")
     print(f"✓ Emitted {len(events)} SUI events (simulated)")
-    print(f"✓ Event watcher triggered agents for relevant news")
+    print(f"✓ Event watcher signaled agents for relevant news")
     print()
     print("Key Insight:")
-    print("  • SUI Events = Lightweight triggers (200 bytes)")
+    print("  • SUI Events = Lightweight signals (200 bytes)")
     print("  • Real Data = Stored in DB/Walrus (can be 10KB+)")
-    print("  • Agents fetch full data when triggered")
+    print("  • Agents fetch full data when signaled")
     print()
     print("Data Storage Options:")
     print("  1. Local DB (SQLite) - For demo/development")

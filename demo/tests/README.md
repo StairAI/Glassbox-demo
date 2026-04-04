@@ -101,7 +101,7 @@ SUI_TESTNET_RPC=https://fullnode.testnet.sui.io:443
 ### Blockchain Tests
 
 Tests for SUI blockchain integration:
-- Publishing triggers to SUI
+- Publishing signals to SUI
 - Transaction verification
 - Object creation and queries
 - Network connectivity
@@ -165,7 +165,7 @@ End-to-end pipeline tests:
 - Full data flow from news → signals → recommendations
 - Multi-agent orchestration
 - Walrus storage integration
-- Trigger registry
+- Signal registry
 
 **Requirements:**
 - All configuration from `.env`

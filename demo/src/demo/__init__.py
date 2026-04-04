@@ -4,6 +4,6 @@ Demo utilities for Glass Box Protocol
 Centralized components for demo purposes (will be replaced by smart contracts in production).
 """
 
-from .trigger_registry import TriggerRegistry
+from .signal_registry import SignalRegistry
 
-__all__ = ["TriggerRegistry"]
+__all__ = ["SignalRegistry"]

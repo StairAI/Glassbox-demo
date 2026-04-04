@@ -9,7 +9,7 @@ The system now includes a database table to track "mocked account addresses" use
 In the current implementation using the **Sponsor Pattern**, data ownership is managed through metadata fields rather than separate private keys:
 
 - **Transaction Signer**: Your main wallet (with private key) signs all transactions and pays gas
-- **Data Owner**: Configurable address stored in trigger metadata (no private key needed)
+- **Data Owner**: Configurable address stored in signal metadata (no private key needed)
 
 "Mocked accounts" are these owner addresses - they're used for indexing and organization, but don't require separate private keys or gas funding.
 

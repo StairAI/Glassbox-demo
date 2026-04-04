@@ -70,7 +70,7 @@ def get_cached_signals():
 
         # Cache miss or outdated - reload
         news = registry.get_signals(signal_type='news', limit=1000)
-        signals = registry.get_signals(signal_type='insight', limit=1000)
+        signals = registry.get_signals(signal_type='signal', limit=1000)
         all_signals = news + signals
 
         # Update cache
@@ -82,7 +82,7 @@ def get_cached_signals():
         print(f"Cache error: {e}")
         # Fallback to direct registry access
         news = registry.get_signals(signal_type='news', limit=1000)
-        signals = registry.get_signals(signal_type='insight', limit=1000)
+        signals = registry.get_signals(signal_type='signal', limit=1000)
         return news + signals
 
 
@@ -188,7 +188,7 @@ def get_agents():
     """
     try:
         # Get all signal signals grouped by producer (agent)
-        signals = registry.get_signals(signal_type='insight', limit=1000)
+        signals = registry.get_signals(signal_type='signal', limit=1000)
 
         # Group by agent
         agent_stats = {}
@@ -241,7 +241,7 @@ def get_agent_reasoning_traces(agent_id: str):
     """
     try:
         # Get all signals from this agent
-        signals = registry.get_signals(signal_type='insight', limit=1000)
+        signals = registry.get_signals(signal_type='signal', limit=1000)
         agent_signals = [s for s in signals if s.get('producer') == agent_id]
 
         traces = []
@@ -324,7 +324,7 @@ def get_stats():
 
         # Get signal counts
         news_signals = registry.get_signals(signal_type='news', limit=10000)
-        signal_signals = registry.get_signals(signal_type='insight', limit=10000)
+        signal_signals = registry.get_signals(signal_type='signal', limit=10000)
 
         return jsonify({
             'success': True,

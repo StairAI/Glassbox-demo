@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Complete Demo: News → Walrus → Trigger → Agent A → Sentiment Signal
+Complete Demo: News → Walrus → Signal → Agent A → Sentiment Signal
 
 This demonstrates the complete flow:
 1. NewsPipeline fetches real news from CryptoPanic
 2. Stores full data on Walrus
-3. Creates trigger in TriggerRegistry
-4. Agent A reads trigger and fetches data from Walrus
+3. Creates signal in SignalRegistry
+4. Agent A reads signal and fetches data from Walrus
 5. Agent A analyzes sentiment with LLM (or fallback)
 6. Agent A stores reasoning trace on Walrus
-7. Agent A publishes sentiment signal trigger
+7. Agent A publishes sentiment signal signal
 """
 
 import os
@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 from src.pipeline.news_pipeline import NewsPipeline
 from src.blockchain.sui_publisher import OnChainPublisher
-from src.demo.trigger_registry import TriggerRegistry
+from src.demo.signal_registry import SignalRegistry
 from src.storage.walrus_client import WalrusClient
 from src.agents.agent_a_sentiment import AgentA
 
@@ -57,9 +57,9 @@ def main():
     )
     print(f"  ✓ OnChainPublisher: Configured")
 
-    # Trigger registry
-    registry = TriggerRegistry()
-    print(f"  ✓ TriggerRegistry: Ready")
+    # Signal registry
+    registry = SignalRegistry()
+    print(f"  ✓ SignalRegistry: Ready")
     print()
 
     # ===========================================================================
@@ -84,23 +84,23 @@ def main():
 
     # Fetch and publish news
     print("Running news pipeline...")
-    trigger = news_pipeline.fetch_and_publish(
+    signal = news_pipeline.fetch_and_publish(
         currencies=["BTC", "ETH"],
         limit=5
     )
 
-    # Register trigger in registry
-    print("Registering trigger...")
-    trigger_id = registry.register_trigger({
-        "trigger_type": "news",
-        "walrus_blob_id": trigger.walrus_blob_id,
-        "data_hash": trigger.data_hash,
-        "size_bytes": trigger.size_bytes,
-        "articles_count": trigger.articles_count,
-        "timestamp": trigger.timestamp.isoformat(),
+    # Register signal in registry
+    print("Registering signal...")
+    signal_id = registry.register_signal({
+        "signal_type": "news",
+        "walrus_blob_id": signal.walrus_blob_id,
+        "data_hash": signal.data_hash,
+        "size_bytes": signal.size_bytes,
+        "articles_count": signal.articles_count,
+        "timestamp": signal.timestamp.isoformat(),
         "producer": "news_pipeline"
     })
-    print(f"  ✓ Trigger registered: {trigger_id}")
+    print(f"  ✓ Signal registered: {signal_id}")
     print()
 
     # ===========================================================================
@@ -120,10 +120,10 @@ def main():
     )
 
     # Run Agent A
-    signal_triggers = agent_a.run(max_triggers=1)
+    signal_signals = agent_a.run(max_signals=1)
 
-    if signal_triggers:
-        signal = signal_triggers[0]
+    if signal_signals:
+        signal = signal_signals[0]
         print()
         print("=" * 80)
         print("SENTIMENT SIGNAL GENERATED")
@@ -158,15 +158,15 @@ def main():
     print("╚" + "=" * 78 + "╝")
     print()
 
-    print("Checking TriggerRegistry for sentiment signals...")
-    sentiment_signals = registry.get_triggers(trigger_type="signal", limit=5)
+    print("Checking SignalRegistry for sentiment signals...")
+    sentiment_signals = registry.get_signals(signal_type="insight", limit=5)
     print(f"  ✓ Found {len(sentiment_signals)} sentiment signal(s)")
 
     if sentiment_signals:
         print()
         print("Latest sentiment signal:")
         latest = sentiment_signals[-1]
-        print(f"  Trigger ID: {latest['trigger_id']}")
+        print(f"  Signal ID: {latest['signal_id']}")
         print(f"  Signal Type: {latest['signal_type']}")
         print(f"  Confidence: {latest['confidence']}")
         print(f"  Producer: {latest['producer']}")
@@ -181,20 +181,20 @@ def main():
     print("=" * 80)
     print()
     print("✅ What worked:")
-    print(f"  1. NewsPipeline fetched {trigger.articles_count} articles from CryptoPanic")
-    print(f"  2. Stored {trigger.size_bytes:,} bytes on Walrus")
-    print(f"  3. Created news trigger in TriggerRegistry")
-    print(f"  4. Agent A read trigger and fetched data from Walrus")
+    print(f"  1. NewsPipeline fetched {signal.articles_count} articles from CryptoPanic")
+    print(f"  2. Stored {signal.size_bytes:,} bytes on Walrus")
+    print(f"  3. Created news signal in SignalRegistry")
+    print(f"  4. Agent A read signal and fetched data from Walrus")
     print(f"  5. Agent A analyzed sentiment {'with LLM' if agent_a.llm_available else 'with fallback'}")
     print(f"  6. Agent A stored reasoning trace on Walrus")
-    print(f"  7. Agent A published sentiment signal trigger")
+    print(f"  7. Agent A published sentiment signal signal")
     print()
     print(f"Storage mode: {'REAL WALRUS TESTNET ✅' if walrus_enabled else 'Simulated'}")
     print(f"LLM mode: {'Claude Sonnet 4.5 ✅' if agent_a.llm_available else 'Fallback (rule-based)'}")
     print()
     print("📋 Next steps:")
     print("  1. Implement Agent B (Investment Signals)")
-    print("  2. Agent B reads sentiment + price triggers")
+    print("  2. Agent B reads sentiment + price signals")
     print("  3. Agent B generates investment signals")
     print("  4. Build complete multi-agent system")
     print()

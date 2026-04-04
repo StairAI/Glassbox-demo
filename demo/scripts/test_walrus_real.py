@@ -133,7 +133,7 @@ def test_walrus_storage():
         print("Next steps:")
         print("1. Integrate with NewsPipeline")
         print("2. Store news data on Walrus")
-        print("3. Create triggers in TriggerRegistry")
+        print("3. Create signals in SignalRegistry")
         print("4. Build agent to fetch and process data")
     else:
         print("Note: Running in simulated mode.")

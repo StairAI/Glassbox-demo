@@ -27,7 +27,7 @@ class PricePipeline:
     - Fetch prices from CoinGecko API
     - Transform to standardized format
     - Publish raw data to SUI blockchain
-    - Emit events to trigger agents
+    - Emit events to signal agents
 
     Does NOT:
     - Use LLMs
@@ -76,7 +76,7 @@ class PricePipeline:
         1. Fetch from CoinGecko API
         2. Transform to standardized format
         3. Publish to SUI blockchain
-        4. (Optional) Emit event to trigger agents
+        4. (Optional) Emit event to signal agents
 
         Args:
             symbols: List of crypto symbols (e.g., ["BTC", "ETH", "SUI"])
@@ -123,9 +123,9 @@ class PricePipeline:
         print(f"  ✓ Published to blockchain")
         print(f"  ✓ Object ID: {object_id}")
 
-        # Step 4: (Optional) Emit event to trigger agents
+        # Step 4: (Optional) Emit event to signal agents
         if self.event_emitter:
-            print(f"\n[4/4] EMIT: Triggering agent events")
+            print(f"\n[4/4] EMIT: Signaling agent events")
             self._emit_events(object_id, price_data)
 
         print(f"\n{'='*80}")
@@ -212,7 +212,7 @@ class PricePipeline:
 
     def _emit_events(self, object_id: str, price_data: Dict[str, Any]):
         """
-        Emit lightweight events to trigger agents.
+        Emit lightweight events to signal agents.
 
         Events contain minimal data (just price previews and object_id).
         Agents will fetch full data from blockchain using object_id.

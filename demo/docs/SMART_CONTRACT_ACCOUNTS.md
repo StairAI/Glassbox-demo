@@ -317,14 +317,14 @@ class OnChainPublisher:
             package_id=account_manager_package
         ) if account_manager_package else None
 
-    def publish_news_trigger(
+    def publish_news_signal(
         self,
         news_data: Dict[str, Any],
         producer: str = "news_pipeline",
         use_managed_account: bool = True  # NEW
-    ) -> NewsTrigger:
+    ) -> NewsSignal:
         """
-        Publish news trigger, optionally using managed account for gas.
+        Publish news signal, optionally using managed account for gas.
         """
         if use_managed_account and self.managed_account_id:
             # Use managed account's balance for gas
@@ -367,7 +367,7 @@ publisher_a = OnChainPublisher(
 )
 
 # Publish uses Project A's managed account for gas
-trigger = publisher_a.publish_news_trigger(
+signal = publisher_a.publish_news_signal(
     news_data={"articles": [...]},
     use_managed_account=True  # Gas paid from managed account balance
 )

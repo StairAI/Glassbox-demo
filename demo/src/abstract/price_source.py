@@ -5,11 +5,13 @@ This allows integration with multiple price APIs (CoinGecko, CoinMarketCap, Bina
 while maintaining a consistent interface.
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict, List, Optional
 from datetime import datetime
 from dataclasses import dataclass
 from decimal import Decimal
+
+from .data_source import DataSource, DataSourceError
 
 
 @dataclass
@@ -64,7 +66,7 @@ class PriceData:
         }
 
 
-class PriceSource(ABC):
+class PriceSource(DataSource):
     """
     Abstract base class for price data sources.
 
@@ -78,15 +80,10 @@ class PriceSource(ABC):
         Args:
             api_key: API authentication key (if required)
         """
-        self.api_key = api_key
-        self._source_name = self.__class__.__name__.lower().replace("source", "")
+        super().__init__(credentials=api_key)
+        self.api_key = api_key  # Keep for backward compatibility
         self._cache: Dict[str, PriceData] = {}
         self._cache_duration = 60  # seconds
-
-    @property
-    def source_name(self) -> str:
-        """Return the name of this price source."""
-        return self._source_name
 
     @abstractmethod
     def get_price(
@@ -222,14 +219,12 @@ class PriceSource(ABC):
         return symbol.upper()
 
 
-class PriceSourceError(Exception):
+class PriceSourceError(DataSourceError):
     """Exception raised when price source encounters an error."""
 
     def __init__(self, source: str, message: str, original_error: Optional[Exception] = None):
-        self.source = source
-        self.message = message
+        super().__init__(source, message)
         self.original_error = original_error
-        super().__init__(f"[{source}] {message}")
 
 
 class RateLimitError(PriceSourceError):

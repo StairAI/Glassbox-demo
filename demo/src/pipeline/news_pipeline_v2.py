@@ -6,14 +6,14 @@ CHANGES FROM V1:
 - One API call fetches multiple articles
 - Each article stored as separate Walrus blob
 - Database deduplication (skip already processed articles)
-- Individual SUI triggers per article
+- Individual SUI signals per article
 - Better tracking and logging
 
 ARCHITECTURE:
 1. Fetch articles list (one API call)
 2. Check DB for already processed articles (deduplication)
 3. Store each NEW article as separate Walrus blob
-4. Create individual SUI trigger per article
+4. Create individual SUI signal per article
 5. Record all in ActivityDB
 """
 
@@ -25,7 +25,7 @@ import json
 from src.data_clients.cryptopanic_client import CryptoPanicClient
 from src.data_sources.cryptopanic_source import CryptoPanicSource
 from src.blockchain.sui_publisher import OnChainPublisher
-from src.core.trigger import NewsTrigger
+from src.abstract import NewsSignal
 from src.storage.activity_db import ActivityDB
 
 
@@ -37,7 +37,7 @@ class NewsPipelineV2:
     - Single API call to fetch all articles
     - Each article gets its own Walrus blob
     - Database deduplication prevents reprocessing
-    - Individual SUI triggers for granular tracking
+    - Individual SUI signals for granular tracking
 
     Example:
         pipeline = NewsPipelineV2(
@@ -45,8 +45,8 @@ class NewsPipelineV2:
             publisher=OnChainPublisher(),
             db=ActivityDB()
         )
-        triggers = pipeline.fetch_and_publish(currencies=["BTC"], limit=20)
-        # Returns list of NewsTrigger instances (one per article)
+        signals = pipeline.fetch_and_publish(currencies=["BTC"], limit=20)
+        # Returns list of NewsSignal instances (one per article)
     """
 
     def __init__(
@@ -93,7 +93,7 @@ class NewsPipelineV2:
         self,
         currencies: Optional[List[str]] = None,
         limit: int = 20
-    ) -> List[NewsTrigger]:
+    ) -> List[NewsSignal]:
         """
         Fetch news articles and publish each as separate Walrus blob.
 
@@ -101,7 +101,7 @@ class NewsPipelineV2:
         1. Single API call to fetch articles
         2. Deduplicate against database
         3. Store each NEW article as separate Walrus blob
-        4. Create individual SUI trigger per article
+        4. Create individual SUI signal per article
         5. Record everything in database
 
         Args:
@@ -109,7 +109,7 @@ class NewsPipelineV2:
             limit: Maximum number of articles to fetch from API
 
         Returns:
-            List of NewsTrigger instances (one per NEW article)
+            List of NewsSignal instances (one per NEW article)
         """
         print(f"\n{'='*80}")
         print("NEWS PIPELINE V2: Starting ETL Process")
@@ -155,15 +155,15 @@ class NewsPipelineV2:
         # Step 3: TRANSFORM & LOAD - Process each article individually
         print(f"\n[3/4] TRANSFORM & LOAD: Publishing {len(new_articles)} articles")
 
-        triggers = []
+        signals = []
 
         for i, article in enumerate(new_articles, 1):
             print(f"\n  [{i}/{len(new_articles)}] Processing: {article.title[:60]}...")
 
             try:
-                trigger = self._publish_single_article(article, currencies)
-                triggers.append(trigger)
-                print(f"      ✓ Published - Trigger: {trigger.object_id[:16]}...")
+                signal = self._publish_single_article(article, currencies)
+                signals.append(signal)
+                print(f"      ✓ Published - Signal: {signal.object_id[:16]}...")
 
             except Exception as e:
                 print(f"      ✗ Failed: {e}")
@@ -171,15 +171,15 @@ class NewsPipelineV2:
 
         # Step 4: SUMMARY
         print(f"\n[4/4] SUMMARY")
-        print(f"  ✓ Successfully published: {len(triggers)} articles")
-        print(f"  ✓ Total Walrus blobs created: {len(triggers)}")
-        print(f"  ✓ Total SUI triggers created: {len(triggers)}")
+        print(f"  ✓ Successfully published: {len(signals)} articles")
+        print(f"  ✓ Total Walrus blobs created: {len(signals)}")
+        print(f"  ✓ Total SUI signals created: {len(signals)}")
 
         print(f"\n{'='*80}")
         print("NEWS PIPELINE V2: ETL Complete")
         print(f"{'='*80}\n")
 
-        return triggers
+        return signals
 
     def _filter_new_articles(self, articles) -> List:
         """
@@ -212,14 +212,14 @@ class NewsPipelineV2:
         self,
         article,
         currencies: Optional[List[str]] = None
-    ) -> NewsTrigger:
+    ) -> NewsSignal:
         """
         Publish a single article to Walrus and SUI.
 
         Steps:
         1. Transform article to storage format
         2. Store on Walrus (get blob_id)
-        3. Create SUI trigger
+        3. Create SUI signal
         4. Record in database
 
         Args:
@@ -227,7 +227,7 @@ class NewsPipelineV2:
             currencies: Currency context for metadata
 
         Returns:
-            NewsTrigger instance
+            NewsSignal instance
         """
         # Transform to storage format
         article_data = {
@@ -244,7 +244,7 @@ class NewsPipelineV2:
         article_id = self._generate_article_id(article.url)
 
         # Publish to Walrus + SUI via OnChainPublisher
-        # Note: OnChainPublisher.publish_news_trigger expects batch format
+        # Note: OnChainPublisher.publish_news_signal expects batch format
         # We wrap single article in the expected structure
         news_data = {
             "articles": [article_data],
@@ -252,7 +252,7 @@ class NewsPipelineV2:
             "total_count": 1
         }
 
-        trigger = self.publisher.publish_news_trigger(
+        signal = self.publisher.publish_news_signal(
             news_data=news_data,
             producer="news_pipeline_v2"
         )
@@ -273,9 +273,9 @@ class NewsPipelineV2:
             # Log Walrus operation
             self.db.log_walrus_operation(
                 operation_type="store",
-                blob_id=trigger.walrus_blob_id,
-                data_hash=trigger.data_hash,
-                size_bytes=trigger.size_bytes,
+                blob_id=signal.walrus_blob_id,
+                data_hash=signal.data_hash,
+                size_bytes=signal.size_bytes,
                 content_type="application/json",
                 metadata={"article_id": article_id, "title": article.title[:100]},
                 success=True,
@@ -284,21 +284,21 @@ class NewsPipelineV2:
 
             # Log SUI transaction
             self.db.log_sui_transaction(
-                transaction_type="create_trigger",
+                transaction_type="create_signal",
                 transaction_digest=None,  # Would be real tx hash in production
-                object_id=trigger.object_id,
+                object_id=signal.object_id,
                 sender="news_pipeline_v2",
                 gas_used=0,  # Simulated
                 status="success",
                 metadata={
-                    "trigger_type": "news",
+                    "signal_type": "news",
                     "article_count": 1,
-                    "walrus_blob_id": trigger.walrus_blob_id
+                    "walrus_blob_id": signal.walrus_blob_id
                 },
                 error_message=None
             )
 
-        return trigger
+        return signal
 
     def _generate_article_id(self, url: str) -> str:
         """
@@ -350,7 +350,7 @@ class NewsSchedulerV2:
         self,
         currencies: Optional[List[str]] = None,
         limit: int = 20
-    ) -> List[NewsTrigger]:
+    ) -> List[NewsSignal]:
         """Run pipeline once."""
         return self.pipeline.fetch_and_publish(currencies=currencies, limit=limit)
 
@@ -383,7 +383,7 @@ class NewsSchedulerV2:
                 print(f"Iteration {iteration}")
                 print(f"{'='*80}")
 
-                triggers = self.run_once(currencies=currencies, limit=limit)
+                signals = self.run_once(currencies=currencies, limit=limit)
 
                 print(f"\nSleeping for {interval_seconds} seconds...")
                 time.sleep(interval_seconds)

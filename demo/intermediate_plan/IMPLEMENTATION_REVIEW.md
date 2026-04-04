@@ -1,4 +1,4 @@
-# Implementation Review: Walrus + Trigger Architecture
+# Implementation Review: Walrus + Signal Architecture
 
 **Status**: ✅ Ready for Review (Steps 4 & 5 Complete)
 
@@ -32,15 +32,15 @@ data = client.fetch(blob_id)
 
 ---
 
-### 2. ✅ Unified Trigger Abstraction ([src/core/trigger.py](../src/core/trigger.py))
+### 2. ✅ Unified Signal Abstraction ([src/core/signal.py](../src/core/signal.py))
 
 **Purpose**: Unified interface for all agent inputs
 
-**Three Trigger Types**:
+**Three Signal Types**:
 
-#### NewsTrigger
+#### NewsSignal
 ```python
-NewsTrigger(
+NewsSignal(
     object_id="0xabc...",           # SUI object ID
     walrus_blob_id="xyz123...",     # Walrus reference
     data_hash="hash...",             # SHA-256
@@ -51,12 +51,12 @@ NewsTrigger(
 )
 
 # Fetch full data
-data = trigger.fetch_full_data()  # Fetches from Walrus
+data = signal.fetch_full_data()  # Fetches from Walrus
 ```
 
-#### PriceTrigger
+#### PriceSignal
 ```python
-PriceTrigger(
+PriceSignal(
     object_id="0xdef...",
     symbol="BTC",
     price_usd=66434.0,
@@ -67,12 +67,12 @@ PriceTrigger(
 )
 
 # Fetch full data
-data = trigger.fetch_full_data()  # Data already in trigger
+data = signal.fetch_full_data()  # Data already in signal
 ```
 
-#### SignalTrigger
+#### InsightSignal
 ```python
-SignalTrigger(
+InsightSignal(
     object_id="0xghi...",
     signal_type="sentiment",
     signal_value={"BTC": 0.72, "ETH": 0.45},
@@ -83,22 +83,22 @@ SignalTrigger(
 )
 
 # Fetch full data + reasoning trace
-data = trigger.fetch_full_data()  # Includes trace from Walrus
+data = signal.fetch_full_data()  # Includes trace from Walrus
 ```
 
-**Key Benefit**: Agents receive `List[Trigger]` regardless of data source!
+**Key Benefit**: Agents receive `List[Signal]` regardless of data source!
 
 ---
 
 ### 3. ✅ Updated OnChainPublisher ([src/blockchain/sui_publisher.py](../src/blockchain/sui_publisher.py))
 
-**Purpose**: Publish triggers to SUI with hybrid storage strategy
+**Purpose**: Publish signals to SUI with hybrid storage strategy
 
 **Three Publishing Methods**:
 
-#### publish_news_trigger()
+#### publish_news_signal()
 ```python
-trigger = publisher.publish_news_trigger(
+signal = publisher.publish_news_signal(
     news_data={
         "articles": [...],
         "total_count": 5
@@ -109,14 +109,14 @@ trigger = publisher.publish_news_trigger(
 # Internally:
 # 1. Store full data on Walrus → blob_id
 # 2. Publish metadata + blob_id to SUI → object_id
-# 3. Return NewsTrigger
+# 3. Return NewsSignal
 ```
 
 **Storage Strategy**: Large data (news) → Walrus + SUI metadata
 
-#### publish_price_trigger()
+#### publish_price_signal()
 ```python
-trigger = publisher.publish_price_trigger(
+signal = publisher.publish_price_signal(
     symbol="BTC",
     price_usd=66434.0,
     oracle_source="pyth",
@@ -124,16 +124,16 @@ trigger = publisher.publish_price_trigger(
 )
 
 # Internally:
-# 1. Create trigger data (small, < 200 bytes)
+# 1. Create signal data (small, < 200 bytes)
 # 2. Publish directly to SUI → object_id
-# 3. Return PriceTrigger
+# 3. Return PriceSignal
 ```
 
 **Storage Strategy**: Small data (price) → Direct SUI storage
 
-#### publish_signal_trigger()
+#### publish_signal_signal()
 ```python
-trigger = publisher.publish_signal_trigger(
+signal = publisher.publish_signal_signal(
     signal_type="sentiment",
     signal_value={"BTC": 0.72},
     confidence=0.85,
@@ -149,7 +149,7 @@ trigger = publisher.publish_signal_trigger(
 # Internally:
 # 1. Store reasoning trace on Walrus → trace_id
 # 2. Publish signal + trace_id to SUI → object_id
-# 3. Return SignalTrigger
+# 3. Return InsightSignal
 ```
 
 **Storage Strategy**: Signal on SUI + reasoning trace on Walrus
@@ -166,11 +166,11 @@ trigger = publisher.publish_signal_trigger(
    ↓
 2. TRANSFORM: Convert to standard format
    ↓
-3. LOAD: publisher.publish_news_trigger()
+3. LOAD: publisher.publish_news_signal()
    ├─> Walrus: Full data (4KB+)
    └─> SUI: Metadata + blob_id (< 500 bytes)
    ↓
-4. RETURN: NewsTrigger
+4. RETURN: NewsSignal
 ```
 
 **Usage**:
@@ -180,20 +180,20 @@ pipeline = NewsPipeline(
     publisher=OnChainPublisher()
 )
 
-trigger = pipeline.fetch_and_publish(
+signal = pipeline.fetch_and_publish(
     currencies=["BTC", "ETH"],
     limit=5
 )
 
-print(f"Trigger: {trigger.object_id}")
-print(f"Walrus blob: {trigger.walrus_blob_id}")
-print(f"Articles: {trigger.articles_count}")
+print(f"Signal: {signal.object_id}")
+print(f"Walrus blob: {signal.walrus_blob_id}")
+print(f"Articles: {signal.articles_count}")
 ```
 
 **Key Points**:
 - ✅ Simple: All data → Walrus
 - ✅ Cost-efficient: Only metadata on SUI
-- ✅ Returns NewsTrigger for agents
+- ✅ Returns NewsSignal for agents
 - ❌ No LLM, no reasoning
 
 ---
@@ -208,10 +208,10 @@ print(f"Articles: {trigger.articles_count}")
    ↓
 2. TRANSFORM: Already standardized (no transformation needed)
    ↓
-3. PUBLISH: publisher.publish_price_trigger()
-   └─> SUI: Price trigger (< 200 bytes)
+3. PUBLISH: publisher.publish_price_signal()
+   └─> SUI: Price signal (< 200 bytes)
    ↓
-4. RETURN: PriceTrigger
+4. RETURN: PriceSignal
 ```
 
 **Usage**:
@@ -223,11 +223,11 @@ pipeline = SuiPricePipeline(
     simulated=True
 )
 
-trigger = pipeline.read_and_publish_trigger(symbol="BTC")
+signal = pipeline.read_and_publish_signal(symbol="BTC")
 
-print(f"Trigger: {trigger.object_id}")
-print(f"Price: ${trigger.price_usd}")
-print(f"Oracle: {trigger.oracle_source}")
+print(f"Signal: {signal.object_id}")
+print(f"Price: ${signal.price_usd}")
+print(f"Oracle: {signal.oracle_source}")
 ```
 
 **Key Points**:
@@ -268,7 +268,7 @@ print(f"Oracle: {trigger.oracle_source}")
 ┌────────────────────────────────────────────────────────────┐
 │                     SUI BLOCKCHAIN                         │
 │                                                            │
-│  NewsTrigger               PriceTrigger                   │
+│  NewsSignal               PriceSignal                   │
 │  • walrus_blob_id          • symbol                       │
 │  • data_hash               • price_usd                    │
 │  • size_bytes              • oracle_source                │
@@ -276,12 +276,12 @@ print(f"Oracle: {trigger.oracle_source}")
 │                                                            │
 └──────────────────────────┬─────────────────────────────────┘
                            │
-                           │ Unified Trigger Interface
+                           │ Unified Signal Interface
                            ▼
                   ┌─────────────────┐
                   │  Agent Inputs   │
                   │                 │
-                  │  List[Trigger]  │
+                  │  List[Signal]  │
                   └─────────────────┘
 ```
 
@@ -303,19 +303,19 @@ print(f"Oracle: {trigger.oracle_source}")
    - Only metadata on expensive chain
 
 2. **Unified Interface**
-   - All agents receive `List[Trigger]`
-   - `trigger.fetch_full_data()` works regardless of source
+   - All agents receive `List[Signal]`
+   - `signal.fetch_full_data()` works regardless of source
    - Easy to add new data sources
 
 3. **Leverage Existing Infrastructure**
    - Price oracles already on SUI
-   - Just read and wrap in trigger
+   - Just read and wrap in signal
    - No redundant API calls
 
 4. **Clear Separation**
    - NewsPipeline: Fetch from API → Walrus + SUI
-   - SuiPricePipeline: Read from SUI → Wrap in trigger
-   - Agents: Process triggers (next step!)
+   - SuiPricePipeline: Read from SUI → Wrap in signal
+   - Agents: Process signals (next step!)
 
 ---
 
@@ -323,13 +323,13 @@ print(f"Oracle: {trigger.oracle_source}")
 
 Before implementing the smart contracts, let's review the requirements:
 
-### Required Trigger Objects on SUI
+### Required Signal Objects on SUI
 
-#### NewsTrigger Object
+#### NewsSignal Object
 ```move
-struct NewsTrigger has key, store {
+struct NewsSignal has key, store {
     id: UID,
-    trigger_type: vector<u8>,   // "news"
+    signal_type: vector<u8>,   // "news"
     walrus_blob_id: vector<u8>, // Walrus reference
     data_hash: vector<u8>,      // SHA-256
     size_bytes: u64,
@@ -339,11 +339,11 @@ struct NewsTrigger has key, store {
 }
 ```
 
-#### PriceTrigger Object
+#### PriceSignal Object
 ```move
-struct PriceTrigger has key, store {
+struct PriceSignal has key, store {
     id: UID,
-    trigger_type: vector<u8>,   // "price"
+    signal_type: vector<u8>,   // "price"
     symbol: vector<u8>,
     price_usd: u64,             // Scaled by 1e8
     oracle_source: vector<u8>,  // "pyth", "switchboard"
@@ -353,11 +353,11 @@ struct PriceTrigger has key, store {
 }
 ```
 
-#### SignalTrigger Object
+#### InsightSignal Object
 ```move
-struct SignalTrigger has key, store {
+struct InsightSignal has key, store {
     id: UID,
-    trigger_type: vector<u8>,   // "signal"
+    signal_type: vector<u8>,   // "signal"
     signal_type: vector<u8>,    // "sentiment", "investment"
     signal_value: vector<u8>,   // JSON blob
     confidence: u64,            // Scaled by 1e8
@@ -370,9 +370,9 @@ struct SignalTrigger has key, store {
 ### Required Events
 
 ```move
-struct TriggerCreated has copy, drop {
-    trigger_id: address,
-    trigger_type: vector<u8>,
+struct SignalCreated has copy, drop {
+    signal_id: address,
+    signal_type: vector<u8>,
     timestamp: u64,
 }
 ```
@@ -382,19 +382,19 @@ struct TriggerCreated has copy, drop {
 ## Questions for Review
 
 1. **Smart Contract Structure**: Should we have:
-   - One module `glass_box::trigger` with all three structs?
-   - Three separate modules (news_trigger, price_trigger, signal_trigger)?
+   - One module `glass_box::signal` with all three structs?
+   - Three separate modules (news_signal, price_signal, signal_signal)?
 
 2. **Data Scaling**: For prices and confidence, we're using `u64` with scaling factor (1e8). Is this acceptable or should we use a different representation?
 
-3. **Signal Value Storage**: SignalTrigger stores `signal_value` as JSON blob (vector<u8>). Should we have a more structured format?
+3. **Signal Value Storage**: InsightSignal stores `signal_value` as JSON blob (vector<u8>). Should we have a more structured format?
 
-4. **Access Control**: Should triggers be:
+4. **Access Control**: Should signals be:
    - Publicly shared objects (any agent can read)?
    - Owned objects (only specific agents can read)?
    - Hybrid (some public, some private)?
 
-5. **Additional Fields**: Are there any other fields needed for triggers?
+5. **Additional Fields**: Are there any other fields needed for signals?
    - Producer reputation score?
    - Expiration timestamp?
    - Version number?

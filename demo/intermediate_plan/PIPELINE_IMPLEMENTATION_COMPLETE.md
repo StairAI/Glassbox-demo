@@ -33,7 +33,7 @@ class OnChainPublisher:
 #### OnChainEventEmitter
 ```python
 class OnChainEventEmitter:
-    """Emits lightweight events to trigger agents"""
+    """Emits lightweight events to signal agents"""
 
     def emit_event(event_type, object_id, metadata) -> str:
         # Emit event with reference to full data
@@ -44,7 +44,7 @@ class OnChainEventEmitter:
 - Simulated mode for demo/development
 - Real blockchain mode (ready for pysui integration)
 - Data hashing for integrity verification
-- Event emission for agent triggering
+- Event emission for agent signaling
 
 ---
 
@@ -67,7 +67,7 @@ class NewsPipeline:
         # Step 3: LOAD - Publish to blockchain
         object_id = self.publisher.publish_raw_data(...)
 
-        # Step 4: EMIT - Trigger agents (optional)
+        # Step 4: EMIT - Signal agents (optional)
         self.event_emitter.emit_event(...)
 
         return object_id
@@ -117,7 +117,7 @@ class PricePipeline:
         # Step 3: LOAD - Publish to blockchain
         object_id = self.publisher.publish_raw_data(...)
 
-        # Step 4: EMIT - Trigger agents (optional)
+        # Step 4: EMIT - Signal agents (optional)
         self.event_emitter.emit_event(...)
 
         return object_id
@@ -177,7 +177,7 @@ module glass_box::raw_data {
         data_hash: vector<u8>,
     }
 
-    /// Event to trigger agents
+    /// Event to signal agents
     struct DataAvailableEvent has copy, drop {
         event_type: vector<u8>,     // "news_available", "price_updated"
         object_id: address,         // Reference to RawDataObject
@@ -192,7 +192,7 @@ module glass_box::raw_data {
         // Transfer to sender
     }
 
-    /// Emit event to trigger agents
+    /// Emit event to signal agents
     public entry fun emit_data_event(...) {
         // Emit DataAvailableEvent
     }
@@ -212,7 +212,7 @@ module glass_box::raw_data {
 
 **Features**:
 - Clear producer_type distinction ("pipeline" vs "agent")
-- Lightweight events for triggering
+- Lightweight events for signaling
 - Data integrity verification via hash
 - Public sharing for agent access
 
@@ -233,7 +233,7 @@ NEWS PIPELINE: Starting ETL Process
   ✓ Prepared 5 articles
 [3/4] LOAD: Publishing to SUI blockchain
   ✓ Mock Object ID: 0x914197285212592f...
-[4/4] EMIT: Triggering agent events
+[4/4] EMIT: Signaling agent events
   ✓ 5 events emitted
 ```
 
@@ -246,7 +246,7 @@ PRICE PIPELINE: Starting ETL Process
   ✓ Prepared 1 price records
 [3/4] LOAD: Publishing to SUI blockchain
   ✓ Mock Object ID: 0x0581c00d605a3e81...
-[4/4] EMIT: Triggering agent events
+[4/4] EMIT: Signaling agent events
   ✓ 1 event emitted
 ```
 
@@ -365,7 +365,7 @@ PRICE PIPELINE: Starting ETL Process
    ↓
 6. SUI Blockchain (RawDataObject + Events)
    ↓
-7. Event Watchers (Trigger agents on events)
+7. Event Watchers (Signal agents on events)
    ↓
 8. Real Agents (LLM reasoning + Walrus traces)
    ↓
@@ -412,7 +412,7 @@ python3 scripts/demo_pipeline_architecture.py
 
 1. ✅ News pipeline fetches and publishes 5 articles
 2. ✅ Price pipeline fetches and publishes BTC price
-3. ✅ Events emitted for agent triggering
+3. ✅ Events emitted for agent signaling
 4. ✅ Simulated agent processing shown
 
 ### Sample Output
@@ -453,7 +453,7 @@ PRICE PIPELINE: ETL Complete
 - Pipelines and agents are decoupled
 
 ### 5. Cost Efficiency
-- Lightweight events (< 200 bytes) trigger agents
+- Lightweight events (< 200 bytes) signal agents
 - Full data stored once on-chain
 - Agents fetch only when needed
 

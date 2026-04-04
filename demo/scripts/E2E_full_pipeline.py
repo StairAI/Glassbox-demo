@@ -7,7 +7,7 @@ This script tests the complete glass box pipeline end-to-end:
 2. Fetch news articles (100 BTC + 100 SUI) from CryptoPanic
 3. Publish each article individually to Walrus with owner address
 4. Initialize Agent A under the same owner account
-5. Process each news trigger to generate sentiment signals
+5. Process each news signal to generate sentiment signals
 6. Publish signals + reasoning traces under the same owner
 
 All data will be tagged with the same owner address for filtering in the visualization.
@@ -34,8 +34,7 @@ from src.storage.walrus_client import WalrusClient, WalrusHelper
 from src.data_clients.cryptopanic_client import CryptoPanicClient
 from src.data_sources.cryptopanic_source import CryptoPanicSource
 from src.blockchain.sui_publisher import OnChainPublisher
-from src.demo.trigger_registry import TriggerRegistry
-from src.agents.agent_a_sentiment import AgentA
+from src.demo.signal_registry import SignalRegistry
 
 
 class E2EFullPipeline:
@@ -64,7 +63,7 @@ class E2EFullPipeline:
             aggregator_url=walrus_aggregator,
             simulated=False  # Use REAL Walrus testnet
         )
-        self.registry = TriggerRegistry(registry_path="data/trigger_registry.json")
+        self.registry = SignalRegistry(registry_path="data/signal_registry.json")
 
         # Initialize publisher with owner address
         self.publisher = OnChainPublisher(
@@ -241,7 +240,7 @@ class E2EFullPipeline:
 
         for i, article in enumerate(articles, 1):
             try:
-                # Create news data payload (one article per trigger)
+                # Create news data payload (one article per signal)
                 news_data = {
                     "articles": [article],
                     "fetched_at": datetime.now().isoformat(),
@@ -249,18 +248,18 @@ class E2EFullPipeline:
                     "currencies": article.get("currencies", [])
                 }
 
-                # Publish to Walrus and register trigger
-                trigger = self.publisher.publish_news_trigger(
+                # Publish to Walrus and register signal
+                signal = self.publisher.publish_news_signal(
                     news_data=news_data,
                     producer=f"{self.project_name}_news_pipeline"
                 )
 
-                # Register in TriggerRegistry
-                self.registry.register_trigger({
-                    "trigger_type": "news",
-                    "walrus_blob_id": trigger.walrus_blob_id,
-                    "data_hash": trigger.data_hash,
-                    "size_bytes": trigger.size_bytes,
+                # Register in SignalRegistry
+                self.registry.register_signal({
+                    "signal_type": "news",
+                    "walrus_blob_id": signal.walrus_blob_id,
+                    "data_hash": signal.data_hash,
+                    "size_bytes": signal.size_bytes,
                     "articles_count": 1,
                     "producer": f"{self.project_name}_news_pipeline",
                     "owner": self.owner_address,  # Tag with owner
@@ -284,84 +283,83 @@ class E2EFullPipeline:
         print("[Step 4] Running Agent A (Sentiment Analysis)")
         print("=" * 80)
 
-        # Initialize Agent A with owner-filtered triggers
-        agent_a = AgentA(
-            registry=self.registry,
-            publisher=self.publisher,
-            target_tokens=["BTC", "SUI"],  # Both tokens we fetched
+        # Initialize Agent A with new abstract Agent interface
+        from src.agents.agent_a_sentiment import AgentASentiment
+        from src.reasoning_ledger.reasoning_ledger_sdk import ReasoningLedger
+        from src.abstract import NewsSignal
+
+        # Create ReasoningLedger for trace storage
+        reasoning_ledger = ReasoningLedger(self.walrus_client)
+
+        agent_a = AgentASentiment(
+            reasoning_ledger=reasoning_ledger,
+            walrus_client=self.walrus_client,
+            target_tokens=["BTC", "SUI"],
             api_key=self.anthropic_api_key
         )
 
-        # Get news triggers for this owner
-        all_news_triggers = self.registry.get_triggers(trigger_type="news", limit=1000)
-        owner_news_triggers = [
-            t for t in all_news_triggers
+        # Get news signals for this owner
+        all_news_signals = self.registry.get_signals(signal_type="news", limit=1000)
+        owner_news_signals = [
+            t for t in all_news_signals
             if t.get("owner") == self.owner_address
         ]
 
-        print(f"  Found {len(owner_news_triggers)} news triggers for this owner")
-        print(f"  Processing all triggers...")
+        print(f"  Found {len(owner_news_signals)} news signals for this owner")
+        print(f"  Processing all signals...")
         print()
 
-        # Process all triggers
-        for i, trigger_data in enumerate(owner_news_triggers, 1):
+        # Process all signals
+        for i, signal_data in enumerate(owner_news_signals, 1):
             try:
-                print(f"  [Processing {i}/{len(owner_news_triggers)}] Trigger: {trigger_data['trigger_id']}")
+                print(f"  [Processing {i}/{len(owner_news_signals)}] Signal: {signal_data['signal_id']}")
 
-                # Fetch full news data from Walrus
-                news_data = WalrusHelper.fetch_json(
-                    self.walrus_client,
-                    trigger_data['walrus_blob_id']
+                # Convert signal_data to NewsSignal object
+                news_signal = NewsSignal(
+                    object_id=signal_data['signal_id'],
+                    walrus_blob_id=signal_data['walrus_blob_id'],
+                    data_hash=signal_data['data_hash'],
+                    size_bytes=signal_data['size_bytes'],
+                    articles_count=signal_data.get('articles_count', 1),
+                    timestamp=datetime.fromisoformat(signal_data['timestamp']),
+                    producer=signal_data['producer']
                 )
 
-                # Analyze sentiment
-                sentiment_scores = agent_a._analyze_sentiment(news_data['articles'])
+                # Process signal using Agent.run() - this automatically:
+                # 1. Fetches news data from Walrus
+                # 2. Analyzes sentiment
+                # 3. Records reasoning steps
+                # 4. Stores signal data on Walrus
+                # 5. Stores reasoning trace on Walrus
+                # 6. Returns InsightSignal
+                insight_signal = agent_a.run(signals=[news_signal])
 
-                # Create reasoning trace
-                reasoning_trace = {
-                    "agent": "agent_a_sentiment",
+                # Register insight signal in registry
+                self.registry.register_signal({
+                    "signal_type": "insight",
+                    "insight_type": insight_signal.insight_type,
+                    "walrus_blob_id": insight_signal.walrus_blob_id,
+                    "data_hash": insight_signal.data_hash,
+                    "size_bytes": insight_signal.size_bytes,
+                    "confidence": insight_signal.confidence,
+                    "producer": insight_signal.producer,
+                    "walrus_trace_id": insight_signal.walrus_trace_id,
                     "owner": self.owner_address,  # Tag with owner
-                    "input_trigger": trigger_data['trigger_id'],
-                    "input_walrus_blob": trigger_data['walrus_blob_id'],
-                    "articles_analyzed": len(news_data['articles']),
-                    "sentiment_scores": sentiment_scores,
-                    "target_tokens": ["BTC", "SUI"],
-                    "llm_provider": "anthropic" if agent_a.llm_available else "fallback",
-                    "llm_model": "claude-sonnet-4.5-20250514" if agent_a.llm_available else "rule_based",
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-
-                # Publish signal trigger with reasoning
-                signal_trigger = self.publisher.publish_signal_trigger(
-                    signal_type="sentiment",
-                    signal_value=sentiment_scores,
-                    confidence=sentiment_scores.get("overall_confidence", 0.8),
-                    producer=f"{self.project_name}_agent_a",
-                    reasoning_trace=reasoning_trace
-                )
-
-                # Register signal trigger
-                self.registry.register_trigger({
-                    "trigger_type": "signal",
-                    "signal_type": "sentiment",
-                    "signal_value": sentiment_scores,
-                    "confidence": sentiment_scores.get("overall_confidence", 0.8),
-                    "producer": f"{self.project_name}_agent_a",
-                    "owner": self.owner_address,  # Tag with owner
-                    "walrus_trace_id": signal_trigger.walrus_trace_id,
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": insight_signal.timestamp.isoformat()
                 })
 
                 self.stats["signals_generated"] += 1
 
                 if i % 10 == 0:
-                    print(f"    Progress: {i}/{len(owner_news_triggers)} signals generated")
+                    print(f"    Progress: {i}/{len(owner_news_signals)} signals generated")
 
             except Exception as e:
-                print(f"    ✗ Failed to process trigger {i}: {e}")
+                print(f"    ✗ Failed to process signal {i}: {e}")
+                import traceback
+                traceback.print_exc()
 
         print()
-        print(f"  ✓ Generated {self.stats['signals_generated']}/{len(owner_news_triggers)} sentiment signals")
+        print(f"  ✓ Generated {self.stats['signals_generated']}/{len(owner_news_signals)} sentiment signals")
         print()
 
     def _print_summary(self):

@@ -29,11 +29,11 @@ def check_data():
     """Check if demo data exists."""
     print("\nChecking demo data...")
 
-    registry_path = Path("../demo/data/trigger_registry.json")
+    registry_path = Path("../demo/data/signal_registry.json")
     db_path = Path("../demo/data/activity.db")
 
     if not registry_path.exists():
-        print("  ⚠️  No trigger registry found")
+        print("  ⚠️  No signal registry found")
         print("  Run: cd ../demo && python scripts/batch_process_btc_sui.py")
         return False
 

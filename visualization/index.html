@@ -25,8 +25,8 @@
 
         <!-- Tab Navigation -->
         <nav class="tabs">
-            <button class="tab-button active" data-tab="triggers">
-                📊 Triggers
+            <button class="tab-button active" data-tab="signals">
+                📊 Signals
             </button>
             <button class="tab-button" data-tab="agents">
                 🤖 Agents
@@ -35,27 +35,27 @@
 
         <!-- Tab Content -->
         <div class="tab-content">
-            <!-- Triggers Tab -->
-            <div id="triggers" class="tab-panel active">
+            <!-- Signals Tab -->
+            <div id="signals" class="tab-panel active">
                 <div class="panel-header">
-                    <h2>Triggers</h2>
-                    <button class="refresh-btn" onclick="refreshTriggers()">
+                    <h2>Signals</h2>
+                    <button class="refresh-btn" onclick="refreshSignals()">
                         🔄 Refresh
                     </button>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Total Triggers</div>
-                        <div class="stat-value" id="total-triggers">-</div>
+                        <div class="stat-label">Total Signals</div>
+                        <div class="stat-value" id="total-signals">-</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">News Triggers</div>
-                        <div class="stat-value" id="news-triggers">-</div>
+                        <div class="stat-label">News Signals</div>
+                        <div class="stat-value" id="news-signals">-</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Signal Triggers</div>
-                        <div class="stat-value" id="signal-triggers">-</div>
+                        <div class="stat-label">Insight Signals</div>
+                        <div class="stat-value" id="insight-signals">-</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Latest Update</div>
@@ -64,20 +64,20 @@
                 </div>
 
                 <div class="data-section">
-                    <h3>Recent Triggers from SUI Network</h3>
+                    <h3>Recent Signals from SUI Network</h3>
                     <div class="filter-bar">
                         <select id="owner-filter">
                             <!-- Populated dynamically from API -->
                         </select>
-                        <select id="trigger-type-filter">
+                        <select id="signal-type-filter">
                             <option value="all">All Types</option>
-                            <option value="news">News Triggers</option>
-                            <option value="signal">Signal Triggers</option>
+                            <option value="news">News Signals</option>
+                            <option value="insight">Insight Signals</option>
                         </select>
                         <input type="text" id="search-box" placeholder="Search by ID, token, or producer...">
                     </div>
-                    <div id="triggers-list" class="triggers-list">
-                        <div class="loading">Loading triggers from SUI...</div>
+                    <div id="signals-list" class="signals-list">
+                        <div class="loading">Loading signals from SUI...</div>
                     </div>
                 </div>
             </div>

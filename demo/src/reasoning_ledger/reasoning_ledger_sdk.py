@@ -8,7 +8,7 @@ from agents on Walrus (decentralized storage) and registering them on-chain.
 Key Features:
 - Store reasoning traces with full transparency
 - Retrieve and verify reasoning traces
-- Link reasoning to triggers (input/output)
+- Link reasoning to signals (input/output)
 - Support for multi-agent reasoning chains
 - Immutable audit trail
 """
@@ -35,8 +35,8 @@ class ReasoningTrace:
     """
     agent_id: str                           # Agent identifier (e.g., "agent_a_sentiment")
     agent_version: str                      # Agent version
-    input_triggers: List[str]               # Input trigger IDs
-    output_trigger: Optional[str]           # Output trigger ID (if published)
+    input_signals: List[str]               # Input signal IDs
+    output_signal: Optional[str]           # Output signal ID (if published)
 
     # Reasoning content
     reasoning_steps: List[Dict[str, Any]]   # Step-by-step reasoning
@@ -73,7 +73,7 @@ class ReasoningLedger:
 
     This provides a clean interface for agents to:
     1. Store their reasoning process transparently
-    2. Link reasoning to specific triggers
+    2. Link reasoning to specific signals
     3. Retrieve and verify past reasoning
     4. Build audit trails for multi-agent systems
     """
@@ -137,7 +137,7 @@ class ReasoningLedger:
 
         Args:
             agent_id: Agent identifier
-            input_data: Input data (triggers, etc.)
+            input_data: Input data (signals, etc.)
             output_data: Output data (signals, etc.)
             reasoning_steps: List of reasoning steps
             confidence: Overall confidence
@@ -149,8 +149,8 @@ class ReasoningLedger:
         trace = ReasoningTrace(
             agent_id=agent_id,
             agent_version=kwargs.get("agent_version", "1.0"),
-            input_triggers=kwargs.get("input_triggers", []),
-            output_trigger=kwargs.get("output_trigger"),
+            input_signals=kwargs.get("input_signals", []),
+            output_signal=kwargs.get("output_signal"),
             reasoning_steps=reasoning_steps,
             final_output=output_data,
             confidence=confidence,
@@ -246,26 +246,26 @@ class ReasoningLedger:
 
     def get_reasoning_chain(
         self,
-        trigger_id: str,
+        signal_id: str,
         registry
     ) -> List[ReasoningTrace]:
         """
-        Get the chain of reasoning traces that led to a specific trigger.
+        Get the chain of reasoning traces that led to a specific signal.
 
         This traces back through multiple agents to understand how a decision was made.
 
         Args:
-            trigger_id: Final trigger ID to trace back from
-            registry: TriggerRegistry to query triggers
+            signal_id: Final signal ID to trace back from
+            registry: SignalRegistry to query signals
 
         Returns:
             List of ReasoningTrace objects in chronological order
         """
         chain = []
-        current_trigger_id = trigger_id
+        current_signal_id = signal_id
 
-        # TODO: Implement recursive trace-back through triggers
-        # This would follow input_triggers -> output_trigger links
+        # TODO: Implement recursive trace-back through signals
+        # This would follow input_signals -> output_signal links
 
         return chain
 

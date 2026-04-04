@@ -43,7 +43,7 @@ Yes, you can create EOA wallets on SUI and make data ownership configurable. Her
 #### **A. Object Owner (Built-in SUI field)**
 ```move
 // In SUI Move smart contract
-public struct NewsTrigger has key {
+public struct NewsSignal has key {
     id: UID,
     // This is set by SUI framework automatically
     // Owner = transaction signer by default
@@ -52,7 +52,7 @@ public struct NewsTrigger has key {
 
 #### **B. Metadata Owner (Custom field)** ← **Recommended for your use case**
 ```move
-public struct NewsTrigger has key {
+public struct NewsSignal has key {
     id: UID,
     owner: address,  // ← Custom field, fully configurable
     creator: address, // ← Who created it (your wallet)
@@ -75,7 +75,7 @@ sponsor_wallet = "0xYourPersonalWallet"
 data_owner = "0xProjectWallet"  # Or "0xUserWallet", etc.
 
 # Create object
-registry.register_trigger({
+registry.register_signal({
     "owner": data_owner,          # ← Configurable!
     "creator": sponsor_wallet,    # ← Your wallet (immutable)
     "walrus_blob_id": blob_id,
@@ -122,7 +122,7 @@ project_wallet = create_sui_wallet()
 print(f"New wallet address: {project_wallet['address']}")
 
 # Use as data owner
-registry.register_trigger({
+registry.register_signal({
     "owner": project_wallet['address'],  # New wallet
     ...
 })
@@ -151,8 +151,8 @@ wallet_1 = derive_wallet(seed, path="m/44'/784'/0'/0'/1'")  # Project A
 wallet_2 = derive_wallet(seed, path="m/44'/784'/0'/0'/2'")  # Project B
 
 # Use different wallets for different projects
-register_trigger(owner=wallet_1['address'])  # Project A
-register_trigger(owner=wallet_2['address'])  # Project B
+register_signal(owner=wallet_1['address'])  # Project A
+register_signal(owner=wallet_2['address'])  # Project B
 ```
 
 **Benefits:**
@@ -177,9 +177,9 @@ class OnChainPublisher:
         self.signer = private_key
         self.owner = owner_address or derive_address(private_key)
 
-    def publish_news_trigger(self, news_data):
-        # Create trigger object
-        trigger = {
+    def publish_news_signal(self, news_data):
+        # Create signal object
+        signal = {
             "owner": self.owner,      # ← Configurable
             "creator": self.signer_address,
             "walrus_blob_id": blob_id,
@@ -187,17 +187,17 @@ class OnChainPublisher:
         }
 
         # Sign with your wallet, but owner field is different
-        return self.sign_and_submit(trigger)
+        return self.sign_and_submit(signal)
 ```
 
 ## Query by Owner
 
 ```python
 # Query all objects owned by specific address
-triggers = registry.get_triggers(owner="0xProjectAddress")
+signals = registry.get_signals(owner="0xProjectAddress")
 
 # Query by creator (who paid for it)
-triggers = registry.get_triggers(creator="0xYourWallet")
+signals = registry.get_signals(creator="0xYourWallet")
 
 # Both fields are indexed and queryable
 ```
@@ -210,24 +210,24 @@ publisher_a = OnChainPublisher(
     private_key=YOUR_KEY,
     owner_address="0xProjectA_Address"
 )
-publisher_a.publish_news_trigger(data)
+publisher_a.publish_news_signal(data)
 
 # Project B
 publisher_b = OnChainPublisher(
     private_key=YOUR_KEY,  # Same payer!
     owner_address="0xProjectB_Address"  # Different owner!
 )
-publisher_b.publish_news_trigger(data)
+publisher_b.publish_news_signal(data)
 
 # Query
-project_a_data = query_triggers(owner="0xProjectA_Address")
-project_b_data = query_triggers(owner="0xProjectB_Address")
+project_a_data = query_signals(owner="0xProjectA_Address")
+project_b_data = query_signals(owner="0xProjectB_Address")
 ```
 
 ## Implementation Plan
 
 1. **Add `owner` parameter to OnChainPublisher** ✓ (next step)
-2. **Add `owner` field to TriggerRegistry** ✓
+2. **Add `owner` field to SignalRegistry** ✓
 3. **Update visualization to filter by owner** ✓
 4. **Support wallet creation utilities** (optional)
 

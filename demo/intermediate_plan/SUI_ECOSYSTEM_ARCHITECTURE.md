@@ -7,12 +7,12 @@
 
 ## Three Distinct Use Cases
 
-### Use Case 1: Event Triggers & Data Source Inventory
-**What**: Real-time events that trigger agent execution
+### Use Case 1: Event Signals & Data Source Inventory
+**What**: Real-time events that signal agent execution
 **Examples**:
 - Price threshold crossed (BTC > $70k)
 - News article published (crypto regulatory news)
-- Time-based triggers (daily portfolio rebalance)
+- Time-based signals (daily portfolio rebalance)
 - Data source updates inventory
 
 ### Use Case 2: Reasoning Ledger
@@ -37,7 +37,7 @@
 
 | Use Case | Best Solution | Why | Cost | Latency |
 |----------|--------------|-----|------|---------|
-| **1. Event Triggers** | SUI Events + Objects | On-chain events, queryable | Low | <1s |
+| **1. Event Signals** | SUI Events + Objects | On-chain events, queryable | Low | <1s |
 | **2. Reasoning Ledger** | Walrus DA | Large data, immutable | Very Low | ~5s |
 | **3. Reputation Scores** | SUI Smart Contract | Queryable, programmable | Low | <1s |
 
@@ -45,7 +45,7 @@
 
 ## Detailed Architecture
 
-### Use Case 1: Event Triggers & Data Inventory
+### Use Case 1: Event Signals & Data Inventory
 
 #### Solution: **SUI Events + Dynamic Fields**
 
@@ -53,7 +53,7 @@
 - ✅ Real-time event emission
 - ✅ Queryable by event type
 - ✅ Lightweight (only metadata)
-- ✅ Can trigger off-chain watchers
+- ✅ Can signal off-chain watchers
 - ✅ Indexed automatically
 
 **Architecture:**
@@ -76,7 +76,7 @@
          └────────┬────────┘
                   │
                   ▼
-         Trigger Agent Execution
+         Signal Agent Execution
 ```
 
 **Implementation:**
@@ -284,7 +284,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class EventWatcher:
-    """Watch SUI events and trigger agent execution."""
+    """Watch SUI events and signal agent execution."""
 
     def __init__(self, client: SuiClient, package_id: str):
         self.client = client
@@ -726,7 +726,7 @@ class RAIDScoreContract:
 | **Programmable** | ❌ No | ❌ No | ✅ Yes |
 | **Immutable** | ✅ Yes | ✅ Yes | ⚠️ Mutable |
 | **Data Size** | Small (<1KB) | Large (10KB+) | Small (<10KB) |
-| **Best For** | Triggers | Archives | State |
+| **Best For** | Signals | Archives | State |
 
 ---
 
@@ -755,7 +755,7 @@ class RAIDScoreContract:
 │• Timers │    │• Reason  │      │• Queries    │
 │         │    │  steps   │      │             │
 └─────────┘    └──────────┘      └─────────────┘
-  Triggers       Archives            State
+  Signals       Archives            State
 ```
 
 ---
@@ -768,7 +768,7 @@ class RAIDScoreContract:
 3. ✅ Basic integration with Agent A
 
 ### Phase 2: Events (Week 2)
-4. ⏭️ SUI Events for price/news triggers
+4. ⏭️ SUI Events for price/news signals
 5. ⏭️ Event watcher for automated execution
 6. ⏭️ Data inventory tracking
 
@@ -784,7 +784,7 @@ class RAIDScoreContract:
 Would you like me to:
 1. **Implement SUI Smart Contracts** (Move code for events, ledger, RAID)?
 2. **Create Python integration layer** (clients for all three use cases)?
-3. **Build event watcher system** (automated agent triggering)?
+3. **Build event watcher system** (automated agent signaling)?
 4. **All of the above** (full implementation)?
 
 Let me know which direction you'd like to go! 🚀

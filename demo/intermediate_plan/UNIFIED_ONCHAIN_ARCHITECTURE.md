@@ -533,7 +533,7 @@ class Agent0CryptoPanic(BaseAgent):
         """
         Process: Fetch news from CryptoPanic.
 
-        Input: Empty (or trigger event)
+        Input: Empty (or signal event)
         Output: News articles as on-chain data
         """
         # Step 1: Fetch news from API

@@ -47,32 +47,32 @@ CRYPTOPANIC_API_TOKEN=72101129f9f637bc26a837a8b61ad6bae189ab2f
   - Simulated + real modes
   - JSON helper functions
 
-- **Trigger Abstraction** ([src/core/trigger.py](../src/core/trigger.py))
-  - NewsTrigger (Walrus reference)
-  - PriceTrigger (on-chain data)
-  - SignalTrigger (agent output)
+- **Signal Abstraction** ([src/core/signal.py](../src/core/signal.py))
+  - NewsSignal (Walrus reference)
+  - PriceSignal (on-chain data)
+  - InsightSignal (agent output)
   - Unified `fetch_full_data()` interface
 
 - **OnChainPublisher** ([src/blockchain/sui_publisher.py](../src/blockchain/sui_publisher.py))
-  - `publish_news_trigger()` - Walrus + SUI metadata
-  - `publish_price_trigger()` - Direct SUI
-  - `publish_signal_trigger()` - Signal + trace
+  - `publish_news_signal()` - Walrus + SUI metadata
+  - `publish_price_signal()` - Direct SUI
+  - `publish_signal_signal()` - Signal + trace
 
 #### Pipelines
 - **NewsPipeline** ([src/pipeline/news_pipeline.py](../src/pipeline/news_pipeline.py))
   - Fetch from CryptoPanic
   - Store ALL data on Walrus
-  - Returns NewsTrigger
+  - Returns NewsSignal
 
 - **SuiPricePipeline** ([src/pipeline/sui_price_pipeline.py](../src/pipeline/sui_price_pipeline.py))
   - Read from on-chain oracles
-  - Returns PriceTrigger
+  - Returns PriceSignal
 
 #### Demo Infrastructure
-- **TriggerRegistry** ([src/demo/trigger_registry.py](../src/demo/trigger_registry.py))
-  - Centralized trigger storage (JSON file)
+- **SignalRegistry** ([src/demo/signal_registry.py](../src/demo/signal_registry.py))
+  - Centralized signal storage (JSON file)
   - Replaces smart contracts for demo
-  - `register_trigger()`, `get_triggers()`, `get_trigger()`
+  - `register_signal()`, `get_signals()`, `get_signal()`
 
 ---
 
@@ -130,8 +130,8 @@ python scripts/demo_complete_flow.py
 ### What Works in Simulated Mode:
 1. ✅ NewsPipeline fetches real news from CryptoPanic
 2. ✅ Data stored in simulated Walrus (local memory)
-3. ✅ Triggers registered in TriggerRegistry (JSON file)
-4. ✅ Agents can fetch triggers and data
+3. ✅ Signals registered in SignalRegistry (JSON file)
+4. ✅ Agents can fetch signals and data
 5. ✅ Complete data flow demonstrated
 
 ---
@@ -181,15 +181,15 @@ python scripts/demo_complete_flow.py
                │
                ▼
 ┌────────────────────────────────────────────────┐
-│    TriggerRegistry (LOCAL JSON) ✅             │
-│  - Store trigger metadata                      │
-│  - data/trigger_registry.json                  │
+│    SignalRegistry (LOCAL JSON) ✅             │
+│  - Store signal metadata                      │
+│  - data/signal_registry.json                  │
 └──────────────┬─────────────────────────────────┘
                │
                ▼
 ┌────────────────────────────────────────────────┐
 │          Agent A (TO BE BUILT)                 │
-│  - Read triggers from registry                 │
+│  - Read signals from registry                 │
 │  - Fetch data from Walrus (simulated)          │
 │  - Process with LLM                            │
 │  - Generate sentiment signals                  │
@@ -202,9 +202,9 @@ python scripts/demo_complete_flow.py
 
 ### Core
 - `src/storage/walrus_client.py` - Walrus storage client
-- `src/core/trigger.py` - Trigger abstractions
+- `src/core/signal.py` - Signal abstractions
 - `src/blockchain/sui_publisher.py` - On-chain publisher
-- `src/demo/trigger_registry.py` - Demo trigger storage
+- `src/demo/signal_registry.py` - Demo signal storage
 
 ### Pipelines
 - `src/pipeline/news_pipeline.py` - News ETL
@@ -232,7 +232,7 @@ python scripts/demo_complete_flow.py
 - ✅ Configuration set up
 - ✅ Core components implemented
 - ✅ Pipelines implemented
-- ✅ TriggerRegistry implemented
+- ✅ SignalRegistry implemented
 
 **What Needs Fixing**:
 - ❌ Walrus API endpoints (404 error)

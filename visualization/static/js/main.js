@@ -3,8 +3,8 @@
 const API_BASE = 'http://localhost:8080/api';
 
 // State
-let currentTab = 'triggers';
-let triggers = [];
+let currentTab = 'signals';
+let signals = [];
 let agents = [];
 let owners = [];
 let selectedOwner = 'all';
@@ -78,13 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ownerFilter.addEventListener('change', (e) => {
             selectedOwner = e.target.value;
             currentPage = 1;  // Reset to first page
-            loadTriggers();
+            loadSignals();
         });
     }
 
     // Initial load
     loadOwners();
-    loadTriggers();
+    loadSignals();
     loadAgents();
 });
 
@@ -147,73 +147,73 @@ function populateOwnerFilter(ownersList) {
 }
 
 // ============================================================================
-// Triggers Tab
+// Signals Tab
 // ============================================================================
 
-async function loadTriggers() {
+async function loadSignals() {
     try {
         const params = new URLSearchParams();
         if (selectedOwner && selectedOwner !== 'all') {
             params.append('owner', selectedOwner);
         }
 
-        const url = `${API_BASE}/triggers${params.toString() ? '?' + params.toString() : ''}`;
+        const url = `${API_BASE}/signals${params.toString() ? '?' + params.toString() : ''}`;
         const response = await fetch(url);
         const data = await response.json();
 
-        triggers = data.triggers || [];
-        updateTriggerStats(triggers);
-        renderTriggers(triggers);
+        signals = data.signals || [];
+        updateSignalStats(signals);
+        renderSignals(signals);
     } catch (error) {
-        console.error('Error loading triggers:', error);
-        document.getElementById('triggers-list').innerHTML = `
+        console.error('Error loading signals:', error);
+        document.getElementById('signals-list').innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">⚠️</div>
-                <p>Error loading triggers from SUI network</p>
+                <p>Error loading signals from SUI network</p>
                 <p style="font-size: 12px; margin-top: 10px;">${error.message}</p>
             </div>
         `;
     }
 }
 
-function updateTriggerStats(triggersData) {
-    const newsCount = triggersData.filter(t => t.trigger_type === 'news').length;
-    const signalCount = triggersData.filter(t => t.trigger_type === 'signal').length;
+function updateSignalStats(signalsData) {
+    const newsCount = signalsData.filter(t => t.signal_type === 'news').length;
+    const insightCount = signalsData.filter(t => t.signal_type === 'insight').length;
 
     // Get latest timestamp
-    const timestamps = triggersData.map(t => new Date(t.timestamp));
+    const timestamps = signalsData.map(t => new Date(t.timestamp));
     const latest = timestamps.length > 0 ? new Date(Math.max(...timestamps)) : null;
 
-    document.getElementById('total-triggers').textContent = triggersData.length;
-    document.getElementById('news-triggers').textContent = newsCount;
-    document.getElementById('signal-triggers').textContent = signalCount;
+    document.getElementById('total-signals').textContent = signalsData.length;
+    document.getElementById('news-signals').textContent = newsCount;
+    document.getElementById('insight-signals').textContent = insightCount;
     document.getElementById('latest-update').textContent = latest
         ? formatTimeAgo(latest)
         : 'N/A';
 }
 
-function renderTriggers(triggersToRender) {
-    const container = document.getElementById('triggers-list');
+function renderSignals(signalsToRender) {
+    const container = document.getElementById('signals-list');
 
-    if (triggersToRender.length === 0) {
+    if (signalsToRender.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📭</div>
-                <p>No triggers found on SUI network</p>
+                <p>No signals found on SUI network</p>
             </div>
         `;
         return;
     }
 
     // Pagination
-    const totalPages = Math.ceil(triggersToRender.length / itemsPerPage);
+    const totalPages = Math.ceil(signalsToRender.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedTriggers = triggersToRender.slice(startIndex, endIndex);
+    const paginatedSignals = signalsToRender.slice(startIndex, endIndex);
 
-    // Render triggers
-    const triggersHTML = paginatedTriggers.map(trigger => {
-        return createTriggerCard(trigger);
+    // Render signals
+    const signalsHTML = paginatedSignals.map(signal => {
+        return createSignalCard(signal);
     }).join('');
 
     // Render pagination controls
@@ -226,7 +226,7 @@ function renderTriggers(triggersToRender) {
                 ← Previous
             </button>
             <span style="color: #ccc;">
-                Page ${currentPage} of ${totalPages} (${triggersToRender.length} total items)
+                Page ${currentPage} of ${totalPages} (${signalsToRender.length} total items)
             </span>
             <button
                 onclick="changePage(${currentPage + 1})"
@@ -237,52 +237,52 @@ function renderTriggers(triggersToRender) {
         </div>
     ` : '';
 
-    container.innerHTML = triggersHTML + paginationHTML;
+    container.innerHTML = signalsHTML + paginationHTML;
 }
 
 function changePage(newPage) {
     currentPage = newPage;
-    filterTriggers();
+    filterSignals();
 }
 
-function createTriggerCard(trigger) {
-    const typeClass = trigger.trigger_type === 'news' ? 'news' : 'signal';
+function createSignalCard(signal) {
+    const typeClass = signal.signal_type === 'news' ? 'news' : 'insight';
 
     return `
-        <div class="trigger-card" data-trigger-id="${trigger.trigger_id || 'unknown'}">
-            <div class="trigger-header">
-                <span class="trigger-type ${typeClass}">${trigger.trigger_type}</span>
-                <span class="trigger-timestamp">${formatTimestamp(trigger.timestamp)}</span>
+        <div class="signal-card" data-signal-id="${signal.signal_id || 'unknown'}">
+            <div class="signal-header">
+                <span class="signal-type ${typeClass}">${signal.signal_type}</span>
+                <span class="signal-timestamp">${formatTimestamp(signal.timestamp)}</span>
             </div>
-            <div class="trigger-body">
-                <div class="trigger-field">
-                    <div class="field-label">Trigger ID</div>
-                    <div class="field-value">${trigger.trigger_id || 'N/A'}</div>
+            <div class="signal-body">
+                <div class="signal-field">
+                    <div class="field-label">Signal ID</div>
+                    <div class="field-value">${signal.signal_id || 'N/A'}</div>
                 </div>
-                <div class="trigger-field">
+                <div class="signal-field">
                     <div class="field-label">SUI Object ID</div>
-                    <div class="field-value">${truncate(trigger.object_id || 'N/A', 32)}</div>
+                    <div class="field-value">${truncate(signal.object_id || 'N/A', 32)}</div>
                 </div>
-                <div class="trigger-field">
+                <div class="signal-field">
                     <div class="field-label">Walrus Blob ID</div>
-                    <div class="field-value">${truncate(trigger.walrus_blob_id || 'N/A', 32)}</div>
+                    <div class="field-value">${truncate(signal.walrus_blob_id || 'N/A', 32)}</div>
                 </div>
-                <div class="trigger-field">
+                <div class="signal-field">
                     <div class="field-label">Owner</div>
-                    <div class="field-value">${truncate(trigger.owner || 'default', 32)}</div>
+                    <div class="field-value">${truncate(signal.owner || 'default', 32)}</div>
                 </div>
-                <div class="trigger-field">
+                <div class="signal-field">
                     <div class="field-label">Producer</div>
-                    <div class="field-value">${trigger.producer || 'N/A'}</div>
+                    <div class="field-value">${signal.producer || 'N/A'}</div>
                 </div>
-                <div class="trigger-field">
+                <div class="signal-field">
                     <div class="field-label">Size</div>
-                    <div class="field-value">${formatBytes(trigger.size_bytes || 0)}</div>
+                    <div class="field-value">${formatBytes(signal.size_bytes || 0)}</div>
                 </div>
             </div>
-            ${trigger.walrus_blob_id ? `
+            ${signal.walrus_blob_id ? `
                 <div style="margin-top: 12px;">
-                    <a href="https://walruscan.com/testnet/blob/${trigger.walrus_blob_id}"
+                    <a href="https://walruscan.com/testnet/blob/${signal.walrus_blob_id}"
                        target="_blank"
                        class="expand-btn"
                        style="text-decoration: none; display: block; text-align: center; padding: 10px;"
@@ -295,15 +295,15 @@ function createTriggerCard(trigger) {
     `;
 }
 
-async function viewWalrusData(triggerId) {
+async function viewWalrusData(signalId) {
     try {
         showToast('Fetching full data from Walrus...', 'info', 'Loading');
 
-        const response = await fetch(`${API_BASE}/triggers/${triggerId}/full`);
+        const response = await fetch(`${API_BASE}/signals/${signalId}/full`);
         const data = await response.json();
 
         if (!data.success) {
-            showToast(data.error || 'Failed to fetch trigger data', 'error', 'Fetch Failed');
+            showToast(data.error || 'Failed to fetch signal data', 'error', 'Fetch Failed');
             return;
         }
 
@@ -329,38 +329,38 @@ async function viewWalrusData(triggerId) {
     }
 }
 
-function refreshTriggers() {
-    document.getElementById('triggers-list').innerHTML = '<div class="loading">Refreshing...</div>';
-    loadTriggers();
+function refreshSignals() {
+    document.getElementById('signals-list').innerHTML = '<div class="loading">Refreshing...</div>';
+    loadSignals();
 }
 
-// Filter triggers
-document.getElementById('trigger-type-filter')?.addEventListener('change', (e) => {
+// Filter signals
+document.getElementById('signal-type-filter')?.addEventListener('change', (e) => {
     currentPage = 1;  // Reset to first page
-    filterTriggers();
+    filterSignals();
 });
 
 document.getElementById('search-box')?.addEventListener('input', (e) => {
     currentPage = 1;  // Reset to first page
-    filterTriggers();
+    filterSignals();
 });
 
-function filterTriggers() {
-    const typeFilter = document.getElementById('trigger-type-filter').value;
+function filterSignals() {
+    const typeFilter = document.getElementById('signal-type-filter').value;
     const searchQuery = document.getElementById('search-box').value.toLowerCase();
 
-    let filtered = triggers;
+    let filtered = signals;
 
     // Filter by type
     if (typeFilter !== 'all') {
-        filtered = filtered.filter(t => t.trigger_type === typeFilter);
+        filtered = filtered.filter(t => t.signal_type === typeFilter);
     }
 
     // Filter by search
     if (searchQuery) {
         filtered = filtered.filter(t => {
             const searchText = `
-                ${t.trigger_id}
+                ${t.signal_id}
                 ${t.object_id}
                 ${t.producer}
                 ${t.signal_type || ''}
@@ -369,7 +369,7 @@ function filterTriggers() {
         });
     }
 
-    renderTriggers(filtered);
+    renderSignals(filtered);
 }
 
 // ============================================================================
@@ -598,8 +598,8 @@ function showWalrusDataModal(data) {
             <div style="margin-bottom: 20px;">
                 <h3 style="color: #4CAF50; margin-bottom: 10px;">Metadata</h3>
                 <div style="background: #2a2a2a; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 13px;">
-                    <div><strong>Trigger ID:</strong> ${metadata.trigger_id || 'N/A'}</div>
-                    <div><strong>Type:</strong> ${metadata.trigger_type || 'N/A'}</div>
+                    <div><strong>Signal ID:</strong> ${metadata.signal_id || 'N/A'}</div>
+                    <div><strong>Type:</strong> ${metadata.signal_type || 'N/A'}</div>
                     <div><strong>Walrus Blob ID:</strong> ${metadata.walrus_blob_id || 'N/A'}</div>
                     <div><strong>Owner:</strong> ${metadata.owner || 'N/A'}</div>
                     <div><strong>Size:</strong> ${formatBytes(metadata.size_bytes || 0)}</div>

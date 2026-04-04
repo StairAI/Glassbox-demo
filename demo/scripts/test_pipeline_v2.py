@@ -6,7 +6,7 @@ This script demonstrates the improved pipeline:
 1. Fetch 20 articles in one API call
 2. Deduplicate against database
 3. Store each NEW article as separate Walrus blob
-4. Create individual SUI triggers
+4. Create individual SUI signals
 """
 
 import os
@@ -19,7 +19,7 @@ from src.pipeline.news_pipeline_v2 import NewsPipelineV2
 from src.blockchain.sui_publisher import OnChainPublisher
 from src.storage.walrus_client import WalrusClient
 from src.storage.activity_db import ActivityDB
-from src.demo.trigger_registry import TriggerRegistry
+from src.demo.signal_registry import SignalRegistry
 from dotenv import load_dotenv
 
 def main():
@@ -63,9 +63,9 @@ def main():
     db = ActivityDB(db_path="data/activity.db")
     print(f"  ✓ Database: data/activity.db")
 
-    # Trigger registry
-    registry = TriggerRegistry(registry_path="data/trigger_registry.json")
-    print(f"  ✓ Registry: data/trigger_registry.json")
+    # Signal registry
+    registry = SignalRegistry(registry_path="data/signal_registry.json")
+    print(f"  ✓ Registry: data/signal_registry.json")
 
     # Publisher (with configurable owner)
     publisher = OnChainPublisher(
@@ -94,45 +94,45 @@ def main():
     print("TEST 1: Fetch BTC articles (limit 20)")
     print("=" * 80)
 
-    triggers_btc = pipeline.fetch_and_publish(
+    signals_btc = pipeline.fetch_and_publish(
         currencies=["BTC"],
         limit=20
     )
 
     print(f"\n✓ BTC Processing complete:")
-    print(f"  - New articles published: {len(triggers_btc)}")
-    if triggers_btc:
-        print(f"  - First trigger ID: {triggers_btc[0].object_id[:32]}...")
-        print(f"  - First Walrus blob: {triggers_btc[0].walrus_blob_id[:32]}...")
+    print(f"  - New articles published: {len(signals_btc)}")
+    if signals_btc:
+        print(f"  - First signal ID: {signals_btc[0].object_id[:32]}...")
+        print(f"  - First Walrus blob: {signals_btc[0].walrus_blob_id[:32]}...")
 
     # Test 2: Fetch SUI articles
     print("\n" + "=" * 80)
     print("TEST 2: Fetch SUI articles (limit 20)")
     print("=" * 80)
 
-    triggers_sui = pipeline.fetch_and_publish(
+    signals_sui = pipeline.fetch_and_publish(
         currencies=["SUI"],
         limit=20
     )
 
     print(f"\n✓ SUI Processing complete:")
-    print(f"  - New articles published: {len(triggers_sui)}")
-    if triggers_sui:
-        print(f"  - First trigger ID: {triggers_sui[0].object_id[:32]}...")
-        print(f"  - First Walrus blob: {triggers_sui[0].walrus_blob_id[:32]}...")
+    print(f"  - New articles published: {len(signals_sui)}")
+    if signals_sui:
+        print(f"  - First signal ID: {signals_sui[0].object_id[:32]}...")
+        print(f"  - First Walrus blob: {signals_sui[0].walrus_blob_id[:32]}...")
 
     # Test 3: Run again to test deduplication
     print("\n" + "=" * 80)
     print("TEST 3: Re-fetch BTC articles (should skip duplicates)")
     print("=" * 80)
 
-    triggers_btc_2 = pipeline.fetch_and_publish(
+    signals_btc_2 = pipeline.fetch_and_publish(
         currencies=["BTC"],
         limit=20
     )
 
     print(f"\n✓ BTC Re-fetch complete:")
-    print(f"  - New articles published: {len(triggers_btc_2)}")
+    print(f"  - New articles published: {len(signals_btc_2)}")
     print(f"  - Expected: 0 (all should be deduplicated)")
 
     # Display statistics
@@ -146,10 +146,10 @@ def main():
     print(f"  Total Walrus operations: {stats['total_walrus_operations']}")
     print(f"  Total SUI transactions: {stats['total_sui_transactions']}")
 
-    # Trigger registry summary
-    print(f"\n  Trigger Registry:")
-    news_triggers = registry.get_triggers(trigger_type="news")
-    print(f"    - News triggers: {len(news_triggers)}")
+    # Signal registry summary
+    print(f"\n  Signal Registry:")
+    news_signals = registry.get_signals(signal_type="news")
+    print(f"    - News signals: {len(news_signals)}")
 
     print("\n" + "=" * 80)
     print("TEST COMPLETE")

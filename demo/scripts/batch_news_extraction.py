@@ -6,7 +6,7 @@ This script:
 1. Fetches 100 news articles for BTC and SUI from CryptoPanic
 2. Stores articles in local database
 3. Feeds aggregated data to SUI blockchain
-4. Creates triggers for Agent A to process
+4. Creates signals for Agent A to process
 """
 
 import os
@@ -153,7 +153,7 @@ class BatchNewsExtractor:
             articles: List of articles
 
         Returns:
-            Dict with walrus_blob_id and trigger metadata
+            Dict with walrus_blob_id and signal metadata
         """
         print(f"\n{'=' * 80}")
         print(f"PUBLISHING {token} NEWS TO BLOCKCHAIN")
@@ -194,11 +194,11 @@ class BatchNewsExtractor:
                 success=True
             )
 
-            # Step 2: Create trigger metadata
-            print(f"\n[2/3] Creating trigger metadata...")
+            # Step 2: Create signal metadata
+            print(f"\n[2/3] Creating signal metadata...")
 
-            trigger_metadata = {
-                "trigger_type": "news",
+            signal_metadata = {
+                "signal_type": "news",
                 "walrus_blob_id": blob_id,
                 "token": token,
                 "article_count": len(articles),
@@ -206,14 +206,14 @@ class BatchNewsExtractor:
             }
 
             # Step 3: Publish to SUI (for now, simulate - actual SUI integration in next step)
-            print(f"\n[3/3] Publishing trigger to SUI...")
+            print(f"\n[3/3] Publishing signal to SUI...")
 
             # TODO: Actual SUI blockchain transaction
             # For now, we'll just log it
-            sui_object_id = f"sui_trigger_{token}_{int(time.time())}"
+            sui_object_id = f"sui_signal_{token}_{int(time.time())}"
 
             self.db.log_sui_transaction(
-                transaction_type="publish_news_trigger",
+                transaction_type="publish_news_signal",
                 object_id=sui_object_id,
                 status="success",
                 metadata={
@@ -229,7 +229,7 @@ class BatchNewsExtractor:
             return {
                 "walrus_blob_id": blob_id,
                 "sui_object_id": sui_object_id,
-                "trigger_metadata": trigger_metadata
+                "signal_metadata": signal_metadata
             }
 
         except Exception as e:

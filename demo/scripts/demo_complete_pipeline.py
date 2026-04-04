@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Complete Pipeline Demo: News → Walrus → Trigger → Agent A
+Complete Pipeline Demo: News → Walrus → Signal → Agent A
 
 This demonstrates:
 1. NewsPipeline fetches real news from CryptoPanic
 2. Stores full data on Walrus (real testnet!)
-3. Creates trigger in TriggerRegistry
-4. Agent A reads trigger and fetches data from Walrus
+3. Creates signal in SignalRegistry
+4. Agent A reads signal and fetches data from Walrus
 5. Agent A processes with LLM and generates sentiment signals
 """
 
@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 from src.pipeline.news_pipeline import NewsPipeline
 from src.blockchain.sui_publisher import OnChainPublisher
-from src.demo.trigger_registry import TriggerRegistry
+from src.demo.signal_registry import SignalRegistry
 from src.storage.walrus_client import WalrusClient
 
 # Load environment
@@ -50,13 +50,13 @@ def main():
     # OnChain publisher
     publisher = OnChainPublisher(
         walrus_client=walrus_client,
-        simulated=True  # For demo, we use TriggerRegistry instead of real smart contracts
+        simulated=True  # For demo, we use SignalRegistry instead of real smart contracts
     )
     print(f"  ✓ OnChainPublisher: Configured")
 
-    # Trigger registry (replaces smart contracts for demo)
-    registry = TriggerRegistry()
-    print(f"  ✓ TriggerRegistry: Ready")
+    # Signal registry (replaces smart contracts for demo)
+    registry = SignalRegistry()
+    print(f"  ✓ SignalRegistry: Ready")
     print()
 
     # ===========================================================================
@@ -81,23 +81,23 @@ def main():
 
     # Fetch and publish news
     print("Running news pipeline...")
-    trigger = news_pipeline.fetch_and_publish(
+    signal = news_pipeline.fetch_and_publish(
         currencies=["BTC", "ETH"],
         limit=5
     )
 
-    # Register trigger in registry
-    print("Registering trigger...")
-    trigger_id = registry.register_trigger({
-        "trigger_type": "news",
-        "walrus_blob_id": trigger.walrus_blob_id,
-        "data_hash": trigger.data_hash,
-        "size_bytes": trigger.size_bytes,
-        "articles_count": trigger.articles_count,
-        "timestamp": trigger.timestamp.isoformat(),
+    # Register signal in registry
+    print("Registering signal...")
+    signal_id = registry.register_signal({
+        "signal_type": "news",
+        "walrus_blob_id": signal.walrus_blob_id,
+        "data_hash": signal.data_hash,
+        "size_bytes": signal.size_bytes,
+        "articles_count": signal.articles_count,
+        "timestamp": signal.timestamp.isoformat(),
         "producer": "news_pipeline"
     })
-    print(f"  ✓ Trigger registered: {trigger_id}")
+    print(f"  ✓ Signal registered: {signal_id}")
     print()
 
     # ===========================================================================
@@ -109,19 +109,19 @@ def main():
     print("╚" + "=" * 78 + "╝")
     print()
 
-    print("Agent A checking for new triggers...")
+    print("Agent A checking for new signals...")
 
-    # Agent reads triggers from registry
-    news_triggers = registry.get_triggers(trigger_type="news", limit=1)
+    # Agent reads signals from registry
+    news_signals = registry.get_signals(signal_type="news", limit=1)
 
-    if not news_triggers:
-        print("  No triggers found")
+    if not news_signals:
+        print("  No signals found")
         return
 
-    latest_trigger = news_triggers[0]
-    print(f"  ✓ Found trigger: {latest_trigger['trigger_id']}")
-    print(f"  ✓ Walrus blob: {latest_trigger['walrus_blob_id'][:32]}...")
-    print(f"  ✓ Articles count: {latest_trigger['articles_count']}")
+    latest_signal = news_signals[0]
+    print(f"  ✓ Found signal: {latest_signal['signal_id']}")
+    print(f"  ✓ Walrus blob: {latest_signal['walrus_blob_id'][:32]}...")
+    print(f"  ✓ Articles count: {latest_signal['articles_count']}")
     print()
 
     # ===========================================================================
@@ -135,22 +135,22 @@ def main():
 
     print("Fetching full news data from Walrus...")
 
-    # Create trigger object from registry data
-    from src.core.trigger import NewsTrigger
+    # Create signal object from registry data
+    from src.abstract import NewsSignal
     from datetime import datetime
 
-    trigger_obj = NewsTrigger(
-        object_id=latest_trigger['trigger_id'],
-        walrus_blob_id=latest_trigger['walrus_blob_id'],
-        data_hash=latest_trigger['data_hash'],
-        size_bytes=latest_trigger['size_bytes'],
-        articles_count=latest_trigger['articles_count'],
-        timestamp=datetime.fromisoformat(latest_trigger['timestamp']),
-        producer=latest_trigger['producer']
+    signal_obj = NewsSignal(
+        object_id=latest_signal['signal_id'],
+        walrus_blob_id=latest_signal['walrus_blob_id'],
+        data_hash=latest_signal['data_hash'],
+        size_bytes=latest_signal['size_bytes'],
+        articles_count=latest_signal['articles_count'],
+        timestamp=datetime.fromisoformat(latest_signal['timestamp']),
+        producer=latest_signal['producer']
     )
 
     # Fetch full data (this will get from Walrus!)
-    news_data = trigger_obj.fetch_full_data()
+    news_data = signal_obj.fetch_full_data()
 
     print(f"  ✓ Fetched {len(news_data['articles'])} articles from Walrus")
     print(f"  ✓ Data integrity verified (hash matches)")
@@ -175,7 +175,7 @@ def main():
     print("  1. Analyze sentiment of each article with LLM")
     print("  2. Generate sentiment scores for BTC/ETH")
     print("  3. Store reasoning trace on Walrus")
-    print("  4. Publish sentiment signal trigger")
+    print("  4. Publish sentiment signal signal")
     print()
     print("  → This will be implemented in Agent A class")
     print()
@@ -189,10 +189,10 @@ def main():
     print("=" * 80)
     print()
     print("✅ What worked:")
-    print(f"  1. NewsPipeline fetched {trigger.articles_count} articles from CryptoPanic")
-    print(f"  2. Stored {trigger.size_bytes:,} bytes on Walrus testnet")
-    print(f"  3. Created trigger in TriggerRegistry")
-    print(f"  4. Agent A read trigger and fetched data from Walrus")
+    print(f"  1. NewsPipeline fetched {signal.articles_count} articles from CryptoPanic")
+    print(f"  2. Stored {signal.size_bytes:,} bytes on Walrus testnet")
+    print(f"  3. Created signal in SignalRegistry")
+    print(f"  4. Agent A read signal and fetched data from Walrus")
     print(f"  5. Data integrity verified via hash")
     print()
     print("📋 Next steps:")

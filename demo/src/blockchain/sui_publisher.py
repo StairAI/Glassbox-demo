@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-OnChainPublisher: Publishes triggers to SUI blockchain.
+OnChainPublisher: Publishes signals to SUI blockchain.
 
 Updated architecture:
 - Large data (news) → Walrus storage + metadata on SUI
 - Small data (prices) → Direct storage on SUI
-- All data exposed as Triggers for agents
+- All data exposed as Signals for agents
 """
 
 import json
@@ -14,18 +14,18 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 from src.storage.walrus_client import WalrusClient, WalrusHelper
-from src.core.trigger import NewsTrigger, PriceTrigger, SignalTrigger
+from src.abstract import NewsSignal, PriceSignal, InsightSignal
 
 
 class OnChainPublisher:
     """
-    Publishes triggers to SUI blockchain.
+    Publishes signals to SUI blockchain.
 
     Uses hybrid storage strategy:
     - Large data (> 1KB) → Walrus (cheap) + metadata on SUI
     - Small data (< 1KB) → Direct storage on SUI
 
-    All published data is exposed as Triggers for agent consumption.
+    All published data is exposed as Signals for agent consumption.
 
     Example:
         publisher = OnChainPublisher(
@@ -35,10 +35,10 @@ class OnChainPublisher:
         )
 
         # Publish news (large data → Walrus)
-        trigger = publisher.publish_news_trigger(news_data, "news_pipeline")
+        signal = publisher.publish_news_signal(news_data, "news_pipeline")
 
         # Publish price (small data → SUI)
-        trigger = publisher.publish_price_trigger("BTC", 66434.0, "pyth")
+        signal = publisher.publish_price_signal("BTC", 66434.0, "pyth")
     """
 
     def __init__(
@@ -72,29 +72,29 @@ class OnChainPublisher:
         if not simulated and (not sui_client or not package_id):
             raise ValueError("sui_client and package_id required when simulated=False")
 
-    # === News Triggers ===
+    # === News Signals ===
 
-    def publish_news_trigger(
+    def publish_news_signal(
         self,
         news_data: Dict[str, Any],
         producer: str = "news_pipeline"
-    ) -> NewsTrigger:
+    ) -> NewsSignal:
         """
-        Publish news trigger.
+        Publish news signal.
 
         News data is large (4KB+), so:
         1. Store full data on Walrus
         2. Store metadata + blob_id on SUI
-        3. Return NewsTrigger
+        3. Return NewsSignal
 
         Args:
             news_data: Full news data dict
             producer: Pipeline identifier
 
         Returns:
-            NewsTrigger instance
+            NewsSignal instance
         """
-        print(f"\n[OnChainPublisher] Publishing News Trigger")
+        print(f"\n[OnChainPublisher] Publishing News Signal")
 
         # Step 1: Store full data on Walrus
         print(f"  [1/3] Storing full data on Walrus...")
@@ -107,10 +107,10 @@ class OnChainPublisher:
         print(f"    ✓ Data hash: {data_hash[:16]}...")
         print(f"    ✓ Size: {size_bytes:,} bytes")
 
-        # Step 2: Create trigger metadata (lightweight!)
-        print(f"  [2/3] Creating trigger metadata...")
-        trigger_metadata = {
-            "trigger_type": "news",
+        # Step 2: Create signal metadata (lightweight!)
+        print(f"  [2/3] Creating signal metadata...")
+        signal_metadata = {
+            "signal_type": "news",
             "walrus_blob_id": blob_id,
             "data_hash": data_hash,
             "size_bytes": size_bytes,
@@ -120,44 +120,44 @@ class OnChainPublisher:
             "owner": self.owner_address or "default"  # Configurable owner
         }
 
-        metadata_size = len(json.dumps(trigger_metadata))
+        metadata_size = len(json.dumps(signal_metadata))
         print(f"    ✓ Metadata size: {metadata_size} bytes (< 500 bytes)")
 
         # Step 3: Publish metadata to SUI
         print(f"  [3/3] Publishing metadata to SUI...")
-        object_id = self._publish_trigger_to_sui(trigger_metadata)
+        object_id = self._publish_signal_to_sui(signal_metadata)
         print(f"    ✓ SUI object ID: {object_id}")
 
-        # Create and return trigger
-        trigger = NewsTrigger(
+        # Create and return signal
+        signal = NewsSignal(
             object_id=object_id,
             walrus_blob_id=blob_id,
             data_hash=data_hash,
             size_bytes=size_bytes,
-            articles_count=trigger_metadata["articles_count"],
-            timestamp=datetime.fromtimestamp(trigger_metadata["timestamp"]),
+            articles_count=signal_metadata["articles_count"],
+            timestamp=datetime.fromtimestamp(signal_metadata["timestamp"]),
             producer=producer
         )
 
-        print(f"  ✓ News trigger published successfully\n")
-        return trigger
+        print(f"  ✓ News signal published successfully\n")
+        return signal
 
-    # === Price Triggers ===
+    # === Price Signals ===
 
-    def publish_price_trigger(
+    def publish_price_signal(
         self,
         symbol: str,
         price_usd: float,
         oracle_source: str,
         confidence: Optional[float] = None,
         producer: str = "sui_price_pipeline"
-    ) -> PriceTrigger:
+    ) -> PriceSignal:
         """
-        Publish price trigger.
+        Publish price signal.
 
         Price data is small (< 200 bytes), so:
         1. Store directly on SUI (no Walrus needed)
-        2. Return PriceTrigger
+        2. Return PriceSignal
 
         Args:
             symbol: Asset symbol (e.g., "BTC")
@@ -167,14 +167,14 @@ class OnChainPublisher:
             producer: Pipeline identifier
 
         Returns:
-            PriceTrigger instance
+            PriceSignal instance
         """
-        print(f"\n[OnChainPublisher] Publishing Price Trigger")
+        print(f"\n[OnChainPublisher] Publishing Price Signal")
 
-        # Create trigger data (small enough for on-chain)
-        print(f"  [1/2] Creating trigger data...")
-        trigger_data = {
-            "trigger_type": "price",
+        # Create signal data (small enough for on-chain)
+        print(f"  [1/2] Creating signal data...")
+        signal_data = {
+            "signal_type": "price",
             "symbol": symbol,
             "price_usd": price_usd,
             "oracle_source": oracle_source,
@@ -184,7 +184,7 @@ class OnChainPublisher:
             "owner": self.owner_address or "default"  # Configurable owner
         }
 
-        data_size = len(json.dumps(trigger_data))
+        data_size = len(json.dumps(signal_data))
         print(f"    ✓ Symbol: {symbol}")
         print(f"    ✓ Price: ${price_usd:,.2f}")
         print(f"    ✓ Oracle: {oracle_source}")
@@ -192,35 +192,35 @@ class OnChainPublisher:
 
         # Publish to SUI
         print(f"  [2/2] Publishing to SUI...")
-        object_id = self._publish_trigger_to_sui(trigger_data)
+        object_id = self._publish_signal_to_sui(signal_data)
         print(f"    ✓ SUI object ID: {object_id}")
 
-        # Create and return trigger
-        trigger = PriceTrigger(
+        # Create and return signal
+        signal = PriceSignal(
             object_id=object_id,
             symbol=symbol,
             price_usd=price_usd,
             oracle_source=oracle_source,
-            timestamp=datetime.fromtimestamp(trigger_data["timestamp"]),
+            timestamp=datetime.fromtimestamp(signal_data["timestamp"]),
             confidence=confidence,
             producer=producer
         )
 
-        print(f"  ✓ Price trigger published successfully\n")
-        return trigger
+        print(f"  ✓ Price signal published successfully\n")
+        return signal
 
-    # === Signal Triggers ===
+    # === Signal Signals ===
 
-    def publish_signal_trigger(
+    def publish_signal_signal(
         self,
         signal_type: str,
         signal_value: Dict[str, Any],
         confidence: float,
         producer: str,
         reasoning_trace: Optional[Dict[str, Any]] = None
-    ) -> SignalTrigger:
+    ) -> InsightSignal:
         """
-        Publish signal trigger (agent output).
+        Publish signal signal (agent output).
 
         Signals are stored on SUI, reasoning traces on Walrus.
 
@@ -232,9 +232,9 @@ class OnChainPublisher:
             reasoning_trace: Optional reasoning trace (stored on Walrus)
 
         Returns:
-            SignalTrigger instance
+            InsightSignal instance
         """
-        print(f"\n[OnChainPublisher] Publishing Signal Trigger")
+        print(f"\n[OnChainPublisher] Publishing Signal Signal")
 
         # Store reasoning trace on Walrus (if provided)
         walrus_trace_id = None
@@ -243,10 +243,10 @@ class OnChainPublisher:
             walrus_trace_id = WalrusHelper.store_json(self.walrus_client, reasoning_trace)
             print(f"    ✓ Trace ID: {walrus_trace_id[:16]}...")
 
-        # Create trigger data
-        print(f"  [2/3] Creating signal trigger...")
-        trigger_data = {
-            "trigger_type": "signal",
+        # Create signal data
+        print(f"  [2/3] Creating signal signal...")
+        signal_data = {
+            "signal_type": "insight",
             "signal_type": signal_type,
             "signal_value": signal_value,
             "confidence": confidence,
@@ -258,50 +258,50 @@ class OnChainPublisher:
 
         # Publish to SUI
         print(f"  [3/3] Publishing to SUI...")
-        object_id = self._publish_trigger_to_sui(trigger_data)
+        object_id = self._publish_signal_to_sui(signal_data)
         print(f"    ✓ SUI object ID: {object_id}")
 
-        # Create and return trigger
-        trigger = SignalTrigger(
+        # Create and return signal
+        signal = InsightSignal(
             object_id=object_id,
             signal_type=signal_type,
             signal_value=signal_value,
             confidence=confidence,
-            timestamp=datetime.fromtimestamp(trigger_data["timestamp"]),
+            timestamp=datetime.fromtimestamp(signal_data["timestamp"]),
             producer=producer,
             walrus_trace_id=walrus_trace_id
         )
 
-        print(f"  ✓ Signal trigger published successfully\n")
-        return trigger
+        print(f"  ✓ Signal signal published successfully\n")
+        return signal
 
     # === Private Methods ===
 
-    def _publish_trigger_to_sui(self, trigger_data: Dict[str, Any]) -> str:
+    def _publish_signal_to_sui(self, signal_data: Dict[str, Any]) -> str:
         """
-        Publish trigger metadata to SUI blockchain.
+        Publish signal metadata to SUI blockchain.
 
         Args:
-            trigger_data: Trigger metadata dict
+            signal_data: Signal metadata dict
 
         Returns:
             object_id: SUI object ID
         """
         if self.simulated:
-            return self._simulate_sui_publish(trigger_data)
+            return self._simulate_sui_publish(signal_data)
         else:
-            return self._real_sui_publish(trigger_data)
+            return self._real_sui_publish(signal_data)
 
-    def _simulate_sui_publish(self, trigger_data: Dict[str, Any]) -> str:
+    def _simulate_sui_publish(self, signal_data: Dict[str, Any]) -> str:
         """Simulate SUI publication for demo."""
-        # Generate mock object ID from trigger data
-        data_str = json.dumps(trigger_data, sort_keys=True)
+        # Generate mock object ID from signal data
+        data_str = json.dumps(signal_data, sort_keys=True)
         object_hash = hashlib.sha256(data_str.encode()).hexdigest()
         mock_object_id = f"0x{object_hash[:40]}"
 
         return mock_object_id
 
-    def _real_sui_publish(self, trigger_data: Dict[str, Any]) -> str:
+    def _real_sui_publish(self, signal_data: Dict[str, Any]) -> str:
         """
         Publish to real SUI blockchain.
 
@@ -312,14 +312,14 @@ class OnChainPublisher:
 
             txn = SyncTransaction(client=self.sui_client)
 
-            if trigger_data["trigger_type"] == "news":
+            if signal_data["signal_type"] == "news":
                 txn.move_call(
-                    target=f"{self.package_id}::trigger::publish_news_trigger",
+                    target=f"{self.package_id}::signal::publish_news_signal",
                     arguments=[...],
                 )
-            elif trigger_data["trigger_type"] == "price":
+            elif signal_data["signal_type"] == "price":
                 txn.move_call(
-                    target=f"{self.package_id}::trigger::publish_price_trigger",
+                    target=f"{self.package_id}::signal::publish_price_signal",
                     arguments=[...],
                 )
 
@@ -332,11 +332,11 @@ class OnChainPublisher:
         )
 
 
-class TriggerEventEmitter:
+class SignalEventEmitter:
     """
-    Emits lightweight SUI events when triggers are created.
+    Emits lightweight SUI events when signals are created.
 
-    These events allow agents to watch for new triggers without
+    These events allow agents to watch for new signals without
     constantly polling the blockchain.
     """
 
@@ -345,25 +345,25 @@ class TriggerEventEmitter:
         self.package_id = package_id
         self.simulated = simulated
 
-    def emit_trigger_event(
+    def emit_signal_event(
         self,
-        trigger_type: str,
+        signal_type: str,
         object_id: str,
         preview_data: Dict[str, Any]
     ) -> str:
         """
-        Emit event when trigger is created.
+        Emit event when signal is created.
 
         Args:
-            trigger_type: "news", "price", "signal"
-            object_id: SUI object ID of trigger
+            signal_type: "news", "price", "insight"
+            object_id: SUI object ID of signal
             preview_data: Small preview data for filtering
 
         Returns:
             Event ID
         """
         if self.simulated:
-            print(f"  [Event] TriggerCreated: type={trigger_type}, object={object_id[:16]}...")
+            print(f"  [Event] SignalCreated: type={signal_type}, object={object_id[:16]}...")
             return f"event_{object_id[:16]}"
 
         # Real implementation would emit SUI event

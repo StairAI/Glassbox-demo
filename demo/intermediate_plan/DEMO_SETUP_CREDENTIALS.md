@@ -203,7 +203,7 @@ print(f"Object data: {result.result_data}")
 
 ## Simplified Demo Architecture (No Smart Contracts)
 
-For the demo, we'll use a **centralized trigger registry** instead of smart contracts:
+For the demo, we'll use a **centralized signal registry** instead of smart contracts:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -212,39 +212,39 @@ For the demo, we'll use a **centralized trigger registry** instead of smart cont
 
 1. NewsPipeline
    ├─> Store full data on Walrus (REAL) ✅
-   ├─> Store trigger metadata in local JSON file (FAKE) ⚠️
-   └─> Return NewsTrigger
+   ├─> Store signal metadata in local JSON file (FAKE) ⚠️
+   └─> Return NewsSignal
 
 2. SuiPricePipeline
    ├─> Read from simulated oracle (FAKE) ⚠️
-   ├─> Store trigger metadata in local JSON file (FAKE) ⚠️
-   └─> Return PriceTrigger
+   ├─> Store signal metadata in local JSON file (FAKE) ⚠️
+   └─> Return PriceSignal
 
 3. Agent A
-   ├─> Read trigger metadata from local JSON (FAKE) ⚠️
+   ├─> Read signal metadata from local JSON (FAKE) ⚠️
    ├─> Fetch full news from Walrus (REAL) ✅
    ├─> Process with LLM
    └─> Output sentiment signals
 ```
 
-### Centralized Trigger Registry (For Demo)
+### Centralized Signal Registry (For Demo)
 
 ```python
-# src/demo/trigger_registry.py
+# src/demo/signal_registry.py
 
 import json
 from pathlib import Path
 from typing import List, Dict, Any
 
-class TriggerRegistry:
+class SignalRegistry:
     """
-    Centralized trigger registry for demo.
+    Centralized signal registry for demo.
 
     In production, this would be replaced by SUI smart contracts.
     For demo, we just use a local JSON file.
     """
 
-    def __init__(self, registry_path: str = "data/trigger_registry.json"):
+    def __init__(self, registry_path: str = "data/signal_registry.json"):
         self.registry_path = Path(registry_path)
         self.registry_path.parent.mkdir(exist_ok=True)
 
@@ -252,48 +252,48 @@ class TriggerRegistry:
         if not self.registry_path.exists():
             self._save_registry([])
 
-    def register_trigger(self, trigger_data: Dict[str, Any]) -> str:
-        """Register a trigger and return its ID."""
-        triggers = self._load_registry()
+    def register_signal(self, signal_data: Dict[str, Any]) -> str:
+        """Register a signal and return its ID."""
+        signals = self._load_registry()
 
         # Generate ID
-        trigger_id = f"trigger_{len(triggers):04d}"
-        trigger_data["trigger_id"] = trigger_id
+        signal_id = f"signal_{len(signals):04d}"
+        signal_data["signal_id"] = signal_id
 
-        triggers.append(trigger_data)
-        self._save_registry(triggers)
+        signals.append(signal_data)
+        self._save_registry(signals)
 
-        print(f"[TriggerRegistry] Registered {trigger_data['trigger_type']} trigger: {trigger_id}")
-        return trigger_id
+        print(f"[SignalRegistry] Registered {signal_data['signal_type']} signal: {signal_id}")
+        return signal_id
 
-    def get_triggers(self, trigger_type: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Get all triggers, optionally filtered by type."""
-        triggers = self._load_registry()
+    def get_signals(self, signal_type: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Get all signals, optionally filtered by type."""
+        signals = self._load_registry()
 
-        if trigger_type:
-            triggers = [t for t in triggers if t.get("trigger_type") == trigger_type]
+        if signal_type:
+            signals = [t for t in signals if t.get("signal_type") == signal_type]
 
-        return triggers
+        return signals
 
-    def get_trigger(self, trigger_id: str) -> Optional[Dict[str, Any]]:
-        """Get a specific trigger by ID."""
-        triggers = self._load_registry()
+    def get_signal(self, signal_id: str) -> Optional[Dict[str, Any]]:
+        """Get a specific signal by ID."""
+        signals = self._load_registry()
 
-        for trigger in triggers:
-            if trigger.get("trigger_id") == trigger_id:
-                return trigger
+        for signal in signals:
+            if signal.get("signal_id") == signal_id:
+                return signal
 
         return None
 
     def _load_registry(self) -> List[Dict[str, Any]]:
-        """Load triggers from JSON file."""
+        """Load signals from JSON file."""
         with open(self.registry_path, 'r') as f:
             return json.load(f)
 
-    def _save_registry(self, triggers: List[Dict[str, Any]]):
-        """Save triggers to JSON file."""
+    def _save_registry(self, signals: List[Dict[str, Any]]):
+        """Save signals to JSON file."""
         with open(self.registry_path, 'w') as f:
-            json.dump(triggers, f, indent=2)
+            json.dump(signals, f, indent=2)
 ```
 
 ---
@@ -340,7 +340,7 @@ python test_sui_connection.py
 |-----------|-----------|-----------------|
 | **Walrus Storage** | ✅ REAL (use testnet) | ✅ REAL (use mainnet) |
 | **News Data** | ✅ REAL (CryptoPanic API) | ✅ REAL |
-| **Trigger Registry** | ⚠️ FAKE (local JSON) | ✅ REAL (smart contracts) |
+| **Signal Registry** | ⚠️ FAKE (local JSON) | ✅ REAL (smart contracts) |
 | **Price Oracle** | ⚠️ FAKE (simulated) | ✅ REAL (Pyth/Switchboard) |
 | **Agent Processing** | ✅ REAL (LLM) | ✅ REAL (LLM) |
 
@@ -352,17 +352,17 @@ python test_sui_connection.py
    - Update code to use `simulated=False`
    - Test storing and fetching data
 
-2. **Create Trigger Registry** (Simple - just local JSON)
-   - Implement TriggerRegistry class
-   - Store trigger metadata locally
+2. **Create Signal Registry** (Simple - just local JSON)
+   - Implement SignalRegistry class
+   - Store signal metadata locally
 
 3. **Build Complete Demo**
-   - NewsPipeline → Walrus (real) + TriggerRegistry (fake)
-   - Agent reads from TriggerRegistry → fetches from Walrus (real)
+   - NewsPipeline → Walrus (real) + SignalRegistry (fake)
+   - Agent reads from SignalRegistry → fetches from Walrus (real)
 
 4. **Optional: Add SUI** (Later)
    - Get SUI wallet and tokens
    - Read from price oracles
-   - Eventually replace TriggerRegistry with smart contracts
+   - Eventually replace SignalRegistry with smart contracts
 
-Want me to implement the TriggerRegistry and update the demo to use real Walrus?
+Want me to implement the SignalRegistry and update the demo to use real Walrus?

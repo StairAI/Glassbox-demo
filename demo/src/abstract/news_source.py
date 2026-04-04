@@ -5,10 +5,12 @@ This allows integration with multiple news APIs (CryptoPanic, NewsAPI, Twitter, 
 while maintaining a consistent interface.
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import List, Dict, Optional
 from datetime import datetime
 from dataclasses import dataclass
+
+from .data_source import DataSource, DataSourceError
 
 
 @dataclass
@@ -53,7 +55,7 @@ class NewsArticle:
         }
 
 
-class NewsSource(ABC):
+class NewsSource(DataSource):
     """
     Abstract base class for news data sources.
 
@@ -67,13 +69,8 @@ class NewsSource(ABC):
         Args:
             api_token: API authentication token (if required)
         """
-        self.api_token = api_token
-        self._source_name = self.__class__.__name__.lower().replace("source", "")
-
-    @property
-    def source_name(self) -> str:
-        """Return the name of this news source."""
-        return self._source_name
+        super().__init__(credentials=api_token)
+        self.api_token = api_token  # Keep for backward compatibility
 
     @abstractmethod
     def fetch_news(
@@ -132,14 +129,12 @@ class NewsSource(ABC):
         return True
 
 
-class NewsSourceError(Exception):
+class NewsSourceError(DataSourceError):
     """Exception raised when news source encounters an error."""
 
     def __init__(self, source: str, message: str, original_error: Optional[Exception] = None):
-        self.source = source
-        self.message = message
+        super().__init__(source, message)
         self.original_error = original_error
-        super().__init__(f"[{source}] {message}")
 
 
 class RateLimitError(NewsSourceError):

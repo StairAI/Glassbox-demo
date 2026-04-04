@@ -42,9 +42,9 @@
 ### Core Components
 
 ✅ **WalrusClient** - Walrus testnet integration
-✅ **Trigger Abstraction** - Unified trigger interface
-✅ **OnChainPublisher** - Trigger publishing
-✅ **TriggerRegistry** - Demo trigger storage
+✅ **Signal Abstraction** - Unified signal interface
+✅ **OnChainPublisher** - Signal publishing
+✅ **SignalRegistry** - Demo signal storage
 ✅ **NewsPipeline** - News ETL pipeline
 ✅ **SuiPricePipeline** - Price oracle integration (skeleton)
 
@@ -162,7 +162,7 @@ Reference these in main docs:
 **File:** `src/agents/agent_b_investment.py`
 
 1. **Input:**
-   - Agent A sentiment signals (from TriggerRegistry)
+   - Agent A sentiment signals (from SignalRegistry)
    - Real BTC price (CoinGecko API)
    - Historical price data
 
@@ -257,9 +257,9 @@ Packages: pysui, python-dotenv, requests
 **Implemented:**
 - [src/agents/agent_a_sentiment.py](src/agents/agent_a_sentiment.py)
 - [src/storage/walrus_client.py](src/storage/walrus_client.py)
-- [src/core/trigger.py](src/core/trigger.py)
+- [src/core/signal.py](src/core/signal.py)
 - [src/blockchain/sui_publisher.py](src/blockchain/sui_publisher.py)
-- [src/demo/trigger_registry.py](src/demo/trigger_registry.py)
+- [src/demo/signal_registry.py](src/demo/signal_registry.py)
 - [src/pipeline/news_pipeline.py](src/pipeline/news_pipeline.py)
 - [src/reasoning_ledger/reasoning_ledger_sdk.py](src/reasoning_ledger/reasoning_ledger_sdk.py)
 - [scripts/demo_with_agent_a.py](scripts/demo_with_agent_a.py)

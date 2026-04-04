@@ -5,7 +5,7 @@ NewsPipeline: ETL pipeline for news data with Walrus storage
 SIMPLIFIED ARCHITECTURE:
 - All news data → Walrus (full storage)
 - Only metadata + blob_id → SUI
-- Returns NewsTrigger for agents
+- Returns NewsSignal for agents
 
 This is NOT an agent - just pure ETL (Extract, Transform, Load).
 """
@@ -16,7 +16,7 @@ from datetime import datetime
 from src.data_clients.cryptopanic_client import CryptoPanicClient
 from src.data_sources.cryptopanic_source import CryptoPanicSource
 from src.blockchain.sui_publisher import OnChainPublisher
-from src.core.trigger import NewsTrigger
+from src.abstract import NewsSignal
 
 
 class NewsPipeline:
@@ -28,7 +28,7 @@ class NewsPipeline:
     2. Transform to standardized format
     3. Store ALL data on Walrus (cheap!)
     4. Publish metadata + blob_id to SUI
-    5. Return NewsTrigger
+    5. Return NewsSignal
 
     No LLM, no reasoning - just data movement.
 
@@ -37,7 +37,7 @@ class NewsPipeline:
             api_token="YOUR_TOKEN",
             publisher=OnChainPublisher()
         )
-        trigger = pipeline.fetch_and_publish(currencies=["BTC"], limit=5)
+        signal = pipeline.fetch_and_publish(currencies=["BTC"], limit=5)
     """
 
     def __init__(
@@ -65,7 +65,7 @@ class NewsPipeline:
         self,
         currencies: Optional[List[str]] = None,
         limit: int = 20
-    ) -> NewsTrigger:
+    ) -> NewsSignal:
         """
         Fetch news from API and publish to Walrus + SUI.
 
@@ -79,7 +79,7 @@ class NewsPipeline:
             limit: Maximum number of articles to fetch
 
         Returns:
-            NewsTrigger instance (reference to data on Walrus + SUI)
+            NewsSignal instance (reference to data on Walrus + SUI)
         """
         print(f"\n{'='*80}")
         print("NEWS PIPELINE: Starting ETL Process")
@@ -104,10 +104,10 @@ class NewsPipeline:
         # OnChainPublisher handles:
         # - Storing full data on Walrus
         # - Publishing metadata to SUI
-        # - Returning NewsTrigger
+        # - Returning NewsSignal
         print(f"\n[3/3] LOAD: Publishing to Walrus + SUI")
 
-        trigger = self.publisher.publish_news_trigger(
+        signal = self.publisher.publish_news_signal(
             news_data=news_data,
             producer="news_pipeline"
         )
@@ -115,13 +115,13 @@ class NewsPipeline:
         print(f"{'='*80}")
         print("NEWS PIPELINE: ETL Complete")
         print(f"{'='*80}")
-        print(f"✓ News trigger published: {trigger.object_id[:16]}...")
-        print(f"✓ Walrus blob: {trigger.walrus_blob_id[:16]}...")
-        print(f"✓ Articles count: {trigger.articles_count}")
-        print(f"✓ Size: {trigger.size_bytes:,} bytes")
+        print(f"✓ News signal published: {signal.object_id[:16]}...")
+        print(f"✓ Walrus blob: {signal.walrus_blob_id[:16]}...")
+        print(f"✓ Articles count: {signal.articles_count}")
+        print(f"✓ Size: {signal.size_bytes:,} bytes")
         print()
 
-        return trigger
+        return signal
 
     def _transform_for_storage(self, articles) -> dict:
         """
@@ -162,7 +162,7 @@ class NewsScheduler:
     def __init__(self, pipeline: NewsPipeline):
         self.pipeline = pipeline
 
-    def run_once(self, currencies: Optional[List[str]] = None) -> NewsTrigger:
+    def run_once(self, currencies: Optional[List[str]] = None) -> NewsSignal:
         """Run pipeline once."""
         return self.pipeline.fetch_and_publish(currencies=currencies)
 

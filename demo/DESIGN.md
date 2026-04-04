@@ -549,7 +549,7 @@ agent_c_status = {
 
 #### 3.3 Wire Agent A → Agent B Pipeline
 - Read Agent A signal from JSONL
-- Trigger Agent B on new sentiment data
+- Signal Agent B on new sentiment data
 - Pass signals via local files (no network calls)
 
 ---
@@ -582,7 +582,7 @@ agent_c_status = {
 
 #### 4.3 Wire Agent B → Agent C Pipeline
 - Read Agent B signal from JSONL
-- Trigger Agent C on new predictions
+- Signal Agent C on new predictions
 - Execute full pipeline: A → B → C
 
 ---
@@ -970,7 +970,7 @@ python src/orchestrator/runner.py
 # Run single agent (testing)
 python scripts/run_single_agent.py --agent a
 
-# Validate predictions (manual trigger)
+# Validate predictions (manual signal)
 python scripts/validate_predictions.py
 ```
 
