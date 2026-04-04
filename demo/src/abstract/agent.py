@@ -197,6 +197,37 @@ class Agent(ABC):
         )
         self._reasoning_steps.append(step)
 
+    def record_tool_call(
+        self,
+        tool_name: str,
+        tool_input: Any,
+        tool_output: Any,
+        tool_description: Optional[str] = None,
+        success: bool = True
+    ) -> None:
+        """
+        Record a tool call for transparency.
+
+        Use this to track when agents call external tools/APIs (price feeds, etc.)
+
+        Args:
+            tool_name: Name of the tool (e.g., "get_sui_price", "fetch_oracle_data")
+            tool_input: Input parameters to the tool
+            tool_output: Output from the tool
+            tool_description: Human-readable description of what the tool does
+            success: Whether the tool call succeeded
+        """
+        step = {
+            "step_type": "tool_call",
+            "tool_name": tool_name,
+            "tool_description": tool_description or f"Called tool: {tool_name}",
+            "tool_input": tool_input,
+            "tool_output": tool_output,
+            "success": success,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self._reasoning_steps.append(step)
+
     def get_reasoning_steps(self) -> List[Dict[str, Any]]:
         """Get all recorded reasoning steps."""
         return self._reasoning_steps.copy()

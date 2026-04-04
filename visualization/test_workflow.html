@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Workflow Debug Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #2a2a2a; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>Workflow API Debug Test</h1>
+
+    <button onclick="testMetadata()">1. Test Metadata API</button>
+    <button onclick="testLineage()">2. Test Lineage API (Agent C)</button>
+    <button onclick="testLineageAgentB()">3. Test Lineage API (Agent B)</button>
+
+    <h2>Results:</h2>
+    <div id="output"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+
+        function log(message, isError = false) {
+            const output = document.getElementById('output');
+            const className = isError ? 'error' : 'success';
+            output.innerHTML += `<div class="${className}">${message}</div>`;
+        }
+
+        async function testMetadata() {
+            document.getElementById('output').innerHTML = '';
+            log('Testing /api/workflow/metadata...');
+
+            try {
+                const response = await fetch(`${API_BASE}/workflow/metadata`);
+                const data = await response.json();
+
+                if (data.success) {
+                    log(`✓ Success! Found ${data.agents.length} agents`);
+                    log(`<pre>${JSON.stringify(data, null, 2)}</pre>`);
+                } else {
+                    log(`✗ API returned success=false: ${data.error}`, true);
+                }
+            } catch (error) {
+                log(`✗ Network error: ${error.message}`, true);
+                console.error(error);
+            }
+        }
+
+        async function testLineage() {
+            document.getElementById('output').innerHTML = '';
+            log('Testing /api/workflow/lineage/signal_000154 (Agent C)...');
+
+            try {
+                const response = await fetch(`${API_BASE}/workflow/lineage/signal_000154`);
+                const data = await response.json();
+
+                if (data.success) {
+                    log(`✓ Success! Signal: ${data.signal.signal_id}`);
+                    log(`  Producer: ${data.signal.producer}`);
+                    log(`  Upstream signals: ${data.upstream_signals.length}`);
+
+                    if (data.upstream_signals.length > 0) {
+                        data.upstream_signals.forEach((sig, i) => {
+                            log(`    ${i+1}. ${sig.signal_type} from ${sig.producer} (${sig.signal_id})`);
+                        });
+                    }
+
+                    log(`<pre>${JSON.stringify(data, null, 2)}</pre>`);
+                } else {
+                    log(`✗ API returned success=false: ${data.error}`, true);
+                }
+            } catch (error) {
+                log(`✗ Network error: ${error.message}`, true);
+                console.error(error);
+            }
+        }
+
+        async function testLineageAgentB() {
+            document.getElementById('output').innerHTML = '';
+            log('Testing /api/workflow/lineage/signal_000153 (Agent B)...');
+
+            try {
+                const response = await fetch(`${API_BASE}/workflow/lineage/signal_000153`);
+                const data = await response.json();
+
+                if (data.success) {
+                    log(`✓ Success! Signal: ${data.signal.signal_id}`);
+                    log(`  Producer: ${data.signal.producer}`);
+                    log(`  Upstream signals: ${data.upstream_signals.length}`);
+
+                    if (data.upstream_signals.length > 0) {
+                        data.upstream_signals.forEach((sig, i) => {
+                            log(`    ${i+1}. ${sig.signal_type} from ${sig.producer} (${sig.signal_id})`);
+                        });
+                    }
+
+                    log(`<pre>${JSON.stringify(data, null, 2)}</pre>`);
+                } else {
+                    log(`✗ API returned success=false: ${data.error}`, true);
+                }
+            } catch (error) {
+                log(`✗ Network error: ${error.message}`, true);
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

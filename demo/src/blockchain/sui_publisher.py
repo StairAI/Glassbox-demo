@@ -99,7 +99,8 @@ class OnChainPublisher:
         # Step 1: Store full data on Walrus
         print(f"  [1/3] Storing full data on Walrus...")
         blob_id = WalrusHelper.store_json(self.walrus_client, news_data)
-        data_json = json.dumps(news_data, sort_keys=True)
+        # IMPORTANT: Hash must match WalrusHelper.store_json format (sort_keys=True, indent=2)
+        data_json = json.dumps(news_data, sort_keys=True, indent=2)
         data_hash = hashlib.sha256(data_json.encode()).hexdigest()
         size_bytes = len(data_json)
 
@@ -146,24 +147,21 @@ class OnChainPublisher:
 
     def publish_price_signal(
         self,
-        symbol: str,
-        price_usd: float,
-        oracle_source: str,
-        confidence: Optional[float] = None,
-        producer: str = "sui_price_pipeline"
+        price_data: Dict[str, Any],
+        producer: str = "coingecko_price_pipeline"
     ) -> PriceSignal:
         """
         Publish price signal.
 
-        Price data is small (< 200 bytes), so:
-        1. Store directly on SUI (no Walrus needed)
-        2. Return PriceSignal
+        UNIFIED WALRUS ARCHITECTURE:
+        All signals use the same pattern:
+        1. Store full data on Walrus
+        2. Store metadata + blob_id on SUI
+        3. Return PriceSignal
 
         Args:
-            symbol: Asset symbol (e.g., "BTC")
-            price_usd: Price in USD
-            oracle_source: Oracle name (e.g., "pyth")
-            confidence: Oracle confidence (optional)
+            price_data: Full price data dict from PriceData.to_dict()
+                Expected keys: source, symbol, price_usd, timestamp, etc.
             producer: Pipeline identifier
 
         Returns:
@@ -171,38 +169,51 @@ class OnChainPublisher:
         """
         print(f"\n[OnChainPublisher] Publishing Price Signal")
 
-        # Create signal data (small enough for on-chain)
-        print(f"  [1/2] Creating signal data...")
-        signal_data = {
+        # Step 1: Store full data on Walrus
+        print(f"  [1/3] Storing full data on Walrus...")
+        blob_id = WalrusHelper.store_json(self.walrus_client, price_data)
+        # IMPORTANT: Hash must match WalrusHelper.store_json format (sort_keys=True, indent=2)
+        data_json = json.dumps(price_data, sort_keys=True, indent=2)
+        data_hash = hashlib.sha256(data_json.encode()).hexdigest()
+        size_bytes = len(data_json)
+
+        print(f"    ✓ Walrus blob ID: {blob_id[:16]}...")
+        print(f"    ✓ Data hash: {data_hash[:16]}...")
+        print(f"    ✓ Size: {size_bytes:,} bytes")
+
+        # Step 2: Create signal metadata (lightweight!)
+        print(f"  [2/3] Creating signal metadata...")
+        signal_metadata = {
             "signal_type": "price",
-            "symbol": symbol,
-            "price_usd": price_usd,
-            "oracle_source": oracle_source,
-            "confidence": confidence,
+            "walrus_blob_id": blob_id,
+            "data_hash": data_hash,
+            "size_bytes": size_bytes,
+            "symbol": price_data["symbol"],
+            "price_usd": price_data["price_usd"],
             "timestamp": int(datetime.now().timestamp()),
             "producer": producer,
             "owner": self.owner_address or "default"  # Configurable owner
         }
 
-        data_size = len(json.dumps(signal_data))
-        print(f"    ✓ Symbol: {symbol}")
-        print(f"    ✓ Price: ${price_usd:,.2f}")
-        print(f"    ✓ Oracle: {oracle_source}")
-        print(f"    ✓ Data size: {data_size} bytes (< 1KB, no Walrus needed)")
+        metadata_size = len(json.dumps(signal_metadata))
+        print(f"    ✓ Symbol: {price_data['symbol']}")
+        print(f"    ✓ Price: ${price_data['price_usd']:,.2f}")
+        print(f"    ✓ Metadata size: {metadata_size} bytes (< 500 bytes)")
 
-        # Publish to SUI
-        print(f"  [2/2] Publishing to SUI...")
-        object_id = self._publish_signal_to_sui(signal_data)
+        # Step 3: Publish metadata to SUI
+        print(f"  [3/3] Publishing metadata to SUI...")
+        object_id = self._publish_signal_to_sui(signal_metadata)
         print(f"    ✓ SUI object ID: {object_id}")
 
         # Create and return signal
         signal = PriceSignal(
             object_id=object_id,
-            symbol=symbol,
-            price_usd=price_usd,
-            oracle_source=oracle_source,
-            timestamp=datetime.fromtimestamp(signal_data["timestamp"]),
-            confidence=confidence,
+            walrus_blob_id=blob_id,
+            data_hash=data_hash,
+            size_bytes=size_bytes,
+            symbol=signal_metadata["symbol"],
+            price_usd=signal_metadata["price_usd"],
+            timestamp=datetime.fromtimestamp(signal_metadata["timestamp"]),
             producer=producer
         )
 

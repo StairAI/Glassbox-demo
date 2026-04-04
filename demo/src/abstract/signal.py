@@ -138,9 +138,10 @@ class NewsSignal(Signal):
             data = WalrusHelper.fetch_json(client, self.walrus_blob_id)
 
             # Verify integrity
+            # IMPORTANT: Must match the format used in WalrusHelper.store_json (sort_keys=True, indent=2)
             import hashlib
             computed_hash = hashlib.sha256(
-                json.dumps(data, sort_keys=True).encode()
+                json.dumps(data, sort_keys=True, indent=2).encode()
             ).hexdigest()
 
             if computed_hash != self.data_hash:
@@ -244,9 +245,10 @@ class PriceSignal(Signal):
             data = WalrusHelper.fetch_json(client, self.walrus_blob_id)
 
             # Verify integrity
+            # IMPORTANT: Must match the format used in WalrusHelper.store_json (sort_keys=True, indent=2)
             import hashlib
             computed_hash = hashlib.sha256(
-                json.dumps(data, sort_keys=True).encode()
+                json.dumps(data, sort_keys=True, indent=2).encode()
             ).hexdigest()
 
             if computed_hash != self.data_hash:
@@ -362,9 +364,10 @@ class InsightSignal(Signal):
             data = WalrusHelper.fetch_json(client, self.walrus_blob_id)
 
             # Verify integrity
+            # IMPORTANT: Must match the format used in WalrusHelper.store_json (sort_keys=True, indent=2)
             import hashlib
             computed_hash = hashlib.sha256(
-                json.dumps(data, sort_keys=True).encode()
+                json.dumps(data, sort_keys=True, indent=2).encode()
             ).hexdigest()
 
             if computed_hash != self.data_hash:

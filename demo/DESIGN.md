@@ -51,54 +51,70 @@
 ### High-Level System Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    REAL DATA SOURCES (ALL LIVE!)                    │
-│  [CryptoPanic API] [CoinGecko API: BTC] [CoinGecko API: SUI]       │
-└───────────┬────────────────┬─────────────────────────────┬──────────┘
-            │                │                             │
-            ▼                │                             │
-    ┌───────────────┐        │                             │
-    │   AGENT A     │        │                             │
-    │   Sentiment   │        │                             │
-    │   Digestion   │        │                             │
-    └───────┬───────┘        │                             │
-            │                │                             │
-            │ Signal A       │                             │
-            │ (Sentiment     │                             │
-            │  Metrics)      │                             │
-            │                │                             │
-            └────────┬───────┘                             │
-                     ▼                                     │
-            ┌────────────────┐                             │
-            │   AGENT B      │                             │
-            │  Investment    │◄────────────────────────────┘
-            │  Suggestion    │   (Real BTC Price - CoinGecko)
-            └───────┬────────┘
-                    │
-                    │ Signal B
-                    │ (BTC Price
-                    │  Prediction)
-                    │
-                    └──────┬─────────────────┐
-                           ▼                 │
-                   ┌────────────────┐        │ (Real SUI Price)
-                   │   AGENT C      │        │
-                   │   Portfolio    │◄───────┘
-                   │   Management   │
-                   └────────┬───────┘
-                            │
-                            ▼
-                   [Asset Allocation Actions]
-                            │
-                            ▼
-            ┌───────────────────────────────────────┐
-            │  SUI TESTNET + WALRUS DA INTEGRATION  │
-            │  • Agent Identity (testnet addresses) │
-            │  • Reasoning traces → Walrus DA       │
-            │  • RAID scores → SUI chain            │
-            │  • Portfolio state → SUI chain        │
-            │  • Rebalancing txs → SUI chain        │
-            └───────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      REAL DATA SOURCES (ALL LIVE!)                          │
+│  [CryptoPanic API]        [CoinGecko API: BTC]        [CoinGecko API: SUI]  │
+└────────┬──────────────────────────┬──────────────────────────┬───────────────┘
+         │                          │                          │
+         │ NewsSignal               │ PriceSignal (BTC)        │ SUI (tool call)
+         │                          │                          │
+         ▼                          ▼                          │
+  ┌──────────────────┐     ┌──────────────────┐              │
+  │  WALRUS STORAGE  │     │  WALRUS STORAGE  │              │
+  │  (NewsSignals)   │     │  (BTC Price)     │◄─────────────┼──────┐
+  └────────┬─────────┘     └─────────┬────────┘              │    REUSED
+           │                         │                        │      │
+           │                         │                        │      │
+           ▼                         ▼                        │      │
+    ┌─────────────┐         ┌──────────────────┐             │      │
+    │  AGENT A    │         │     AGENT B      │             │      │
+    │  Sentiment  │────────>│  Investment      │             │      │
+    │  Analysis   │         │  Prediction      │             │      │
+    └─────────────┘         └─────────┬────────┘             │      │
+                                      │                       │      │
+                                      │ InsightSignal         │      │
+                                      ▼                       │      │
+                              ┌──────────────┐               │      │
+                              │   WALRUS     │               │      │
+                              │ (Prediction) │               │      │
+                              └──────┬───────┘               │      │
+                                     │                        │      │
+                                     ▼                        ▼      │
+                              ┌──────────────┐        ┌──────────────┐
+                              │   AGENT C    │        │   AGENT C    │
+                              │  Portfolio   │◄───────┤ (consumes    │
+                              │  Management  │        │  BTC Price)  │
+                              └──────┬───────┘        └──────────────┘
+                                     │  +get_portfolio()
+                                     │  +get_sui_price()
+                                     │
+                                     ▼
+                          [Portfolio Recommendations]
+                                     │
+                                     ▼
+            ┌───────────────────────────────────────────────────────────────┐
+            │         SUI TESTNET + WALRUS DA INTEGRATION                   │
+            │  • Agent Identity (testnet addresses on SUI)                  │
+            │  • Reasoning traces → Walrus DA (off-chain)                   │
+            │  • Signal data → Walrus DA (off-chain)                        │
+            │  • Signal metadata → SUI chain (on-chain)                     │
+            │  • Portfolio state → Walrus DA (off-chain)                    │
+            │  • RAID scores → SUI chain (on-chain)                         │
+            └───────────────────────────────────────────────────────────────┘
+
+DATA FLOW SUMMARY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+① Agent A: Consumes NewsSignals → Produces Sentiment InsightSignal
+② Agent B: Consumes Sentiment + BTC PriceSignal → Produces Price Prediction
+③ Agent C: Consumes Prediction + BTC PriceSignal (REUSED) → Portfolio Advice
+
+KEY PATTERN: Signal Reuse for Efficiency & Consistency
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• BTC PriceSignal is fetched ONCE from CoinGecko and stored on Walrus
+• Both Agent B and Agent C consume the SAME BTC PriceSignal from Walrus
+• This ensures data consistency and avoids redundant API calls
+• Agent B: No tool calls (consumes signals only)
+• Agent C: 2 tool calls (get_portfolio, get_sui_price)
 ```
 
 ### Data Flow Pipeline
@@ -365,14 +381,19 @@ agent_b_status = {
 
 ### Agent C: Portfolio Management Agent
 
-**Purpose:** Accept predictions from Agent B + real SUI price from CoinGecko, generate optimal asset allocation, execute rebalancing on SUI testnet.
+**Purpose:** Provide portfolio rebalancing recommendations based on Agent B predictions, price signals from Walrus, and real-time SUI price.
 
 **Input:**
-- Signal from Agent B (BTC prediction)
-- Real SUI price from CoinGecko API
-- Current portfolio state (SQLite)
+- Signal from Agent B (BTC price prediction) - consumed from Walrus
+- PriceSignal (BTC current price) - same signal consumed by Agent B from Walrus (REUSED)
+- Tool calls for additional data:
+  - `get_portfolio()`: Fetch current portfolio state from Walrus
+  - `get_sui_price()`: Fetch real-time SUI price from CoinGecko (SUI not in price signals yet)
 - Risk parameters (configurable)
-- SUI testnet wallet credentials
+
+**Key Design Decision:** Agent C consumes the BTC PriceSignal from Walrus (the same signal that Agent B uses) rather than making a redundant CoinGecko API call. This ensures consistency and avoids rate limits.
+
+**Note:** Agent C generates portfolio allocation *recommendations* but does not execute trades or update portfolio state. It outputs rebalancing actions for review.
 
 **Output Signal:**
 ```json

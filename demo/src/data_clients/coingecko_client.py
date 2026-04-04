@@ -31,9 +31,14 @@ class CoinGeckoClient:
 
     Handles all HTTP communication with CoinGecko API.
     Returns raw JSON responses without transformation.
+
+    Supports both free and Pro tiers:
+    - Free tier: https://api.coingecko.com/api/v3 (15 requests/min)
+    - Pro tier: https://pro-api.coingecko.com/api/v3 (higher rate limits)
     """
 
-    BASE_URL = "https://api.coingecko.com/api/v3"
+    FREE_BASE_URL = "https://api.coingecko.com/api/v3"
+    PRO_BASE_URL = "https://pro-api.coingecko.com/api/v3"
 
     # Symbol to CoinGecko ID mapping
     SYMBOL_TO_ID = {
@@ -60,6 +65,10 @@ class CoinGeckoClient:
         self.api_key = api_key
         self._last_request_time = 0
         self._min_request_interval = min_request_interval
+
+        # Use Pro API URL if API key is provided
+        self.base_url = self.PRO_BASE_URL if api_key else self.FREE_BASE_URL
+        logger.info(f"CoinGecko client initialized with {'Pro' if api_key else 'Free'} tier")
 
     def get_simple_price(
         self,
@@ -119,7 +128,7 @@ class CoinGeckoClient:
         # Make request
         try:
             response = requests.get(
-                f"{self.BASE_URL}/simple/price",
+                f"{self.base_url}/simple/price",
                 params=params,
                 timeout=30
             )
@@ -204,7 +213,7 @@ class CoinGeckoClient:
         # Make request
         try:
             response = requests.get(
-                f"{self.BASE_URL}/coins/{coin_id}/history",
+                f"{self.base_url}/coins/{coin_id}/history",
                 params=params,
                 timeout=30
             )
@@ -246,7 +255,7 @@ class CoinGeckoClient:
             True if API is accessible, False otherwise
         """
         try:
-            response = requests.get(f"{self.BASE_URL}/ping", timeout=10)
+            response = requests.get(f"{self.base_url}/ping", timeout=10)
             return response.status_code == 200
         except Exception:
             return False

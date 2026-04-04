@@ -82,8 +82,9 @@ def get_cached_signals():
 
         # Cache miss or outdated - reload
         news = registry.get_signals(signal_type='news', limit=1000)
-        signals = registry.get_signals(signal_type='insight', limit=1000)
-        all_signals = news + signals
+        insights = registry.get_signals(signal_type='insight', limit=1000)
+        prices = registry.get_signals(signal_type='price', limit=1000)
+        all_signals = news + insights + prices
 
         # Update cache
         _cache['signals'] = all_signals
@@ -94,8 +95,9 @@ def get_cached_signals():
         print(f"Cache error: {e}")
         # Fallback to direct registry access
         news = registry.get_signals(signal_type='news', limit=1000)
-        signals = registry.get_signals(signal_type='insight', limit=1000)
-        return news + signals
+        insights = registry.get_signals(signal_type='insight', limit=1000)
+        prices = registry.get_signals(signal_type='price', limit=1000)
+        return news + insights + prices
 
 
 # ============================================================================
@@ -417,6 +419,144 @@ def get_agent_description(agent_id: str) -> str:
 
 
 # ============================================================================
+# Workflow API Endpoints
+# ============================================================================
+
+@app.route('/api/workflow/metadata', methods=['GET'])
+def get_workflow_metadata():
+    """
+    Get lightweight workflow metadata for initial load.
+
+    Returns:
+        - List of agents with their signal counts
+        - List of signal_ids grouped by agent (no full data)
+    """
+    try:
+        # Get all insight signals (agent outputs)
+        insights = registry.get_signals(signal_type='insight', limit=1000)
+
+        # Build agent -> signals mapping
+        agent_signals = {}
+        for signal in insights:
+            producer = signal.get('producer', 'unknown')
+            if producer not in agent_signals:
+                agent_signals[producer] = []
+
+            agent_signals[producer].append({
+                'signal_id': signal.get('signal_id'),
+                'timestamp': signal.get('timestamp'),
+                'insight_type': signal.get('insight_type'),
+                'confidence': signal.get('confidence')
+            })
+
+        # Build agent list
+        agents = []
+        for agent_id, signals in agent_signals.items():
+            agents.append({
+                'agent_id': agent_id,
+                'name': format_agent_name(agent_id),
+                'signal_count': len(signals),
+                'signals': signals
+            })
+
+        return jsonify({
+            'success': True,
+            'agents': agents
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/workflow/lineage/<signal_id>', methods=['GET'])
+def get_signal_lineage(signal_id):
+    """
+    Get complete lineage for a specific signal.
+
+    Returns:
+        - Signal details
+        - Reasoning trace (if available)
+        - Upstream signals (dependencies)
+        - Agent that produced it
+    """
+    try:
+        # Find the signal in registry
+        all_signals = get_cached_signals()
+        target_signal = None
+        for s in all_signals:
+            if s.get('signal_id') == signal_id:
+                target_signal = s
+                break
+
+        if not target_signal:
+            return jsonify({
+                'success': False,
+                'error': f'Signal {signal_id} not found'
+            }), 404
+
+        # Get reasoning trace if it's an insight signal
+        reasoning_trace = None
+        if target_signal.get('signal_type') == 'insight':
+            walrus_trace_id = target_signal.get('walrus_trace_id')
+            if walrus_trace_id:
+                try:
+                    reasoning_trace = WalrusHelper.fetch_json(walrus_client, walrus_trace_id)
+                except Exception as e:
+                    print(f"Error fetching reasoning trace: {e}")
+
+        # Determine upstream signals based on agent logic
+        # This is hardcoded for now, but could be tracked in a dependency table
+        upstream_signals = []
+        producer = target_signal.get('producer')
+
+        if producer == 'agent_b_investment':
+            # Agent B consumes price signals
+            price_signals = [s for s in all_signals
+                           if s.get('signal_type') == 'price' and s.get('symbol') == 'BTC']
+            if price_signals:
+                # Get the most recent price signal before this insight
+                target_time = target_signal.get('timestamp')
+                valid_prices = [p for p in price_signals if p.get('timestamp') < target_time]
+                if valid_prices:
+                    upstream_signals.append(max(valid_prices, key=lambda x: x.get('timestamp')))
+
+        elif producer == 'agent_c_portfolio':
+            # Agent C consumes price + investment signals
+            target_time = target_signal.get('timestamp')
+
+            # Find price signal
+            price_signals = [s for s in all_signals
+                           if s.get('signal_type') == 'price' and s.get('symbol') == 'BTC'
+                           and s.get('timestamp') < target_time]
+            if price_signals:
+                upstream_signals.append(max(price_signals, key=lambda x: x.get('timestamp')))
+
+            # Find investment signal from Agent B
+            investment_signals = [s for s in all_signals
+                                if s.get('signal_type') == 'insight'
+                                and s.get('producer') == 'agent_b_investment'
+                                and s.get('timestamp') < target_time]
+            if investment_signals:
+                upstream_signals.append(max(investment_signals, key=lambda x: x.get('timestamp')))
+
+        return jsonify({
+            'success': True,
+            'signal': target_signal,
+            'reasoning_trace': reasoning_trace,
+            'upstream_signals': upstream_signals
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ============================================================================
 # Run Server
 # ============================================================================
 
@@ -429,13 +569,15 @@ if __name__ == '__main__':
     print("API Base: http://localhost:8080/api")
     print()
     print("Available Endpoints:")
-    print("  GET  /api/signals           - List all signals")
-    print("  GET  /api/signals/{id}/full - Get full signal data from Walrus")
-    print("  GET  /api/owners             - List all owner addresses")
-    print("  GET  /api/agents             - List all agents")
-    print("  GET  /api/agents/{id}/traces - Get agent reasoning traces")
-    print("  GET  /api/stats              - System statistics")
-    print("  GET  /api/health             - Health check")
+    print("  GET  /api/signals                   - List all signals")
+    print("  GET  /api/signals/{id}/full         - Get full signal data from Walrus")
+    print("  GET  /api/owners                    - List all owner addresses")
+    print("  GET  /api/agents                    - List all agents")
+    print("  GET  /api/agents/{id}/traces        - Get agent reasoning traces")
+    print("  GET  /api/workflow/metadata         - Get workflow metadata (agents + signals)")
+    print("  GET  /api/workflow/lineage/{id}     - Get signal lineage and reasoning trace")
+    print("  GET  /api/stats                     - System statistics")
+    print("  GET  /api/health                    - Health check")
     print()
     print("=" * 80)
 

@@ -31,6 +31,9 @@
             <button class="tab-button" data-tab="agents">
                 🤖 Agents
             </button>
+            <button class="tab-button" data-tab="workflow">
+                🔄 Workflow
+            </button>
         </nav>
 
         <!-- Tab Content -->
@@ -54,6 +57,10 @@
                         <div class="stat-value" id="news-signals">-</div>
                     </div>
                     <div class="stat-card">
+                        <div class="stat-label">Price Signals</div>
+                        <div class="stat-value" id="price-signals">-</div>
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-label">Insight Signals</div>
                         <div class="stat-value" id="insight-signals">-</div>
                     </div>
@@ -72,6 +79,7 @@
                         <select id="signal-type-filter">
                             <option value="all">All Types</option>
                             <option value="news">News Signals</option>
+                            <option value="price">Price Signals</option>
                             <option value="insight">Insight Signals</option>
                         </select>
                         <input type="text" id="search-box" placeholder="Search by ID, token, or producer...">
@@ -105,9 +113,56 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Workflow Tab -->
+            <div id="workflow" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Signal Workflow & Lineage</h2>
+                    <button class="refresh-btn" onclick="refreshWorkflow()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="workflow-controls">
+                    <div class="filter-group">
+                        <label for="workflow-agent-filter">Filter by Agent:</label>
+                        <select id="workflow-agent-filter" onchange="onAgentFilterChange()">
+                            <option value="all">All Agents</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="workflow-signal-filter">Filter by Signal:</label>
+                        <select id="workflow-signal-filter" onchange="onSignalFilterChange()">
+                            <option value="all">All Signals</option>
+                            <!-- Populated dynamically based on selected agent -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button id="view-lineage-btn" class="refresh-btn" onclick="onViewLineageClick()" disabled>
+                            🔍 View Lineage
+                        </button>
+                    </div>
+                </div>
+
+                <div class="workflow-graph-container" id="workflow-graph-container">
+                    <svg id="workflow-graph" width="100%" height="600"></svg>
+                </div>
+
+                <!-- Reasoning Ledger Modal -->
+                <div id="reasoning-ledger-modal" class="modal">
+                    <div class="modal-content large">
+                        <span class="close-btn" onclick="closeReasoningLedger()">&times;</span>
+                        <div id="reasoning-ledger-content">
+                            <!-- Dynamic content loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="static/js/main.js"></script>
 </body>
 </html>

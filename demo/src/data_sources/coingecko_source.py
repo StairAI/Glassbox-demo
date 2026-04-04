@@ -215,3 +215,7 @@ class CoinGeckoSource(PriceSource):
     def normalize_symbol(self, symbol: str) -> str:
         """Normalize symbol to standard format."""
         return symbol.upper()
+
+    def test_connection(self) -> bool:
+        """Test connection to CoinGecko API."""
+        return self.is_available()
