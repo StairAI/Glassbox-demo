@@ -34,14 +34,26 @@ app = Flask(__name__,
 CORS(app)  # Enable CORS for frontend
 
 # Initialize components
-# Use simulated Walrus with persistent file storage
+# Check environment for Walrus configuration
+walrus_enabled = os.getenv("WALRUS_ENABLED", "false").lower() == "true"
+publisher_url = os.getenv("WALRUS_PUBLISHER_URL")
+aggregator_url = os.getenv("WALRUS_AGGREGATOR_URL")
+
 print(f"[DEBUG] Initializing Walrus client:")
-print(f"  Mode: SIMULATED (file-based storage)")
-print(f"  Storage dir: ../../demo/data/walrus_blobs")
+print(f"  Enabled: {walrus_enabled}")
+if walrus_enabled:
+    print(f"  Mode: REAL WALRUS TESTNET")
+    print(f"  Publisher: {publisher_url}")
+    print(f"  Aggregator: {aggregator_url}")
+else:
+    print(f"  Mode: SIMULATED (file-based storage)")
+    print(f"  Storage dir: ../../demo/data/walrus_blobs")
 
 walrus_client = WalrusClient(
-    simulated=True,
-    storage_dir="../../demo/data/walrus_blobs"
+    publisher_url=publisher_url,
+    aggregator_url=aggregator_url,
+    simulated=not walrus_enabled,
+    storage_dir="../../demo/data/walrus_blobs" if not walrus_enabled else None
 )
 
 db = ActivityDB(db_path="../../demo/data/activity.db")
@@ -246,7 +258,7 @@ def get_agent_reasoning_traces(agent_id: str):
 
         traces = []
 
-        for signal in agent_signals[:10]:  # Limit to 10 most recent
+        for signal in agent_signals[:5]:  # Limit to 5 most recent
             trace_blob_id = signal.get('walrus_trace_id')
 
             if trace_blob_id:

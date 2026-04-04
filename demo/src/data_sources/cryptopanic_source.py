@@ -214,6 +214,7 @@ class CryptoPanicSource(NewsSource):
             source=self._source_name,
             url=url,
             title=title,
+            description=description,
             published_at=published_at,
             domain=domain,
             currencies=currencies,

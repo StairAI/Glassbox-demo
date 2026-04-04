@@ -281,11 +281,17 @@ function createSignalCard(signal) {
                 </div>
             </div>
             ${signal.walrus_blob_id ? `
-                <div style="margin-top: 12px;">
+                <div style="margin-top: 12px; display: flex; gap: 10px;">
+                    <button onclick="viewWalrusData('${signal.signal_id}')"
+                            class="expand-btn"
+                            style="flex: 1; padding: 10px;"
+                            title="Fetch and view full data from Walrus">
+                        📦 View Full Data
+                    </button>
                     <a href="https://walruscan.com/testnet/blob/${signal.walrus_blob_id}"
                        target="_blank"
                        class="expand-btn"
-                       style="text-decoration: none; display: block; text-align: center; padding: 10px;"
+                       style="text-decoration: none; flex: 1; text-align: center; padding: 10px;"
                        title="View on Walruscan explorer">
                         🔗 View on Walruscan
                     </a>
@@ -493,8 +499,19 @@ function renderReasoningTrace(trace) {
                     <strong>Confidence:</strong> ${(trace.confidence * 100).toFixed(1)}%
                 </div>
             </div>
-            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">
-                ${formatTimestamp(trace.timestamp)}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--text-secondary);">
+                    ${formatTimestamp(trace.timestamp)}
+                </div>
+                ${trace.walrus_blob_id ? `
+                    <a href="https://walruscan.com/testnet/blob/${trace.walrus_blob_id}"
+                       target="_blank"
+                       class="expand-btn"
+                       style="text-decoration: none; padding: 8px 16px; font-size: 12px;"
+                       title="View trace on Walruscan explorer">
+                        🔗 View on Walruscan
+                    </a>
+                ` : ''}
             </div>
 
             <h4 style="margin-bottom: 15px;">Reasoning Steps (${steps.length})</h4>

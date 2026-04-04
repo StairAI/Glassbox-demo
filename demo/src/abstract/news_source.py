@@ -24,6 +24,7 @@ class NewsArticle:
     published_at: datetime   # Publication timestamp
 
     # Optional fields
+    description: Optional[str] = None     # Article description/summary
     domain: Optional[str] = None          # Source domain (e.g., "coindesk.com")
     currencies: Optional[List[str]] = None # Related currencies (e.g., ["BTC", "ETH"])
     kind: Optional[str] = None            # Article type (e.g., "news", "media")
@@ -45,6 +46,7 @@ class NewsArticle:
             "source": self.source,
             "url": self.url,
             "title": self.title,
+            "description": self.description,
             "published_at": self.published_at.isoformat(),
             "domain": self.domain,
             "currencies": self.currencies,

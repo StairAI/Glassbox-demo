@@ -215,6 +215,7 @@ class E2EFullPipeline:
         return {
             "title": article.title,
             "url": article.url,
+            "description": article.description,  # Include description field
             "published_at": article.published_at.isoformat() if article.published_at else None,
             "source": article.source,
             "domain": article.domain,
