@@ -370,9 +370,10 @@ body {
     padding: 30px;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    width: 90%;
-    max-width: 1000px;
+    width: 50%;
+    max-width: 50vw;
     position: relative;
+    font-size: 40px;
 }
 
 .close-btn {
@@ -393,6 +394,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
+    font-size: 72px;
 }
 
 .reasoning-step {
@@ -412,17 +414,18 @@ body {
 
 .step-name {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 80px;
 }
 
 .step-timestamp {
-    font-size: 12px;
+    font-size: 60px;
     color: var(--text-secondary);
 }
 
 .step-description {
     color: var(--text-secondary);
     margin-bottom: 10px;
+    font-size: 72px;
 }
 
 .step-data {
@@ -430,7 +433,7 @@ body {
     padding: 10px;
     border-radius: 4px;
     font-family: 'Courier New', monospace;
-    font-size: 12px;
+    font-size: 60px;
     overflow-x: auto;
 }
 

@@ -21,7 +21,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../demo'))
 
 from src.demo.signal_registry import SignalRegistry
 from src.storage.walrus_client import WalrusClient, WalrusHelper
-from src.storage.activity_db import ActivityDB
 from dotenv import load_dotenv
 
 # Load environment
@@ -56,31 +55,35 @@ walrus_client = WalrusClient(
     storage_dir="../../demo/data/walrus_blobs" if not walrus_enabled else None
 )
 
-db = ActivityDB(db_path="../../demo/data/activity.db")
-registry = SignalRegistry(registry_path="../../demo/data/signal_registry.json")
+# IMPORTANT: Use absolute path to database so SignalRegistry connects to correct database
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_ABSOLUTE_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "../../demo/data/glassbox.db"))
+registry = SignalRegistry(registry_path="../../demo/data/signal_registry.json", db_path=DB_ABSOLUTE_PATH)
 
-# Simple cache to avoid re-reading JSON on every request
+# Simple cache to avoid re-reading database on every request
 _cache = {
     'signals': None,
     'last_modified': None
 }
 
-def get_registry_path():
-    return "../../demo/data/signal_registry.json"
+def get_database_path():
+    """Get absolute path to SQLite database."""
+    return DB_ABSOLUTE_PATH
 
 def get_cached_signals():
-    """Get signals with simple file modification time caching."""
+    """Get signals with simple database modification time caching."""
     import os
-    registry_path = get_registry_path()
+    db_path = get_database_path()
 
     try:
-        current_mtime = os.path.getmtime(registry_path)
+        # Check database modification time
+        current_mtime = os.path.getmtime(db_path)
 
         # Check if cache is valid
         if _cache['signals'] is not None and _cache['last_modified'] == current_mtime:
             return _cache['signals']
 
-        # Cache miss or outdated - reload
+        # Cache miss or outdated - reload from database
         news = registry.get_signals(signal_type='news', limit=1000)
         insights = registry.get_signals(signal_type='insight', limit=1000)
         prices = registry.get_signals(signal_type='price', limit=1000)
@@ -92,7 +95,9 @@ def get_cached_signals():
 
         return all_signals
     except Exception as e:
-        print(f"Cache error: {e}")
+        print(f"[ERROR] Cache error: {e}")
+        import traceback
+        traceback.print_exc()
         # Fallback to direct registry access
         news = registry.get_signals(signal_type='news', limit=1000)
         insights = registry.get_signals(signal_type='insight', limit=1000)
@@ -296,30 +301,55 @@ def get_agent_reasoning_traces(agent_id: str):
 @app.route('/api/owners', methods=['GET'])
 def get_owners():
     """
-    Get list of all owner addresses from mocked_accounts table.
+    Get list of owner addresses from both signals and mocked_accounts tables.
+
+    Query params:
+        source (optional): 'signals', 'mocked', or 'all' (default: 'all')
 
     Returns:
-        List of owner addresses with their project names
+        List of owner addresses with their signal counts and display names
     """
     try:
-        # Get all mocked accounts from database
-        accounts = db.list_mocked_accounts(active_only=True)
+        source = request.args.get('source', 'all')
 
-        # Format for frontend
-        owners = [
-            {
-                'address': acc['account_address'],
-                'project_name': acc['project_name'],
-                'description': acc['description']
-            }
-            for acc in accounts
-        ]
-
-        return jsonify({
+        result = {
             'success': True,
-            'count': len(owners),
-            'owners': owners
-        })
+            'owners': []
+        }
+
+        # Get signal owners
+        if source in ['signals', 'all']:
+            signal_owners = registry.get_unique_owners()
+            for owner in signal_owners:
+                result['owners'].append({
+                    'address': owner['owner'],
+                    'signal_count': owner['signal_count'],
+                    'source': 'signals',
+                    'name': None  # Will be enriched with mocked account name if exists
+                })
+
+        # Get mocked accounts
+        if source in ['mocked', 'all']:
+            mocked_accounts = registry.get_mocked_accounts()
+            for account in mocked_accounts:
+                # Check if this account already exists in signal owners
+                existing = next((o for o in result['owners'] if o['address'] == account['address']), None)
+                if existing:
+                    # Enrich existing entry with name
+                    existing['name'] = account['name']
+                    existing['description'] = account.get('description')
+                else:
+                    # Add as new entry with zero signals
+                    result['owners'].append({
+                        'address': account['address'],
+                        'signal_count': 0,
+                        'source': 'mocked',
+                        'name': account['name'],
+                        'description': account.get('description')
+                    })
+
+        result['count'] = len(result['owners'])
+        return jsonify(result)
 
     except Exception as e:
         return jsonify({
@@ -331,14 +361,16 @@ def get_owners():
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     """
-    Get overall system statistics.
+    Get overall system statistics from glassbox database.
     """
     try:
-        db_stats = db.get_stats()
+        # Get stats from glassbox database
+        db_stats = registry.get_stats()
 
         # Get signal counts
         news_signals = registry.get_signals(signal_type='news', limit=10000)
-        signal_signals = registry.get_signals(signal_type='insight', limit=10000)
+        insight_signals = registry.get_signals(signal_type='insight', limit=10000)
+        price_signals = registry.get_signals(signal_type='price', limit=10000)
 
         return jsonify({
             'success': True,
@@ -346,13 +378,52 @@ def get_stats():
                 'database': db_stats,
                 'signals': {
                     'news': len(news_signals),
-                    'signal': len(signal_signals),
-                    'total': len(news_signals) + len(signal_signals)
+                    'insight': len(insight_signals),
+                    'price': len(price_signals),
+                    'total': len(news_signals) + len(insight_signals) + len(price_signals)
                 }
             }
         })
 
     except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/walrus/<blob_id>', methods=['GET'])
+def get_walrus_blob(blob_id: str):
+    """
+    Proxy endpoint to fetch raw JSON from Walrus.
+
+    This endpoint exists to avoid CORS issues when fetching directly
+    from Walrus aggregator in the browser.
+
+    Args:
+        blob_id: Walrus blob ID
+
+    Returns:
+        Raw JSON data stored in Walrus
+    """
+    try:
+        print(f"[DEBUG] Proxying Walrus fetch for blob: {blob_id}")
+
+        # Fetch data from Walrus using the helper
+        data = WalrusHelper.fetch_json(walrus_client, blob_id)
+
+        print(f"[DEBUG] Successfully fetched blob from Walrus")
+
+        return jsonify({
+            'success': True,
+            'blob_id': blob_id,
+            'data': data
+        })
+
+    except Exception as e:
+        print(f"[ERROR] Failed to fetch Walrus blob {blob_id}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': str(e)
@@ -571,6 +642,7 @@ if __name__ == '__main__':
     print("Available Endpoints:")
     print("  GET  /api/signals                   - List all signals")
     print("  GET  /api/signals/{id}/full         - Get full signal data from Walrus")
+    print("  GET  /api/walrus/{blob_id}          - Proxy to fetch raw JSON from Walrus (avoids CORS)")
     print("  GET  /api/owners                    - List all owner addresses")
     print("  GET  /api/agents                    - List all agents")
     print("  GET  /api/agents/{id}/traces        - Get agent reasoning traces")
